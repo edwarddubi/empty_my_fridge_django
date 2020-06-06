@@ -47,6 +47,16 @@
       border-radius: 12px;
     }
 
+    .boxbar {
+      background-color: white;
+      color: blueviolet;
+      padding: 14px 20px;
+      margin: 8px 0;
+      border: rgb(51, 99, 182);
+      width: 100%;
+      border-radius: 12px;
+    }
+
     button:hover {
       opacity: 1;
     }
@@ -92,7 +102,12 @@
     }
   </style>
   <body>
-    <form id="myForm" action="/sign/" method="post" style="border: 1px solid #ccc;">
+    <form
+      id="myForm"
+      action="/to_home/"
+      method="post"
+      style="border: 1px solid #ccc;"
+    >
       {% csrf_token %}
 
       <div class="container">
@@ -112,24 +127,13 @@
             <button style="margin: 10;" type="button" class="registerbtn">
               Register
             </button>
-            {% for message in messages %}
-
-            <div class="alert alert-success">
-              <a class="close" href="#" data-dismiss="alert">
-
-              {{ message }}
+            <div class="boxbar">
+                <p1>Heyy</p1>
+              <p1>{{ data }}</p1>
             </div>
-            {% endfor %}
           </div>
         </div>
       </div>
     </form>
-    <script>
-        function myFunction() {
-            
-          var x = document.getElementById("myForm").action;
-          document.getElementById("demo").innerHTML = x;
-        }
-        </script>
   </body>
 </html>

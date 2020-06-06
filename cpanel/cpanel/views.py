@@ -19,19 +19,23 @@ def _sign_in_(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('pass')
+        data= ''
         try:
             user = auth.sign_in_with_email_and_password(email, password)
             #user = auth.refresh(user['refreshToken'])
-            return redirect('to_home')
-                 
+            data = user
+            #return redirect('/to_home/')   
         except Exception as e:
         # logging.exception('')
             response = e.args[0].response
             error = response.json()['error']
             msg = error['message']
-            res = 'Error: ', msg
-            messages.error(request, msg)
-            return render(request, 'signIn.html') 
+            data = 'Error: ', msg
+            #messages.error(request, msg)
+
+    print(data)        
+    return render(request, 'signIn.html', {'data': data})        
+             
 
            
 
