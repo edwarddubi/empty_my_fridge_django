@@ -127,13 +127,19 @@
             <button style="margin: 10;" type="button" class="registerbtn">
               Register
             </button>
-            <div class="boxbar">
-                <p1>Heyy</p1>
-              <p1>{{ data }}</p1>
-            </div>
+           
           </div>
+          <div class="boxbar">
+            <p1>Heyy</p1>
+          <p1>{{ data }}</p1>
+        </div>
         </div>
       </div>
     </form>
+    {% if data %}
+    <script>
+        alert(`{{data}}`);
+    </script>
+    {% endif %}
   </body>
 </html>
