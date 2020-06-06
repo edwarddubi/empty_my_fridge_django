@@ -92,30 +92,44 @@
     }
   </style>
   <body>
-    <form action="/to_home/" method="post" style="border: 1px solid #ccc;">
+    <form id="myForm" action="/sign/" method="post" style="border: 1px solid #ccc;">
       {% csrf_token %}
 
       <div class="container">
-          <div class="center">
-            <h1>Sign In</h1>
-            <hr />
-            <label for="email"><b>Email</b></label>
-            <input type="email" placeholder="Email" name="email" required />
-    
-            <label for="pass"><b>Password</b></label>
-            <input type="password" placeholder="Password" name="pass" required />
-    
-            <div class="clearfix">
-              <button style="margin: 10;" type="submit" class="signInbtn">
-                Sign In
-              </button>
-              <button style="margin: 10;" type="button" class="registerbtn">
-                Register
-              </button>
+        <div class="center">
+          <h1>Sign In</h1>
+          <hr />
+          <label for="email"><b>Email</b></label>
+          <input type="email" placeholder="Email" name="email" required />
+
+          <label for="pass"><b>Password</b></label>
+          <input type="password" placeholder="Password" name="pass" required />
+
+          <div class="clearfix">
+            <button style="margin: 10;" type="submit" class="signInbtn">
+              Sign In
+            </button>
+            <button style="margin: 10;" type="button" class="registerbtn">
+              Register
+            </button>
+            {% for message in messages %}
+
+            <div class="alert alert-success">
+              <a class="close" href="#" data-dismiss="alert">
+
+              {{ message }}
+            </div>
+            {% endfor %}
           </div>
-        
         </div>
       </div>
     </form>
+    <script>
+        function myFunction() {
+            
+          var x = document.getElementById("myForm").action;
+          document.getElementById("demo").innerHTML = x;
+        }
+        </script>
   </body>
 </html>
