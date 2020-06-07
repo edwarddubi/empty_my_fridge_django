@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Sign In</title>
+    <title>Sign Up</title>
   </head>
   <style>
     body {
@@ -14,7 +14,8 @@
 
     /* Full-width input fields */
     input[type="email"],
-    input[type="password"] {
+    input[type="password"],
+    input[type="text"] {
       width: 100%;
       padding: 15px;
       margin: 5px 0 22px 0;
@@ -24,7 +25,8 @@
     }
 
     input[type="email"]:focus,
-    input[type="password"]:focus {
+    input[type="password"]:focus,
+    input[type="text"]:focus {
       background-color: #ddd;
       outline: none;
     }
@@ -34,8 +36,9 @@
       margin-bottom: 25px;
     }
 
+    /* Set a style for all buttons */
     button {
-      background-color: rgb(51, 99, 182);
+      background-color: rgb(196, 48, 48);
       color: white;
       padding: 14px 20px;
       margin: 8px 0;
@@ -45,26 +48,19 @@
       opacity: 0.9;
       border-radius: 12px;
     }
+    
 
     button:hover {
       opacity: 1;
     }
-
-    .registerBtn {
-      padding: 14px 20px;
-      margin: 8px;
-      background-color: rgb(51, 99, 182);
-    }
-
-    .signInBtn,
-    .registerBtn {
-      float: left;
-      width: 35%;
+    
+    .signUpBtn {
+      width: 50%;
     }
 
     /* Add padding to container elements */
     .container {
-      padding: 10%;
+      padding: 11%;
     }
 
     .center {
@@ -80,9 +76,9 @@
       display: table;
     }
 
+    /* Change styles for cancel button and signup button on extra small screens */
     @media screen and (max-width: 300px) {
-      .signInBtn,
-      .registerBtn {
+      .signUpBtn {
         width: 100%;
       }
     }
@@ -90,16 +86,19 @@
   <body>
     <form
       id="myForm"
-      action="/to_home/"
-      method="get"
+      action="/to_signIn/"
+      method="post"
       style="border: 1px solid #ccc;"
     >
       {% csrf_token %}
 
       <div class="container">
         <div class="center">
-          <h1>Sign In</h1>
+          <h1>Create an account</h1>
           <hr />
+          <label for="name"><b>Full Name</b></label>
+          <input type="text" placeholder="Full Name" name="name" required />
+
           <label for="email"><b>Email</b></label>
           <input type="email" placeholder="Email" name="email" required />
 
@@ -107,16 +106,8 @@
           <input type="password" placeholder="Password" name="pass" required />
 
           <div class="clearfix">
-            <button style="margin: 10;" type="submit" class="signInBtn">
-              Sign In
-            </button>
-            <button
-              style="margin: 10;"
-              type="button"
-              class="registerBtn"
-              onclick="location.href={% url 'register'%}"
-            >
-              Register
+            <button style="margin: 10;" type="submit" class="signUpBtn">
+              Create Account
             </button>
           </div>
         </div>
