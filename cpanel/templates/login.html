@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Sign In</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+  </head>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    * {
+      box-sizing: border-box;
+    }
+
+    hr {
+      border: 1px solid #f1f1f1;
+      margin-bottom: 25px;
+    }
+    .center {
+      margin: auto;
+      width: 50%;
+      padding: 170px 0;
+    }
+  </style>
+  <body>
+    <div class="ui container">
+      <div class="center">
+        <h1>Sign In</h1>
+        <hr />
+        <form id="myForm" action="/to_home/" method="get" class="ui form">
+          {% csrf_token %}
+
+          <div class="field">
+            <label>Email</label>
+            <input type="email" placeholder="Email" name="email" required />
+          </div>
+
+          <div class="field">
+            <label>Password</label>
+            <input
+              type="password"
+              placeholder="Password"
+              name="pass"
+              required
+            />
+          </div>
+
+          <div>
+            <button
+              style="margin-right: 5px; width: 48%;"
+              type="submit"
+              class="ui button blue"
+            >
+              Login
+            </button>
+            <button
+              style="margin-left: 5px; width: 48%;"
+              type="button"
+              class="ui button blue right floated"
+              onclick="location.href={% url 'register'%}"
+            >
+              Register
+            </button>
+          </div>
+
+          <div >
+            <div style="margin-top: 10px;">
+              <button type="button" class="ui button fluid yellow">
+                Forgot Password?
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    {% if data %}
+    <script>
+      alert(`{{data}}`);
+    </script>
+    {% endif %}
+  </body>
+</html>

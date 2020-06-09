@@ -14,12 +14,12 @@ db = firebase.database()
 
 
 @csrf_exempt
-def sign_in(request):
-    return render(request, 'signIn.html')
+def login(request):
+    return render(request, 'login.html')
 
 
 @csrf_exempt
-def _sign_in_(request):
+def _login_(request):
     if request.method == 'GET':
         email = request.GET.get('email')
         password = request.GET.get('pass')
@@ -31,14 +31,13 @@ def _sign_in_(request):
             response = e.args[0].response
             error = response.json()['error']
             msg = error['message']
-            return render(request, "signIn.html", {"data": msg})
+            return render(request, "login.html", {"data": msg})
 
     return render(request, "home.html", {"data": user})
 
-@never_cache
 @csrf_exempt
 def register(request):
-    return render(request, 'signUp.html')
+    return render(request, 'register.html')
 
 @csrf_exempt
 def _register_(request):
@@ -51,13 +50,17 @@ def _register_(request):
             user['displayName'] = name
             uid = user['localId']
             email = user['email']
+            index_of_at = email.find("@")
+            username = email[:index_of_at]
             today = date.today()
+            joined = today.strftime("%B %d, %y")
             
             userData = {
                 'name': name,
                 'email': email,
-                'joined': today.strftime("%B %d, %y"),
+                'joined': joined,
                 'userID': uid,
+                'username' : username,
             }
             db.child('users').child(uid).set(userData);
         except Exception as e:
@@ -65,7 +68,7 @@ def _register_(request):
             response = e.args[0].response
             error = response.json()['error']
             msg = error['message']
-            return render(request, "signUp.html", {"data": msg})
+            return render(request, "register.html", {"data": msg})
 
-    return render(request, "signIn.html")    
+    return render(request, "login.html")    
         
