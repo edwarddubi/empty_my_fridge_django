@@ -10,6 +10,8 @@ What is empty my Fridge app?:
 
 Pyrebase
 
+BeautifulSoup
+
 Semantic Ui with fomantic css (found a way to add this)
 
 ## Templates
@@ -47,6 +49,8 @@ Semantic Ui with fomantic css (found a way to add this)
 pip install Django==3.0.7
 
 pip install pyrebase
+
+pip install beautifulsoup4
 
 ## Get Firebase Database Config file Set up
 

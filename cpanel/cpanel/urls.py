@@ -19,8 +19,11 @@ from . import views
 #python manage.py runserver
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('home/', views.home, name='home'),
     path('login/', views.login, name='login'),
     path('register/', views.register, name='register'),
-    path('to_home/', views._login_, name='_login_'),
+    path('to_home/', views._login_, name='to_home'),
     path('to_signIn/', views._register_, name='_register_'),
+    path('to_profile/', views.profile, name='profile'),
+    path('logout/', views._logout_, name='logout')
 ]

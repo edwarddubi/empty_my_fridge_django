@@ -1,11 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>Profile Page</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css"
+    />
   </head>
   <body>
     {% csrf_token %}
-    Welcome Home {{data}}
+    <div class="ui pointing inverted top fixed menu">
+      <div class="item">
+        <h3>Empty My Fridge</h3>
+      </div>
+
+      <a class="item">
+        Home
+      </a>
+      <a class="item">
+        Recipes
+      </a>
+      <div class="ui link dropdown simple item">
+        <span class="text">Browse</span>
+        <i class="dropdown icon"></i>
+        <div class="menu inverted">
+          <div class="item">Pastries</div>
+          <div class="item">Meals</div>
+          <div class="item">Appetizers</div>
+          <div class="item">Dessert</div>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="ui icon input">
+          <input type="text" placeholder="Search for recipes..." />
+          <i class="search icon"></i>
+        </div>
+      </div>
+      <div class="right menu">
+        <div class="item active">
+          <img
+            id="image_profile"
+            onclick="location.href={% url 'profile'%}"
+            class="ui avatar image mini"
+            src="https://react.semantic-ui.com/images/wireframe/square-image.png"
+          />
+          <p id="hi_name">{{data.name}}</p>
+        </div>
+        <a onclick="location.href={% url 'logout'%}" class="item">
+          Logout
+        </a>
+      </div>
+    </div>
+    {% if data %}
+    <script>
+      //document.getElementById("hi_name").innerHTML = {{data.name}};
+      document.getElementById("image_profile").src =
+        "https://react.semantic-ui.com/images/avatar/large/matthew.png";
+    </script>
+    {% endif %}
   </body>
 </html>
