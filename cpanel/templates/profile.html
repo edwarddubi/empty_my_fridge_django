@@ -15,7 +15,7 @@
         <h3>Empty My Fridge</h3>
       </div>
 
-      <a class="item">
+      <a onclick="location.href={% url 'home'%}" class="item">
         Home
       </a>
       <a class="item">
@@ -39,10 +39,9 @@
         </div>
       </div>
       <div class="right menu">
-        <div class="item active">
+        <div onclick="location.href={% url 'profile'%}" class="item active">
           <img
             id="image_profile"
-            onclick="location.href={% url 'profile'%}"
             class="ui avatar image mini"
             src="https://react.semantic-ui.com/images/wireframe/square-image.png"
           />
