@@ -76,12 +76,18 @@
             </div>
           </div>
         </form>
+        <div style="display: none;" id="message" class="ui message">
+          <div class="header">
+            Error
+          </div>
+          <p>{{data}}</p>
+        </div>
       </div>
     </div>
 
     {% if data %}
     <script>
-      alert(`{{data}}`);
+      document.getElementById('message').style.display = "block"
     </script>
     {% endif %}
   </body>

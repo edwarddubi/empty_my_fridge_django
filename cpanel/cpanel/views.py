@@ -9,6 +9,8 @@ from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 import json
 from cpanel.model.user import User
+from validate_email import validate_email
+
 
 
 firebase = pyrebase.initialize_app(config.myConfig())
@@ -54,7 +56,7 @@ def _login_(request):
             # logging.exception('')
             response = e.args[0].response
             error = response.json()['error']
-            msg = error['message']
+            msg = error_message(error['message'])
             return render(request, "login.html", {"data": msg})
     try:
         if request.session['token_id'] is not None:
@@ -74,33 +76,42 @@ def _register_(request):
         email = request.POST.get('email')
         password = request.POST.get('pass')
         name = request.POST.get('name')
-        try:
-            user = auth_fb.create_user_with_email_and_password(email, password)
-            user['displayName'] = name
-            uid = user['localId']
-            email = user['email']
-            index_of_at = email.find("@")
-            username = email[:index_of_at]
-            today = date.today()
-            joined = today.strftime("%B %d, %y")
-
-            userData = {
-                'name': name,
-                'email': email,
-                'joined': joined,
-                'userID': uid,
-                'username': username,
-                'image': 'https://react.semantic-ui.com/images/wireframe/square-image.png'
-            }
-            db.child('users').child(uid).set(userData)
-        except Exception as e:
-            # logging.exception('')
-            response = e.args[0].response
-            error = response.json()['error']
-            msg = error['message']
+        is_email_valid = validate_email(email, verify=True)
+        if is_email_valid:
+            register_user(request, email, password, name)
+        else:
+            msg = error_message("WRONG_EMAIL")
             return render(request, "register.html", {"data": msg})
 
     return render(request, "login.html")
+
+def register_user(request, email, password, name):
+    try:
+        user = auth_fb.create_user_with_email_and_password(email, password)
+        user['displayName'] = name
+        uid = user['localId']
+        email = user['email']
+        index_of_at = email.find("@")
+        username = email[:index_of_at]
+        today = date.today()
+        joined = today.strftime("%B %d, %y")
+
+        userData = {
+            'name': name,
+            'email': email,
+            'joined': joined,
+            'userID': uid,
+            'username': username,
+            'image': 'https://react.semantic-ui.com/images/wireframe/square-image.png'
+        }
+        db.child('users').child(uid).set(userData)
+    except Exception as e:
+        # logging.exception('')
+        response = e.args[0].response
+        error = response.json()['error']
+        msg = error_message(error['message'])
+        return render(request, "register.html", {"data": msg})
+        
 
 
 @csrf_exempt
@@ -112,12 +123,26 @@ def profile(request):
         uid = m_user._getUser_Id_()
         user = db.child("users").child(uid).get().val()
         user_details = dict(user)
+        m_user._setUser_(user_details)
         return render(request, "profile.html", {"data": user_details})
 
 
 @csrf_exempt
 def _profile_(request):
     return render(request, "settings")
+
+def error_message(type):
+    print(type)
+    return {
+        "EMAIL_EXISTS" : "This email is already in use. Try a different email!",
+        "WEAK_PASSWORD": "Password should be at least 6 characters.",
+        "INVALID_EMAIL": "The email you provided is invalid.",
+        "INVALID_PASSWORD": "The password you provided for this email is wrong. Click on Forgot Password to recover your account.",
+        "EMAIL_NOT_FOUND": "This email does not exist anywhere on our services.",
+        "WRONG_EMAIL" : "Please make sure you are using a valid email address."
+
+    }.get(type, "An unknown error has occurred")
+
 
 
 @csrf_exempt
