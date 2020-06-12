@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 import json
 from cpanel.model.user import User
 from validate_email import validate_email
-
+from . import food_network
 
 firebase = pyrebase.initialize_app(config.myConfig())
 
@@ -21,12 +21,16 @@ m_user = User()
 
 @csrf_exempt
 def home(request):
+    #food_network.food_network()
     all_recipes = db.child("recipe").get()
+    recipe_list = []
     for recipe in all_recipes.each():
+        recipe_details = dict(recipe.val())
+        recipe_list.append(recipe_details)
         print(recipe.key())
         print(recipe.val())
     if m_user._isNone_():
-        return render(request, 'home.html', {"recipe": all_recipes.each()})
+        return render(request, 'home.html', {"recipes": recipe_list})
     else:
         user_details = m_user._getUser_()
         return render(request, 'home.html', {"data": user_details})
@@ -58,6 +62,7 @@ def _login_(request):
             # logging.exception('')
             response = e.args[0].response
             error = response.json()['error']
+            print(error['message'])
             msg = error_message(error['message'])
             return render(request, "login.html", {"data": msg})
     try:
@@ -80,6 +85,7 @@ def _register_(request):
         name = request.POST.get('name')
         #is_email_valid = validate_email(email, verify=True)
         is_email_valid = True
+        is_email_valid = True #validate_email(email, verify=True)
         if is_email_valid:
             register_user(request, email, password, name)
         else:

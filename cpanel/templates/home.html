@@ -60,13 +60,26 @@
     </div>
     <!--End of Navigation Bar-->
 
-    <div class="ui list">
+
+    <div class="ui center aligned container">
+    <div class="ui horizontal list" style="margin-top:100px;">
       {% for recipe in recipes %}
-        <div class="item">recipe.recipe_name</div>
-        <div class="item">Pears</div>
-        <div class="item">Oranges</div>
+      <div class="item"> 
+        <div class="ui card" style="margin:10px;">
+          <div class="image">
+            <img src="{{recipe.recipe_image}}">
+          </div>
+          <div class="content">
+            <a class="header">{{recipe.recipe_name}}</a>
+            <div class="description">
+              This is where the description will be.
+            </div>
+          </div>
+        </div>
+        </div>
       {% endfor %}
       </div>
+    </div>
 
     {% if data %}
     <script>
