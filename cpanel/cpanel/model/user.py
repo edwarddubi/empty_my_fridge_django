@@ -34,7 +34,10 @@ class User:
         return self.user["image"]
 
     def _getUser_joined_date(self):
-        return self.user["joined"]    
+        return self.user["joined"]
+
+    def _getUser_bio(self):
+        return self.user["bio"]     
 
     def _isNone_(self):
         if self.user is None and self.uid is None:

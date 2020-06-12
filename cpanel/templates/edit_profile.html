@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <title>Profile Page</title>
+    <meta charset="UTF-8">
+    <title>Edit Profile Page</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css"
     />
   </head>
-  
   <body>
     {% csrf_token %}
     <!--Navigation Bar-->
@@ -74,7 +73,7 @@
     <div class="ui container" style="margin-top: 20px; margin-bottom: 250px;">
 
       <div class="ui pointing menu">
-        <a class="active item">
+        <a onclick="location.href={% url 'profile'%}" class="item">
           About Me
         </a>
         <a class="item">
@@ -88,7 +87,7 @@
         </a>
         
         <div class="right menu">
-          <a onclick="location.href={% url 'edit_profile'%}" class="item">
+          <a class="active item">
             Edit Profile
           </a>
           <a onclick="location.href={% url 'account_settings'%}" class="item">
@@ -97,55 +96,58 @@
         </div>
       </div>
       <div style="margin-bottom: 50px;" class="ui raised segment">
-        <div class="ui form">
+        <form action="/save_profile/" method="post" class="ui form">
           <div style="width: 30%;" class="field">
             <label>Full Name</label>
-            <input value="{{data.name}}" readonly="" type="text">
+            <input value="{{data.name}}" placeholder="Full Name" required name="name" type="text">
           </div>
+
           <div style="width: 30%;" class="field">
             <label>Username</label>
-            <input value="@{{data.username}}" readonly="" type="text">
+            <input value="@{{data.username}}" placeholder="Username" readonly="" type="text">
           </div>
-          {% if data.bio %}
+
           <div style="width: 30%;" class="field">
             <label>Bio</label>
-            <textarea rows="3">{{data.bio}}</textarea>
+            <textarea rows="3" placeholder="Bio" type="text" name="bio">{{data.bio}}</textarea>
           </div>
-          {% else %}
-          <div style="width: 30%;" class="field">
-            <label>Bio</label>
-            <textarea rows="3">I am new here</textarea>
-          </div>
-          {% endif %}
           
-          {% if data.country %}
           <div style="width: 60%;" class="two fields">
             <div class="field">
               <label>Country</label>
-              <input value="{{data.country}}" readonly="" type="text">
+              <input name="country" placeholder="Country" value="{{data.country}}" type="text">
             </div>
             <div class="field">
               <label>State</label>
-              <input value="{{data.state}}" readonly="" type="text">
+              <input name="state" placeholder="State" value="{{data.state}}" type="text">
             </div>
           </div>
-          {% endif %}
-          {% if data.country %}
-          {% endif %}
-          {% if data.blog %}
-          <a href="{{data.blog}}">Personal Blog</a>
-          {% endif %}
+          <div style="width: 30%;" class="field">
+            <label>Personal Blog</label>
+            <input value="{{data.blog}}" placeholder="Personal Blog" name="blog" type="url">
+          </div>
 
+          <button class="ui button yellow" type="submit">Save Changes</button>
+
+        </form>
+        <div style="display: none;" id="message" class="ui {{msg_type}} message">
+          <div class="header">
+            {{msg_type}}
+          </div>
+          <p>{{message}}</p>
         </div>
       </div>
       
     </div>
 
-
+    {% if message %}
+    <script>
+      document.getElementById("message").style.display = "block";
+    </script>
+    {% endif %}
 
     {% if data %}
     <script>
-      //document.getElementById("hi_name").innerHTML = {{data.name}};
       document.getElementById("user_image").src =
         "https://react.semantic-ui.com/images/avatar/large/matthew.png";
       document.getElementById("image_profile").src =

@@ -2,13 +2,12 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Profile Page</title>
+    <title>Account Settings</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css"
     />
   </head>
-  
   <body>
     {% csrf_token %}
     <!--Navigation Bar-->
@@ -60,21 +59,22 @@
 
     <div class="ui segment inverted">
       <div style="margin-top: 70px; display: inline-flex;">
-        <img id="user_image" class="ui avatar image small" src="{{data.image}}">
-        <div style="margin-left: 5px;  margin-top: 15%;">
-          <h2 style="color: bisque; ">{{data.name}} </h2>
+        <img
+          id="user_image"
+          class="ui avatar image small"
+          src="{{data.image}} "
+        />
+        <div style="margin-left: 5px; margin-top: 15%;">
+          <h2 style="color: bisque;">{{data.name}}</h2>
         </div>
-        
       </div>
-
     </div>
 
     <!--Container-->
 
     <div class="ui container" style="margin-top: 20px; margin-bottom: 250px;">
-
       <div class="ui pointing menu">
-        <a class="active item">
+        <a onclick="location.href={% url 'profile'%}" class="item">
           About Me
         </a>
         <a class="item">
@@ -86,66 +86,53 @@
         <a class="item">
           Personal Recipes
         </a>
-        
+
         <div class="right menu">
           <a onclick="location.href={% url 'edit_profile'%}" class="item">
             Edit Profile
           </a>
-          <a onclick="location.href={% url 'account_settings'%}" class="item">
+          <a
+            onclick="location.href={% url 'account_settings'%}"
+            class="active item"
+          >
             Account Settings
           </a>
         </div>
       </div>
       <div style="margin-bottom: 50px;" class="ui raised segment">
-        <div class="ui form">
+        <form action="/recover_password/" method="post" class="ui form">
           <div style="width: 30%;" class="field">
-            <label>Full Name</label>
-            <input value="{{data.name}}" readonly="" type="text">
+            <label>Email</label>
+            <input
+              value="{{data.email}}"
+              readonly=""
+              name="email"
+              type="email"
+            />
           </div>
-          <div style="width: 30%;" class="field">
-            <label>Username</label>
-            <input value="@{{data.username}}" readonly="" type="text">
+          <button class="ui button orange" type="submit">
+            Forgot Password?
+          </button>
+        </form>
+        <div
+          style="display: none;"
+          id="message"
+          class="ui {{msg_type}} message"
+        >
+          <div class="header">
+            {{msg_type}}
           </div>
-          {% if data.bio %}
-          <div style="width: 30%;" class="field">
-            <label>Bio</label>
-            <textarea rows="3">{{data.bio}}</textarea>
-          </div>
-          {% else %}
-          <div style="width: 30%;" class="field">
-            <label>Bio</label>
-            <textarea rows="3">I am new here</textarea>
-          </div>
-          {% endif %}
-          
-          {% if data.country %}
-          <div style="width: 60%;" class="two fields">
-            <div class="field">
-              <label>Country</label>
-              <input value="{{data.country}}" readonly="" type="text">
-            </div>
-            <div class="field">
-              <label>State</label>
-              <input value="{{data.state}}" readonly="" type="text">
-            </div>
-          </div>
-          {% endif %}
-          {% if data.country %}
-          {% endif %}
-          {% if data.blog %}
-          <a href="{{data.blog}}">Personal Blog</a>
-          {% endif %}
-
+          <p>{{message}}</p>
         </div>
       </div>
-      
     </div>
 
-
-
-    {% if data %}
+    {% if message %}
     <script>
-      //document.getElementById("hi_name").innerHTML = {{data.name}};
+      document.getElementById("message").style.display = "block";
+    </script>
+    {% endif %} {% if data %}
+    <script>
       document.getElementById("user_image").src =
         "https://react.semantic-ui.com/images/avatar/large/matthew.png";
       document.getElementById("image_profile").src =

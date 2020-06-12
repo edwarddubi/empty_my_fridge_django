@@ -25,5 +25,9 @@ urlpatterns = [
     path('to_home/', views._login_, name='to_home'),
     path('to_signIn/', views._register_, name='_register_'),
     path('to_profile/', views.profile, name='profile'),
+    path('edit_profile/', views.edit_profile, name='edit_profile'),
+    path('save_profile/', views.save_profile, name='save_profile'),
+    path('account_settings/', views.account_settings, name='account_settings'),
+    path('recover_password/', views.recover_password, name='recover_password'),
     path('logout/', views._logout_, name='logout')
 ]

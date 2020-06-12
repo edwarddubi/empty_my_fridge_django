@@ -12,7 +12,6 @@ from cpanel.model.user import User
 from validate_email import validate_email
 
 
-
 firebase = pyrebase.initialize_app(config.myConfig())
 
 auth_fb = firebase.auth()
@@ -24,10 +23,9 @@ m_user = User()
 def home(request):
     if m_user._isNone_():
         return render(request, 'home.html')
-    else:  
+    else:
         user_details = m_user._getUser_()
-        return render(request, 'home.html', {"data" : user_details})
-    
+        return render(request, 'home.html', {"data": user_details})
 
 
 @csrf_exempt
@@ -85,6 +83,7 @@ def _register_(request):
 
     return render(request, "login.html")
 
+
 def register_user(request, email, password, name):
     try:
         user = auth_fb.create_user_with_email_and_password(email, password)
@@ -111,7 +110,6 @@ def register_user(request, email, password, name):
         error = response.json()['error']
         msg = error_message(error['message'])
         return render(request, "register.html", {"data": msg})
-        
 
 
 @csrf_exempt
@@ -126,23 +124,93 @@ def profile(request):
         m_user._setUser_(user_details)
         return render(request, "profile.html", {"data": user_details})
 
+@csrf_exempt
+def edit_profile(request):
+    if m_user._isNone_():
+        return render(request, "login.html")  
+    else:
+        user_details = m_user._getUser_()
+        return render(request, 'edit_profile.html', {"data": user_details})
+
+@csrf_exempt
+def save_profile(request):
+    user_details = m_user._getUser_()
+    uid = m_user._getUser_Id_()
+    msg = error_message("err")
+    msg_type = "error"
+    if m_user._isNone_():
+        return render(request, "login.html") 
+    else:
+        if request.method == "POST":
+            name = request.POST.get("name")
+            bio = request.POST.get("bio")
+            country = request.POST.get("country")
+            blog = request.POST.get("blog")
+            state = request.POST.get("state")
+            userData = {
+                'name': name,
+                'bio': bio,
+                'country': country,
+                'blog': blog,
+                'state': state
+            }
+            try:
+                db.child("users").child(uid).update(userData)
+                _user_ = dict(db.child("users").child(uid).get().val())
+                m_user._setUser_(_user_)
+                user_details = _user_
+                msg = "Changes saved successfully."
+                msg_type = "success"
+            except Exception as e:
+                pass
+
+    return render(request, 'edit_profile.html', {"data": user_details, "message": msg, "msg_type" : msg_type})
+
+@csrf_exempt
+def account_settings(request):
+    if m_user._isNone_():
+        return render(request, "login.html")
+    else:
+        user_details = m_user._getUser_()
+        return render(request, 'account_settings.html', {"data": user_details})
+
+@csrf_exempt
+def recover_password(request):
+    user_details = m_user._getUser_()
+    uid = m_user._getUser_Id_()
+    msg = error_message("err")
+    msg_type = "error"
+    if m_user._isNone_():
+        return render(request, "login.html") 
+    else:
+        if request.method == "POST":
+            email = request.POST.get("email")
+            try:
+                auth_fb.send_password_reset_email(email)
+                msg = "A password recovery link has been sent to your email."
+                msg_type = "success"
+            except Exception as e:
+                print(e)    
+
+    return render(request, 'account_settings.html', {"data": user_details, "message": msg, "msg_type" : msg_type})
+
+
 
 @csrf_exempt
 def _profile_(request):
     return render(request, "settings")
 
+
 def error_message(type):
-    print(type)
     return {
-        "EMAIL_EXISTS" : "This email is already in use. Try a different email!",
+        "EMAIL_EXISTS": "This email is already in use. Try a different email!",
         "WEAK_PASSWORD": "Password should be at least 6 characters.",
         "INVALID_EMAIL": "The email you provided is invalid.",
         "INVALID_PASSWORD": "The password you provided for this email is wrong. Click on Forgot Password to recover your account.",
         "EMAIL_NOT_FOUND": "This email does not exist anywhere on our services.",
-        "WRONG_EMAIL" : "Please make sure you are using a valid email address."
+        "WRONG_EMAIL": "Please make sure you are using a valid email address."
 
     }.get(type, "An unknown error has occurred")
-
 
 
 @csrf_exempt
