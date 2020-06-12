@@ -11,7 +11,7 @@
 
   <body>
     {% csrf_token %}
-
+    <!--Navigation Bar-->
     <div class="ui pointing inverted top fixed menu">
       <div class="item">
         <h3>Empty My Fridge</h3>
@@ -42,25 +42,29 @@
         </div>
       </div>
       <div class="right menu">
-        <div class="item">
+        <div onclick="location.href={% url 'profile'%}" class="item">
           <img
             id="image_profile"
-            onclick="location.href={% url 'profile'%}"
             class="ui avatar image mini"
-            src="https://react.semantic-ui.com/images/wireframe/square-image.png"
+            src="{{data.image}}"
           />
           <p>{{data.name}}</p>
         </div>
+        <a id="login_btn" style="display: flex;" onclick="location.href={% url 'login'%}" class="item">
+          Login
+        </a>
         <a id="logout_btn" style="display: none;" onclick="location.href={% url 'logout'%}" class="item">
           Logout
         </a>
       </div>
     </div>
+    <!--End of Navigation Bar-->
 
     {% if data %}
     <script>
        document.getElementById("image_profile").src = "https://react.semantic-ui.com/images/avatar/large/matthew.png"
        document.getElementById("logout_btn").style.display = "flex"
+       document.getElementById("login_btn").style.display = "none"
     </script>
     {% endif %}
 

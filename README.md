@@ -52,9 +52,13 @@ pip install pyrebase
 
 pip install beautifulsoup4
 
+pip install validate_email
+
+pip install py3DNS
+
 ## Get Firebase Database Config file Set up
 
-Create a config file and import into firebaseDb
+Create a config file and import into views.py
 
 For security reasons you should exclude when exporting project into Github
 
