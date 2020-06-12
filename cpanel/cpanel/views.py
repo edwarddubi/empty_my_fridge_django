@@ -21,8 +21,12 @@ m_user = User()
 
 @csrf_exempt
 def home(request):
+    all_recipes = db.child("recipe").get()
+    for recipe in all_recipes.each():
+        print(recipe.key())
+        print(recipe.val())
     if m_user._isNone_():
-        return render(request, 'home.html')
+        return render(request, 'home.html', {"recipe": all_recipes.each()})
     else:
         user_details = m_user._getUser_()
         return render(request, 'home.html', {"data": user_details})
@@ -74,7 +78,8 @@ def _register_(request):
         email = request.POST.get('email')
         password = request.POST.get('pass')
         name = request.POST.get('name')
-        is_email_valid = validate_email(email, verify=True)
+        #is_email_valid = validate_email(email, verify=True)
+        is_email_valid = True
         if is_email_valid:
             register_user(request, email, password, name)
         else:

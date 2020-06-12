@@ -60,6 +60,14 @@
     </div>
     <!--End of Navigation Bar-->
 
+    <div class="ui list">
+      {% for recipe in recipes %}
+        <div class="item">recipe.recipe_name</div>
+        <div class="item">Pears</div>
+        <div class="item">Oranges</div>
+      {% endfor %}
+      </div>
+
     {% if data %}
     <script>
        document.getElementById("image_profile").src = "https://react.semantic-ui.com/images/avatar/large/matthew.png"
