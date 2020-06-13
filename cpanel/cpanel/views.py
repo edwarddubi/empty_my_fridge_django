@@ -11,22 +11,37 @@ import json
 from cpanel.model.user import User
 from validate_email import validate_email
 from . import food_network
+from cpanel.model.recipes import Recipes
 
 firebase = pyrebase.initialize_app(config.myConfig())
 
 auth_fb = firebase.auth()
 db = firebase.database()
 m_user = User()
+recipes = Recipes()
 
 
 @csrf_exempt
 def home(request):
-    food_network.food_network()
+    admin = db.child("admin").child("UPLwshBH98OmbVivV").get().val()
+    if admin["scrape"]:
+        db.child("recipe").remove()
+        food_network.food_network()
+        scrape_db_population = False
+        db.child("admin").child("UPLwshBH98OmbVivV").child("scrape").set(scrape_db_population)
+
+    all_recipes = db.child("recipe").get()
+    recipe_list = []
+    for recipe in all_recipes.each():
+        recipe_details = dict(recipe.val())
+        recipe_list.append(recipe_details)
+
+    recipes.set_all_recipes(recipe_list)    
     if m_user._isNone_():
-        return render(request, 'home.html')
+        return render(request, 'home.html', {"recipes": recipe_list})
     else:
         user_details = m_user._getUser_()
-        return render(request, 'home.html', {"data": user_details})
+        return render(request, 'home.html', {"data": user_details, "recipes": recipe_list})
 
 
 @csrf_exempt
@@ -60,7 +75,7 @@ def _login_(request):
             return render(request, "login.html", {"data": msg})
     try:
         if request.session['token_id'] is not None:
-            return render(request, "home.html", {"data": user_details})
+            return render(request, "home.html", {"data": user_details, "recipes": recipes.get_all_recipes()})
     except KeyError:
         return render(request, "login.html")
 
@@ -76,6 +91,7 @@ def _register_(request):
         email = request.POST.get('email')
         password = request.POST.get('pass')
         name = request.POST.get('name')
+        #is_email_valid = validate_email(email, verify=True)
         is_email_valid = True #validate_email(email, verify=True)
         if is_email_valid:
             register_user(request, email, password, name)
@@ -116,7 +132,6 @@ def register_user(request, email, password, name):
 
 @csrf_exempt
 def profile(request):
-    print(m_user._isNone_())
     if m_user._isNone_():
         return render(request, "login.html")
     else:

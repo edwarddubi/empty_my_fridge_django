@@ -6,13 +6,17 @@ What is empty my Fridge app?:
 
 - Django
 
-## Libraries
+## Libraries/Tools
 
 Pyrebase
 
 BeautifulSoup
 
-Semantic Ui with fomantic css (found a way to add this)
+Semantic Ui or fomantic Ui css (currently, Semantic Ui)
+
+Validate Email
+
+Py3DNS
 
 ## Templates
 
@@ -20,7 +24,17 @@ Semantic Ui with fomantic css (found a way to add this)
 
 ## Using Semantic Ui
 
-- Add this to your HTml file
+- Add this to your HTMl file in the head tag. You can ignore the semantic.min.js in the script tag
+
+```html
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css"
+/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+```
+
+- It should look like this. Remember, this is just an example to help you know where it needs to put in the HTML file
 
 ```html
 <!DOCTYPE html>
@@ -42,6 +56,7 @@ Semantic Ui with fomantic css (found a way to add this)
   </body>
 </html>
 ```
+
 - [Implementation? Read from docs](https://semantic-ui.com/elements/)
 
 ## Steps
@@ -58,23 +73,25 @@ pip install py3DNS
 
 ## Get Firebase Database Config file Set up
 
-Create a config file and import into views.py
+Create a config file in the cpanel/cpanel folder. Also, make sure you get the snippet for your app's Firebase config object--this is found in your project settings
 
-For security reasons you should exclude when exporting project into Github
+- [Firebase config object](https://firebase.google.com/docs/web/setup?authuser=0#from-hosting-urls)
+
+For security reasons, you should exclude the config.py module when exporting project into Github (Don't mind this since gitignore does it anyways)
 
 Example:
 
 ```py
 def myConfig():
   config = {
-    'apiKey': "",
-    'authDomain': "empty-my-fridge.firebaseapp.com",
-    'databaseURL': "https://empty-my-fridge.firebaseio.com",
-    'projectId': "empty-my-fridge",
-    'storageBucket': "",
-    'messagingSenderId': "",
-    'appId': "",
-    'measurementId': ""
+    'apiKey': "api-key",
+    'authDomain': "project-id.firebaseapp.com",
+    'databaseURL': "https://project-id.firebaseio.com",
+    'projectId': "project-id",
+    'storageBucket': "project-id.appspot.com",
+    'messagingSenderId': "sender-id",
+    'appId': "app-id",
+    'measurementId': "G-measurement-id"
   }
   return config
 ```
