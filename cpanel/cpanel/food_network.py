@@ -110,19 +110,34 @@ def food_network(db):
 
 
 	#[Title, Image, Link to Recipe, Ingredients array]
+	c = 0;
 	for recipe in grand_recipe_list:
+		ingredients = recipe[3]
 		recipe = {
 		'recipe_name': recipe[0],
 		'recipe_image': recipe[1],
 		'recipe_link': recipe[2],
 		'recipe_ingredients': recipe[3]
 		}
+		
 		db.child('recipe').push(recipe)
-		"""
-		for ingredient in recipe[3]:
-    			food = {
-				'food_name': ingredient
+		for ingredient in ingredients:
+				
+			_ingredient_ = {
+				c : ingredient,
 			}
-			#db.child('food').push(food)
-			#print(ingredient)
-		"""
+			all_ingredients = db.child("all_ingredients").get().val()
+			if all_ingredients != None:
+				found = False
+				for food_ingredient in all_ingredients:
+					if food_ingredient == ingredient:
+						found = True
+						break	
+				if not found:
+					db.child('all_ingredients').update(_ingredient_)
+					c+=1			
+			else:
+				db.child('all_ingredients').set(_ingredient_)
+				c+=1		
+			
+			
