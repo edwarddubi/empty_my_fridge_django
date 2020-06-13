@@ -10,4 +10,4 @@ class Recipes:
         return self.recipe_list
 
     def set_all_recipes(self, recipe_list):
-        self.recipe_list = recipe_list        
+        self.recipe_list = recipe_list      

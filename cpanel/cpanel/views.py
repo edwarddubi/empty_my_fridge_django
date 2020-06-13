@@ -26,7 +26,7 @@ def home(request):
     admin = db.child("admin").child("UPLwshBH98OmbVivV").get().val()
     if admin["scrape"]:
         db.child("recipe").remove()
-        food_network.food_network()
+        food_network.food_network(db)
         scrape_db_population = False
         db.child("admin").child("UPLwshBH98OmbVivV").child("scrape").set(scrape_db_population)
 
