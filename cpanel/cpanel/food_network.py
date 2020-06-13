@@ -2,12 +2,7 @@
 from urllib.request import urlopen as uReq
 from bs4 import BeautifulSoup as soup
 from builtins import any as b_any
-import pyrebase
-from . import config
 import time
-
-firebase = pyrebase.initialize_app(config.myConfig())
-db = firebase.database()
 
 
 #17 Sample recipes for testing (Provided by foodnetwork.com)
@@ -62,7 +57,7 @@ print('Now scraping for recipes!')
 print('For the time being, get yourself a coffee while you wait.')
 print('\n')
 """
-def food_network():	
+def food_network(db):	
 	for recipe in recipes:
 		#Array that will hold the info for each individual recipe
 		add_to_grand_list = []

@@ -21,9 +21,14 @@ m_user = User()
 
 @csrf_exempt
 def home(request):
-    food_network.food_network()
+    #food_network.food_network()
+    all_recipes = db.child("recipe").get()
+    recipe_list = []
+    for recipe in all_recipes.each():
+        recipe_details = dict(recipe.val())
+        recipe_list.append(recipe_details)
     if m_user._isNone_():
-        return render(request, 'home.html')
+        return render(request, 'home.html', {"recipes": recipe_list})
     else:
         user_details = m_user._getUser_()
         return render(request, 'home.html', {"data": user_details})

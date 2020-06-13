@@ -60,6 +60,32 @@
     </div>
     <!--End of Navigation Bar-->
 
+    {% if recipes %}
+    <div class="ui center aligned grid" style="margin-top: 75px;">      
+      {% for recipe in recipes %}
+      <div class="item">
+        <div class="ui link card" style="margin: 10px;">
+          <a class="ui medium image">
+            <img src="{{recipe.recipe_image}}">
+          </a>
+          <div class="content" style="text-align: center;">
+            <a class="header" href={{recipe.recipe_link}}>{{recipe.recipe_name}}</a>
+            <div class="description">
+              This is where the description will be.
+            </div>
+          </div>
+          <div class="extra content" bis_skin_checked="1">
+            <span class="right floated star">
+              <i class="star icon"></i>
+              Favorite
+            </span>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
     {% if data %}
     <script>
        document.getElementById("image_profile").src = "https://react.semantic-ui.com/images/avatar/large/matthew.png"
