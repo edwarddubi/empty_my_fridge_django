@@ -120,7 +120,7 @@ def food_network(db):
 		db.child('recipe').push(recipe)
 		"""
 		for ingredient in recipe[3]:
-			food = {
+    			food = {
 				'food_name': ingredient
 			}
 			#db.child('food').push(food)
