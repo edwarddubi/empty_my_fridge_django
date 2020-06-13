@@ -119,18 +119,10 @@ def food_network(db):
 		}
 		db.child('recipe').push(recipe)
 		"""
-		print('Recipe name: ' + recipe[0])
-		print('Recipe image: '+ recipe[1])
-		print('Link to recipe ' + str(recipe[2]))
-		print('List of ingredients')
-		print('----------------------')
-		
- 
 		for ingredient in recipe[3]:
-			food = {
+    			food = {
 				'food_name': ingredient
 			}
 			#db.child('food').push(food)
 			#print(ingredient)
 		"""
-		#print('\n')
