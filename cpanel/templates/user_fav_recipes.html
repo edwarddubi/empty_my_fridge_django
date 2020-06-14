@@ -41,7 +41,7 @@
   <body>
     {% csrf_token %}
     <!--Navigation Bar-->
-    <div class="ui inverted top fixed menu">
+    <div class="ui inverted secondary top fixed menu">
       <div class="item">
         <h3>Empty My Fridge</h3>
       </div>
@@ -110,7 +110,10 @@
         <a class="item">
           Friends
         </a>
-        <a onclick="location.href={% url 'user_fav_recipes'%}" class="item active">
+        <a
+          onclick="location.href={% url 'user_fav_recipes'%}"
+          class="item active"
+        >
           My Favorite Recipes
         </a>
         <a class="item">
@@ -127,14 +130,19 @@
         </div>
       </div>
 
+      <!--favorite list card-->
       <div
         style="margin-bottom: 50px; padding: 20px;"
-        class="ui raised segment"
-      >
+        class="ui raised segment">
         {% if fav_recipes %}
+        {% if num_of_fav_recipes == 1 %}
+        <p style="margin: 10px;">List of all Your Favorite Recipes ({{num_of_fav_recipes}} Item)</p>
+        {% else %}
+        <p style="margin: 10px;">List of all Your Favorite Recipes ({{num_of_fav_recipes}} Items)</p>
+        {% endif %}
         <div
-          class="ui center aligned grid"
-          style="margin-top: 75px; margin-bottom: 75px;"
+          class="ui grid"
+          style="margin-top: 15px; margin-bottom: 75px;"
         >
           {% for recipe in fav_recipes %}
           <div class="item">
@@ -173,7 +181,7 @@
                     {% if recipe.user_saved %}
                     <button
                       class="ui icon button"
-                      data-tooltip="Remove this Recipe from your favorites"
+                      data-tooltip="Remove this from your Favorite Recipes"
                     >
                       <i class="star icon yellow"></i>
                     </button>
@@ -181,7 +189,7 @@
                     {% else %}
                     <button
                       class="ui icon button"
-                      data-tooltip="Add this Recipe to your favorites"
+                      data-tooltip="Add this to your Favorite Recipes"
                     >
                       <i class="star icon"></i>
                     </button>
@@ -194,10 +202,13 @@
           </div>
           {% endfor %}
         </div>
-        {% else %} 
-        <h2>Your Favorite Recipe is Empty</h2>
+        {% else %}
+        <h2 style="padding: 100px;">
+          Your Favorite Recipe List is Empty. Try adding a few.
+        </h2>
         {% endif %}
       </div>
+      <!--end of favorite list card-->
     </div>
 
     {% if data %}

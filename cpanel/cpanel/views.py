@@ -256,14 +256,19 @@ def user_fav_recipes(request):
         uid = m_user._getUser_Id_()
         fav_recipes_list = []
         fav_recipes = db.child("user_fav_recipes").child(uid).get()
-        for recipe in fav_recipes.each():
-            _key_ = str(recipe.key())
-            print(_key_)
-            user_fav_recipe = db.child("recipe").child(_key_).get().val()
-            fav_recipes_list.append(dict(user_fav_recipe))
+        num_of_fav_recipes = 0
+        if fav_recipes.each() != None:
+            for recipe in fav_recipes.each():
+                _key_ = str(recipe.key())
+                user_fav_recipe = db.child("recipe").child(_key_).get().val()
+                recipe_details = dict(user_fav_recipe)
+                recipe_details["user_saved"] = True
+                recipe_details["recipe_id"] = _key_
+                fav_recipes_list.append(recipe_details)
 
+        num_of_fav_recipes = len(fav_recipes_list)
 
-        return render(request, 'user_fav_recipes.html', {"data": user_details, "fav_recipes" : fav_recipes_list})
+        return render(request, 'user_fav_recipes.html', {"data": user_details, "fav_recipes" : fav_recipes_list, "num_of_fav_recipes" : num_of_fav_recipes})
 
 @csrf_exempt
 def fav_recipe_onclick(request):

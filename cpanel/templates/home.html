@@ -28,7 +28,7 @@
   <body>
     {% csrf_token %}
     <!--Navigation Bar-->
-    <div class="ui top inverted fixed menu" style="background: backgrd;">
+    <div class="ui top inverted secondary fixed menu">
       <div class="item">
         <h3>Empty My Fridge</h3>
       </div>
@@ -89,7 +89,7 @@
 
     {% if recipes %}
     <div
-      class="ui center aligned grid"
+      class="ui centered grid"
       style="margin-top: 75px; margin-bottom: 75px;"
     >
       {% for recipe in recipes %}
@@ -110,6 +110,16 @@
             </div>
           </div>
           <div class="extra content" bis_skin_checked="1">
+            <span class="left floated">
+              <div class="ui labeled button">
+                <div class="ui blue button">
+                  <i class="heart icon"></i> Stars
+                </div>
+                <a class="ui basic blue left pointing label">
+                  {{recipe.likes}}
+                </a>
+              </div>
+            </span>
             <form action="/fav_recipe_onclick/" method="post" class="ui form">
               <span class="right floated star">
                 <input
@@ -122,21 +132,13 @@
                       name="navigate"
                       value="/home/"
                     />
-                <div class="ui labeled button">
-                  <div class="ui blue button">
-                    <i class="heart icon"></i> Stars
-                  </div>
-                  <a class="ui basic blue left pointing label">
-                    {{recipe.likes}}
-                  </a>
-                </div>
                 {% if recipe.user_saved %}
-                <button class="ui icon button" data-tooltip="Remove this Recipe from your favorites">
+                <button class="ui icon button" data-tooltip="Remove this from your Favorite Recipes">
                   <i class="star icon yellow"></i>
                 </button>
 
                 {% else %}
-                <button class="ui icon button" data-tooltip="Add this Recipe to your favorites">
+                <button class="ui icon button" data-tooltip="Add this to your Favorite Recipes">
                   <i class="star icon"></i>
                 </button>
                 
