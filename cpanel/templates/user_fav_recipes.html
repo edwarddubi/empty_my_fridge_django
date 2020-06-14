@@ -1,15 +1,144 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8">
-    <title>Home Page</title>
+    <meta charset="UTF-8" />
+    <title>Profile Page</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css"
     />
   </head>
+
+  <style>
+    .ui.inverted.menu {
+      background: #642b73; /* fallback for old browsers */
+      background: -webkit-linear-gradient(
+        to right,
+        #c6426e,
+        #642b73
+      ); /* Chrome 10-25, Safari 5.1-6 */
+      background: linear-gradient(
+        to right,
+        #c6426e,
+        #642b73
+      ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    }
+    .ui.inverted.segment {
+      background: #642b73; /* fallback for old browsers */
+      background: -webkit-linear-gradient(
+        to right,
+        #c6426e,
+        #642b73
+      ); /* Chrome 10-25, Safari 5.1-6 */
+      background: linear-gradient(
+        to right,
+        #c6426e,
+        #642b73
+      ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    }
+  </style>
+
   <body>
     {% csrf_token %}
-    Welcome Home {{data}}
+    <!--Navigation Bar-->
+    <div class="ui inverted top fixed menu">
+      <div class="item">
+        <h3>Empty My Fridge</h3>
+      </div>
+
+      <a onclick="location.href={% url 'home'%}" class="item">
+        Home
+      </a>
+      <a class="item">
+        Recipes
+      </a>
+      <div class="ui link dropdown simple item">
+        <span class="text">Browse</span>
+        <i class="dropdown icon"></i>
+        <div class="menu inverted">
+          <div class="item">Pastries</div>
+          <div class="item">Meals</div>
+          <div class="item">Appetizers</div>
+          <div class="item">Dessert</div>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="ui icon input">
+          <input type="text" placeholder="Search for recipes..." />
+          <i class="search icon"></i>
+        </div>
+      </div>
+      <div class="right menu">
+        <div onclick="location.href={% url 'profile'%}" class="item active">
+          <img
+            id="image_profile"
+            class="ui avatar image mini"
+            src="{{data.image}}"
+          />
+          <p id="hi_name">{{data.name}}</p>
+        </div>
+        <a onclick="location.href={% url 'logout'%}" class="item">
+          Logout
+        </a>
+      </div>
+    </div>
+    <!--End of Navigation Bar-->
+
+    <!--Profile Image-->
+
+    <div class="ui segment inverted">
+      <div style="margin-top: 70px; display: inline-flex;">
+        <img
+          id="user_image"
+          class="ui avatar image small"
+          src="{{data.image}}"
+        />
+        <div style="margin-left: 5px; margin-top: 15%;">
+          <h2 style="color: bisque;">{{data.name}}</h2>
+        </div>
+      </div>
+    </div>
+
+    <!--Container-->
+
+    <div class="ui container" style="margin-top: 20px; margin-bottom: 250px;">
+      <div class="ui pointing menu">
+        <a class="active item">
+          About Me
+        </a>
+        <a class="item">
+          Friends
+        </a>
+        <a onclick="location.href={% url 'user_fav_recipes'%}" class="item">
+          My Favorite Recipes
+        </a>
+        <a class="item">
+          Personal Recipes
+        </a>
+
+        <div class="right menu">
+          <a onclick="location.href={% url 'edit_profile'%}" class="item">
+            Edit Profile
+          </a>
+          <a onclick="location.href={% url 'account_settings'%}" class="item">
+            Account Settings
+          </a>
+        </div>
+      </div>
+      <div style="margin-bottom: 50px;" class="ui raised segment">
+       
+      </div>
+    </div>
+
+    {% if data %}
+    <script>
+      //document.getElementById("hi_name").innerHTML = {{data.name}};
+      document.getElementById("user_image").src =
+        "https://react.semantic-ui.com/images/avatar/large/matthew.png";
+      document.getElementById("image_profile").src =
+        "https://react.semantic-ui.com/images/avatar/large/matthew.png";
+    </script>
+    {% endif %}
   </body>
 </html>

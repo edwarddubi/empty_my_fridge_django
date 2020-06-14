@@ -94,7 +94,7 @@
     >
       {% for recipe in recipes %}
       <div class="item">
-        <div class="ui link card" style="margin: 10px;">
+        <div class="ui link card" style="margin: 10px; width: 300px; height: 380px;">
           <a class="ui medium image">
             <img src="{{recipe.recipe_image}}" />
           </a>
@@ -107,10 +107,23 @@
             </div>
           </div>
           <div class="extra content" bis_skin_checked="1">
-            <span class="right floated star">
-              <i class="star icon"></i>
-              Favorite
-            </span>
+            <form action="/fav_recipe_onclick/" method="post" class="ui form">
+              <span class="right floated star">
+                <input style="display: none;" name="recipe_id" value="{{recipe.recipe_id}}" />
+                <input style="display: none;" name="recipe" value="{{recipe}}" />
+                <button class="ui labeled icon button">
+                  {% if recipe.user_saved %}
+                  <i class="star icon yellow"></i>
+                  {% else %}
+                  <i class="star icon"></i>
+                  {% endif %}
+                  
+                  Add to Favorite
+                </button>
+              </span>
+              
+            </form>
+            
           </div>
         </div>
       </div>

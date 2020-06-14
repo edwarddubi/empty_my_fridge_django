@@ -117,7 +117,9 @@ def food_network(db):
 		'recipe_name': recipe[0],
 		'recipe_image': recipe[1],
 		'recipe_link': recipe[2],
-		'recipe_ingredients': recipe[3]
+		'recipe_ingredients': ingredients,
+		'recipe_id': 'none',
+		'user_saved' : False,
 		}
 		
 		db.child('recipe').push(recipe)

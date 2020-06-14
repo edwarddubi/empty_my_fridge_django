@@ -12,6 +12,7 @@ from cpanel.model.user import User
 from validate_email import validate_email
 from . import food_network
 from cpanel.model.recipes import Recipes
+import time
 
 firebase = pyrebase.initialize_app(config.myConfig())
 
@@ -23,27 +24,49 @@ recipes = Recipes()
 
 @csrf_exempt
 def home(request):
-    admin = db.child("admin").child("UPLwshBH98OmbVivV").get().val()
-    if admin["scrape"]:
-        db.child("recipe").remove()
-        db.child('all_ingredients').remove()
-        food_network.food_network(db)
-        scrape_db_population = False
-        db.child("admin").child("UPLwshBH98OmbVivV").child("scrape").set(scrape_db_population)
-
-    all_recipes = db.child("recipe").get()
-    recipe_list = []
-    for recipe in all_recipes.each():
-        recipe_details = dict(recipe.val())
-        recipe_list.append(recipe_details)
-
-    recipes.set_all_recipes(recipe_list)    
+    recipe_list = get_all_recipes()   
     if m_user._isNone_():
         return render(request, 'home.html', {"recipes": recipe_list})
     else:
         user_details = m_user._getUser_()
         return render(request, 'home.html', {"data": user_details, "recipes": recipe_list})
 
+def get_all_recipes():
+    admin = db.child("admin").child("UPLwshBH98OmbVivV").get().val()
+    if admin != None:
+        if admin["scrape"]:
+            db.child("recipe").remove()
+            db.child('all_ingredients').remove()
+            food_network.food_network(db)
+            scrape_db_population = False
+            db.child("admin").child("UPLwshBH98OmbVivV").child("scrape").set(scrape_db_population)
+    else:
+        scrape = {
+            "scrape" : False,
+        }
+        db.child("admin").child("UPLwshBH98OmbVivV").set(scrape)
+
+    all_recipes = db.child("recipe").get()
+    
+    recipe_list = []
+    for recipe in all_recipes.each():
+        if recipe.val() != None:
+            key = recipe.key()
+            recipe_details = dict(recipe.val())
+            _key_ = str(key)
+            fav = False
+            if not m_user._isNone_():
+                uid = m_user._getUser_Id_()
+                is_user_fav_recipe_ = db.child("recipe").child(_key_).child("stars").child(uid).get().val() != None
+                if is_user_fav_recipe_:
+                    fav = True
+            recipe_details["recipe_id"] = _key_
+            recipe_details["user_saved"] = fav
+
+            recipe_list.append(recipe_details)
+
+    recipes.set_all_recipes(recipe_list)
+    return recipe_list
 
 @csrf_exempt
 def login(request):
@@ -57,7 +80,7 @@ def _login_(request):
         password = request.GET.get('pass')
         try:
             user = auth_fb.sign_in_with_email_and_password(email, password)
-            if user is not None:
+            if user != None:
                 uid = user["localId"]
                 _user_ = db.child("users").child(uid).get().val()
                 m_user._setUser_Id_(uid)
@@ -65,6 +88,7 @@ def _login_(request):
                 m_user._setUser_(user_details)
                 request.session['token_id'] = user['idToken']
                 request.session['uid'] = uid
+                recipe_list = get_all_recipes()
                 #name = user_info['name']
             #user = auth.refresh(user['refreshToken'])
         except Exception as e:
@@ -217,6 +241,40 @@ def recover_password(request):
 @csrf_exempt
 def _profile_(request):
     return render(request, "settings")
+
+@csrf_exempt
+def user_fav_recipes(request):
+    if m_user._isNone_():
+        return render(request, "login.html") 
+    else:
+        user_details = m_user._getUser_()
+        uid = m_user._getUser_Id_()
+        fav_recipes = db.child("user_fav_recipes").child(uid).get()
+
+        return render(request, 'user_fav_recipes.html', {"data": user_details})
+
+@csrf_exempt
+def fav_recipe_onclick(request):
+    if m_user._isNone_():
+        return render(request, "login.html") 
+    else:
+        if request.method == "POST":
+            uid = m_user._getUser_Id_()
+            recipe_id = request.POST.get("recipe_id")
+            today = date.today()
+            time_now = time.time()
+            time_liked = {
+                "time": time_now,
+            }
+            _recipe_data_ = db.child("user_fav_recipes").child(uid).child(recipe_id).get().val()
+            if _recipe_data_ != None:
+                db.child("user_fav_recipes").child(uid).child(recipe_id).remove()
+                db.child("recipe").child(recipe_id).child("stars").child(uid).remove()
+            else:
+                db.child("user_fav_recipes").child(uid).child(recipe_id).set(time_liked)
+                db.child("recipe").child(recipe_id).child("stars").child(uid).set(time_liked)
+            
+            return HttpResponseRedirect("/home/")
 
 
 def error_message(type):

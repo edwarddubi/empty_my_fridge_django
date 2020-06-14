@@ -29,5 +29,7 @@ urlpatterns = [
     path('save_profile/', views.save_profile, name='save_profile'),
     path('account_settings/', views.account_settings, name='account_settings'),
     path('recover_password/', views.recover_password, name='recover_password'),
-    path('logout/', views._logout_, name='logout')
+    path('user_fav_recipes/', views.user_fav_recipes, name='user_fav_recipes'),
+    path('fav_recipe_onclick/', views.fav_recipe_onclick, name='fav_recipe_onclick'),
+    path('logout/', views._logout_, name='logout'),
 ]
