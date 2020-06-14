@@ -57,11 +57,8 @@ def parser(item):
 		
 	parsed_word = parsed_word.rstrip()
 	return parsed_word
-"""
-print('Now scraping for recipes!')
-print('For the time being, get yourself a coffee while you wait.')
-print('\n')
-"""
+
+
 def food_network():	
 	for recipe in recipes:
 		#Array that will hold the info for each individual recipe
@@ -81,7 +78,7 @@ def food_network():
 		recipe_title = page_soup.find("span", {"class":"o-AssetTitle__a-HeadlineText"})
 		recipe_img = page_soup.find("img", {"class":"m-MediaBlock__a-Image a-Image"})
 		recipe_ingredients = page_soup.findAll("p", {"class":"o-Ingredients__a-Ingredient"})
-
+		recipe_cat = page_soup.findAll('a', {"class":"o-Capsule__a-Tag a-Tag"})
 			
 		if recipe_title != None:
 			add_to_grand_list.append(recipe_title.text)
@@ -93,26 +90,31 @@ def food_network():
 		else:
 			add_to_grand_list.append('No Image')
 
-		#add link to recipe to array
+		#add link to recipe to array 
 		add_to_grand_list.append(recipe)
 
+		#Add list of ingredients to array
 		ingredient_list = []
-		index = 0
 		if recipe_ingredients != None:
 			for item in recipe_ingredients:
-				#print(item.text)
 				parsed_item = parser(item.text)	
 				ingredient_list.append(parsed_item)
-		else:
-			print('No ingredients')
 
 		add_to_grand_list.append(ingredient_list)
+
+		#Add list of categories to array
+		category_list = []
+		if recipe_cat != None:
+			for cat in recipe_cat:
+				category_list.append(cat.text)
+	
+		add_to_grand_list.append(category_list)
+
+	
 		grand_recipe_list.append(add_to_grand_list)
 		#Used to have a 1 second delay for each recipe scraped. Helps prevents forced connection drops from host
 		time.sleep(1)
 		
-
-
 
 	#[Title, Image, Link to Recipe, Ingredients array]
 	for recipe in grand_recipe_list:
@@ -120,22 +122,8 @@ def food_network():
 		'recipe_name': recipe[0],
 		'recipe_image': recipe[1],
 		'recipe_link': recipe[2],
-		'recipe_ingredients': recipe[3]
+		'recipe_ingredients': recipe[3],
+		'recipe_categories': recipe[4]
 		}
 		db.child('recipe').push(recipe)
-		"""
-		print('Recipe name: ' + recipe[0])
-		print('Recipe image: '+ recipe[1])
-		print('Link to recipe ' + str(recipe[2]))
-		print('List of ingredients')
-		print('----------------------')
 		
- 
-		for ingredient in recipe[3]:
-			food = {
-				'food_name': ingredient
-			}
-			#db.child('food').push(food)
-			#print(ingredient)
-		"""
-		#print('\n')
