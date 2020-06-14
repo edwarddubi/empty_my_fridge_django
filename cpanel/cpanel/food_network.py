@@ -119,7 +119,8 @@ def food_network(db):
 		'recipe_link': recipe[2],
 		'recipe_ingredients': ingredients,
 		'recipe_id': 'none',
-		'user_saved' : False,
+		'user_saved': False,
+		'likes':0,
 		}
 		
 		db.child('recipe').push(recipe)

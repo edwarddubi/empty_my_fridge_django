@@ -104,13 +104,13 @@
 
     <div class="ui container" style="margin-top: 20px; margin-bottom: 250px;">
       <div class="ui pointing menu">
-        <a class="active item">
+        <a class="item">
           About Me
         </a>
         <a class="item">
           Friends
         </a>
-        <a onclick="location.href={% url 'user_fav_recipes'%}" class="item">
+        <a onclick="location.href={% url 'user_fav_recipes'%}" class="item active">
           My Favorite Recipes
         </a>
         <a class="item">
@@ -126,8 +126,77 @@
           </a>
         </div>
       </div>
-      <div style="margin-bottom: 50px;" class="ui raised segment">
-       
+
+      <div
+        style="margin-bottom: 50px; padding: 20px;"
+        class="ui raised segment"
+      >
+        {% if fav_recipes %}
+        <div
+          class="ui center aligned grid"
+          style="margin-top: 75px; margin-bottom: 75px;"
+        >
+          {% for recipe in fav_recipes %}
+          <div class="item">
+            <div
+              class="ui link card"
+              style="margin: 10px; width: 300px; height: 380px;"
+            >
+              <a class="ui medium image">
+                <img src="{{recipe.recipe_image}}" />
+              </a>
+              <div class="content" style="text-align: center;">
+                <a class="header" href="{{recipe.recipe_link}}"
+                  >{{recipe.recipe_name}}</a
+                >
+                <div class="description">
+                  This is where the description will be.
+                </div>
+              </div>
+              <div class="extra content" bis_skin_checked="1">
+                <form
+                  action="/fav_recipe_onclick/"
+                  method="post"
+                  class="ui form"
+                >
+                  <span class="right floated star">
+                    <input
+                      style="display: none;"
+                      name="recipe_id"
+                      value="{{recipe.recipe_id}}"
+                    />
+                    <input
+                      style="display: none;"
+                      name="navigate"
+                      value="/user_fav_recipes/"
+                    />
+                    {% if recipe.user_saved %}
+                    <button
+                      class="ui icon button"
+                      data-tooltip="Remove this Recipe from your favorites"
+                    >
+                      <i class="star icon yellow"></i>
+                    </button>
+
+                    {% else %}
+                    <button
+                      class="ui icon button"
+                      data-tooltip="Add this Recipe to your favorites"
+                    >
+                      <i class="star icon"></i>
+                    </button>
+
+                    {% endif %}
+                  </span>
+                </form>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %} 
+        <h2>Your Favorite Recipe is Empty</h2>
+        {% endif %}
       </div>
     </div>
 

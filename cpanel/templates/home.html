@@ -28,63 +28,63 @@
   <body>
     {% csrf_token %}
     <!--Navigation Bar-->
-      <div class="ui top inverted fixed menu" style="background: backgrd;">
-        <div class="item">
-          <h3>Empty My Fridge</h3>
-        </div>
-  
-        <a onclick="location.href={% url 'home'%}" class="item active">
-          Home
-        </a>
-        <a class="item">
-          Recipes
-        </a>
-  
-        <div class="ui link dropdown simple item">
-          <span class="text">Browse</span>
-          <i class="dropdown icon"></i>
-          <div class="menu inverted">
-            <div class="item">Pastries</div>
-            <div class="item">Meals</div>
-            <div class="item">Appetizers</div>
-            <div class="item">Dessert</div>
-          </div>
-        </div>
-  
-        <div class="item">
-          <div class="ui icon input">
-            <input type="text" placeholder="Search for recipes..." />
-            <i class="search icon"></i>
-          </div>
-        </div>
-        <div class="right menu">
-          <div onclick="location.href={% url 'profile'%}" class="item">
-            <img
-              id="image_profile"
-              class="ui avatar image mini"
-              src="https://react.semantic-ui.com/images/wireframe/square-image.png"
-            />
-            <p>{{data.name}}</p>
-          </div>
-          <a
-            id="login_btn"
-            style="display: flex;"
-            onclick="location.href={% url 'login'%}"
-            class="item"
-          >
-            Login
-          </a>
-          <a
-            id="logout_btn"
-            style="display: none;"
-            onclick="location.href={% url 'logout'%}"
-            class="item"
-          >
-            Logout
-          </a>
+    <div class="ui top inverted fixed menu" style="background: backgrd;">
+      <div class="item">
+        <h3>Empty My Fridge</h3>
+      </div>
+
+      <a onclick="location.href={% url 'home'%}" class="item active">
+        Home
+      </a>
+      <a class="item">
+        Recipes
+      </a>
+
+      <div class="ui link dropdown simple item">
+        <span class="text">Browse</span>
+        <i class="dropdown icon"></i>
+        <div class="menu inverted">
+          <div class="item">Pastries</div>
+          <div class="item">Meals</div>
+          <div class="item">Appetizers</div>
+          <div class="item">Dessert</div>
         </div>
       </div>
-    
+
+      <div class="item">
+        <div class="ui icon input">
+          <input type="text" placeholder="Search for recipes..." />
+          <i class="search icon"></i>
+        </div>
+      </div>
+      <div class="right menu">
+        <div onclick="location.href={% url 'profile'%}" class="item">
+          <img
+            id="image_profile"
+            class="ui avatar image mini"
+            src="https://react.semantic-ui.com/images/wireframe/square-image.png"
+          />
+          <p>{{data.name}}</p>
+        </div>
+        <a
+          id="login_btn"
+          style="display: flex;"
+          onclick="location.href={% url 'login'%}"
+          class="item"
+        >
+          Login
+        </a>
+        <a
+          id="logout_btn"
+          style="display: none;"
+          onclick="location.href={% url 'logout'%}"
+          class="item"
+        >
+          Logout
+        </a>
+      </div>
+    </div>
+
     <!--End of Navigation Bar-->
 
     {% if recipes %}
@@ -94,7 +94,10 @@
     >
       {% for recipe in recipes %}
       <div class="item">
-        <div class="ui link card" style="margin: 10px; width: 300px; height: 380px;">
+        <div
+          class="ui link card"
+          style="margin: 10px; width: 300px; height: 380px;"
+        >
           <a class="ui medium image">
             <img src="{{recipe.recipe_image}}" />
           </a>
@@ -109,27 +112,44 @@
           <div class="extra content" bis_skin_checked="1">
             <form action="/fav_recipe_onclick/" method="post" class="ui form">
               <span class="right floated star">
-                <input style="display: none;" name="recipe_id" value="{{recipe.recipe_id}}" />
-                <input style="display: none;" name="recipe" value="{{recipe}}" />
-                <button class="ui labeled icon button">
-                  {% if recipe.user_saved %}
+                <input
+                  style="display: none;"
+                  name="recipe_id"
+                  value="{{recipe.recipe_id}}"
+                />
+                <input
+                      style="display: none;"
+                      name="navigate"
+                      value="/home/"
+                    />
+                <div class="ui labeled button">
+                  <div class="ui blue button">
+                    <i class="heart icon"></i> Stars
+                  </div>
+                  <a class="ui basic blue left pointing label">
+                    {{recipe.likes}}
+                  </a>
+                </div>
+                {% if recipe.user_saved %}
+                <button class="ui icon button" data-tooltip="Remove this Recipe from your favorites">
                   <i class="star icon yellow"></i>
-                  {% else %}
-                  <i class="star icon"></i>
-                  {% endif %}
-                  
-                  Add to Favorite
                 </button>
+
+                {% else %}
+                <button class="ui icon button" data-tooltip="Add this Recipe to your favorites">
+                  <i class="star icon"></i>
+                </button>
+                
+                {% endif %}
               </span>
-              
             </form>
-            
           </div>
         </div>
       </div>
       {% endfor %}
     </div>
-    {% endif %} {% if data %}
+    {% endif %} 
+    {% if data %}
     <script>
       document.getElementById("image_profile").src =
         "https://react.semantic-ui.com/images/avatar/large/matthew.png";

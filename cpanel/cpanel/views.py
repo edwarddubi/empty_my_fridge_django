@@ -54,14 +54,19 @@ def get_all_recipes():
             key = recipe.key()
             recipe_details = dict(recipe.val())
             _key_ = str(key)
+            _stars_ = 0
             fav = False
             if not m_user._isNone_():
                 uid = m_user._getUser_Id_()
+                num_of_stars = db.child("recipe").child(_key_).child("stars").get().val()
+                if num_of_stars != None:
+                    _stars_ = len(num_of_stars.items())
                 is_user_fav_recipe_ = db.child("recipe").child(_key_).child("stars").child(uid).get().val() != None
                 if is_user_fav_recipe_:
                     fav = True
             recipe_details["recipe_id"] = _key_
             recipe_details["user_saved"] = fav
+            recipe_details["likes"] = _stars_
 
             recipe_list.append(recipe_details)
 
@@ -249,9 +254,16 @@ def user_fav_recipes(request):
     else:
         user_details = m_user._getUser_()
         uid = m_user._getUser_Id_()
+        fav_recipes_list = []
         fav_recipes = db.child("user_fav_recipes").child(uid).get()
+        for recipe in fav_recipes.each():
+            _key_ = str(recipe.key())
+            print(_key_)
+            user_fav_recipe = db.child("recipe").child(_key_).get().val()
+            fav_recipes_list.append(dict(user_fav_recipe))
 
-        return render(request, 'user_fav_recipes.html', {"data": user_details})
+
+        return render(request, 'user_fav_recipes.html', {"data": user_details, "fav_recipes" : fav_recipes_list})
 
 @csrf_exempt
 def fav_recipe_onclick(request):
@@ -261,6 +273,7 @@ def fav_recipe_onclick(request):
         if request.method == "POST":
             uid = m_user._getUser_Id_()
             recipe_id = request.POST.get("recipe_id")
+            navigate = request.POST.get("navigate")
             today = date.today()
             time_now = time.time()
             time_liked = {
@@ -274,7 +287,7 @@ def fav_recipe_onclick(request):
                 db.child("user_fav_recipes").child(uid).child(recipe_id).set(time_liked)
                 db.child("recipe").child(recipe_id).child("stars").child(uid).set(time_liked)
             
-            return HttpResponseRedirect("/home/")
+            return HttpResponseRedirect(navigate)
 
 
 def error_message(type):
