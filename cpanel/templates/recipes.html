@@ -1,15 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>Home Page</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css"
     />
   </head>
+
   <body>
     {% csrf_token %}
-    Welcome Home {{data}}
+    <!--Navigation Bar-->
+    <div class="ui pointing inverted top fixed menu">
+      <div class="item">
+        <h3>Empty My Fridge</h3>
+      </div>
+
+      <a onclick="location.href={% url 'home'%}" class="item">
+        Home
+      </a>
+      <a onclick="location.href={% url 'recipes'%}" class="item active">
+        Recipes
+      </a>
+
+      <div class="ui link dropdown simple item">
+        <span class="text">Browse</span>
+        <i class="dropdown icon"></i>
+        <div class="menu inverted">
+          <div class="item">Pastries</div>
+          <div class="item">Meals</div>
+          <div class="item">Appetizers</div>
+          <div class="item">Dessert</div>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="ui icon input">
+          <input type="text" placeholder="Search for recipes..." />
+          <i class="search icon"></i>
+        </div>
+      </div>
+      <div class="right menu">
+        <div onclick="location.href={% url 'profile'%}" class="item">
+          <img
+            id="image_profile"
+            class="ui avatar image mini"
+            src="https://react.semantic-ui.com/images/wireframe/square-image.png"
+          />
+          <p>{{data.name}}</p>
+        </div>
+        <a
+          id="login_btn"
+          style="display: flex;"
+          onclick="location.href={% url 'login'%}"
+          class="item"
+        >
+          Login
+        </a>
+        <a
+          id="logout_btn"
+          style="display: none;"
+          onclick="location.href={% url 'logout'%}"
+          class="item"
+        >
+          Logout
+        </a>
+      </div>
+    </div>
+    <!--End of Navigation Bar-->
+
+    {% if recipes %}
+    <div class="ui center aligned grid" style="margin-top: 75px; margin-bottom: 75px;">      
+      {% for recipe in recipes %}
+      <div class="item">
+        <div class="ui link card" style="margin: 10px;">
+          <a class="ui medium image">
+            <img src="{{recipe.recipe_image}}">
+          </a>
+          <div class="content" style="text-align: center;">
+            <a class="header" href={{recipe.recipe_link}}>{{recipe.recipe_name}}</a>
+            <div class="description">
+              This is where the description will be.
+            </div>
+          </div>
+          <div class="extra content" bis_skin_checked="1">
+            <span class="right floated star">
+              <i class="star icon"></i>
+              Favorite
+            </span>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    
+    {% if data %}
+    <script>
+      document.getElementById("image_profile").src =
+        "https://react.semantic-ui.com/images/avatar/large/matthew.png";
+      document.getElementById("logout_btn").style.display = "flex";
+      document.getElementById("login_btn").style.display = "none";
+    </script>
+    {% endif %}
+
   </body>
 </html>

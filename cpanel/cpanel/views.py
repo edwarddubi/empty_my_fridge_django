@@ -24,11 +24,13 @@ recipes = Recipes()
 @csrf_exempt
 def home(request):
     admin = db.child("admin").child("UPLwshBH98OmbVivV").get().val()
+    
     if admin["scrape"]:
         db.child("recipe").remove()
         food_network.food_network(db)
         scrape_db_population = False
         db.child("admin").child("UPLwshBH98OmbVivV").child("scrape").set(scrape_db_population)
+    
 
     all_recipes = db.child("recipe").get()
     recipe_list = []
@@ -42,6 +44,31 @@ def home(request):
     else:
         user_details = m_user._getUser_()
         return render(request, 'home.html', {"data": user_details, "recipes": recipe_list})
+
+
+@csrf_exempt
+def recipe(request):
+    admin = db.child("admin").child("UPLwshBH98OmbVivV").get().val()
+    
+    if admin["scrape"]:
+        db.child("recipe").remove()
+        food_network.food_network(db)
+        scrape_db_population = False
+        db.child("admin").child("UPLwshBH98OmbVivV").child("scrape").set(scrape_db_population)
+    
+
+    all_recipes = db.child("recipe").get()
+    recipe_list = []
+    for recipe in all_recipes.each():
+        recipe_details = dict(recipe.val())
+        recipe_list.append(recipe_details)
+
+    recipes.set_all_recipes(recipe_list)    
+    if m_user._isNone_():
+        return render(request, 'recipes.html', {"recipes": recipe_list})
+    else:
+        user_details = m_user._getUser_()
+        return render(request, 'recipes.html', {"data": user_details, "recipes": recipe_list})
 
 
 @csrf_exempt
