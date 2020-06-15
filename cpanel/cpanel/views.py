@@ -48,7 +48,7 @@ def home(request):
 
 
 @csrf_exempt
-def recipe(request):
+def recipe_list(request):
     admin = db.child("admin").child("UPLwshBH98OmbVivV").get().val()
     
     if admin["scrape"]:
