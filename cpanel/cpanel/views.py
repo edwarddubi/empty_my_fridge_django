@@ -23,13 +23,12 @@ recipes = Recipes()
 
 
 @csrf_exempt
-def home(request):
-    recipe_list = get_all_recipes()   
+def home(request):   
     if m_user._isNone_():
-        return render(request, 'home.html', {"recipes": recipe_list})
+        return render(request, 'home.html')
     else:
         user_details = m_user._getUser_()
-        return render(request, 'home.html', {"data": user_details, "recipes": recipe_list})
+        return render(request, 'home.html', {"data": user_details})
 
 def get_all_recipes():
     admin = db.child("admin").child("UPLwshBH98OmbVivV").get().val()
@@ -72,6 +71,16 @@ def get_all_recipes():
 
     recipes.set_all_recipes(recipe_list)
     return recipe_list
+
+@csrf_exempt
+def recipe_list(request):
+    recipe_list = get_all_recipes()
+    if m_user._isNone_():
+        return render(request, 'recipes.html', {"recipes": recipe_list})
+    else:
+        user_details = m_user._getUser_()
+        return render(request, 'recipes.html', {"data": user_details, "recipes": recipe_list})
+
 
 @csrf_exempt
 def login(request):
