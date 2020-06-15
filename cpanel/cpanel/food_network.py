@@ -6,7 +6,7 @@ import time
 
 
 #17 Sample recipes for testing (Provided by foodnetwork.com)
-recipes = ['https://www.foodnetwork.com/recipes/food-network-kitchen/senate-bean-soup-recipe-1973240', 'https://www.foodnetwork.com/recipes/food-network-kitchen/applesauce-waffles-3362190', 'https://www.foodnetwork.com/recipes/food-network-kitchen/spaghetti-with-oil-and-garlic-aglio-et-olio-recipe-1944538', 'https://www.foodnetwork.com/recipes/food-network-kitchen/spaghetti-cacio-e-pepe-3565584', 'https://www.foodnetwork.com/recipes/ina-garten/cinnamon-baked-doughnuts-recipe-2135621', 'https://www.foodnetwork.com/recipes/food-network-kitchen/pancakes-recipe-1913844', 'https://www.foodnetwork.com/recipes/alton-brown/granola-recipe-1939521', 'https://www.foodnetwork.com/recipes/food-network-kitchen/healthy-banana-bread-muffins-recipe-7217371', 'https://www.foodnetwork.com/recipes/chocolate-lava-cakes-2312421', 'https://www.foodnetwork.com/recipes/ina-garten/garlic-roasted-potatoes-recipe-1913067', 'https://www.foodnetwork.com/recipes/robert-irvine/french-toast-recipe-1951408','https://www.foodnetwork.com/recipes/food-network-kitchen/curry-fried-rice-recipe-2109760', 'https://www.foodnetwork.com/recipes/ree-drummond/beef-tacos-2632842','https://www.foodnetwork.com/recipes/food-network-kitchen/sweet-and-sour-couscous-stuffed-peppers-recipe-2121036','https://www.foodnetwork.com/recipes/dave-lieberman/mexican-chicken-stew-recipe-1917174','https://www.foodnetwork.com/recipes/food-network-kitchen/cauliflower-gnocchi-4610559','https://www.foodnetwork.com/recipes/sunny-anderson/easy-chicken-pot-pie-recipe-1923875', 'https://www.foodnetwork.com/recipes/geoffrey-zakarian/ricotta-gnocchi-2707052']
+recipes = ['https://www.foodnetwork.com/recipes/food-network-kitchen/senate-bean-soup-recipe-1973240', 'https://www.foodnetwork.com/recipes/food-network-kitchen/applesauce-waffles-3362190', 'https://www.foodnetwork.com/recipes/food-network-kitchen/spaghetti-with-oil-and-garlic-aglio-et-olio-recipe-1944538', 'https://www.foodnetwork.com/recipes/food-network-kitchen/spaghetti-cacio-e-pepe-3565584', 'https://www.foodnetwork.com/recipes/ina-garten/cinnamon-baked-doughnuts-recipe-2135621', 'https://www.foodnetwork.com/recipes/food-network-kitchen/pancakes-recipe-1913844', 'https://www.foodnetwork.com/recipes/alton-brown/granola-recipe-1939521', 'https://www.foodnetwork.com/recipes/food-network-kitchen/healthy-banana-bread-muffins-recipe-7217371', 'https://www.foodnetwork.com/recipes/chocolate-lava-cakes-2312421', 'https://www.foodnetwork.com/recipes/ina-garten/garlic-roasted-potatoes-recipe-1913067', 'https://www.foodnetwork.com/recipes/robert-irvine/french-toast-recipe-1951408','https://www.foodnetwork.com/recipes/food-network-kitchen/curry-fried-rice-recipe-2109760', 'https://www.foodnetwork.com/recipes/ree-drummond/beef-tacos-2632842','https://www.foodnetwork.com/recipes/food-network-kitchen/sweet-and-sour-couscous-stuffed-peppers-recipe-2121036','https://www.foodnetwork.com/recipes/dave-lieberman/mexican-chicken-stew-recipe-1917174','https://www.foodnetwork.com/recipes/food-network-kitchen/cauliflower-gnocchi-4610559','https://www.foodnetwork.com/recipes/sunny-anderson/easy-chicken-pot-pie-recipe-1923875', 'https://www.foodnetwork.com/recipes/geoffrey-zakarian/ricotta-gnocchi-2707052', 'https://www.foodnetwork.com/recipes/food-network-kitchen/the-best-cheddar-and-herb-chaffle-8317038', 'https://www.foodnetwork.com/recipes/ree-drummond/cacio-e-pepe-8640368', 'https://www.foodnetwork.com/recipes/katie-lee/chicken-cauliflower-fried-rice-3588745']
 
 measurementUnits = ['teaspoons','tablespoons','cups','containers','packets','bags','quarts','pounds','cans','bottles',
 		'pints','packages','ounces','jars','heads','gallons','drops','envelopes','bars','boxes','pinches',
@@ -115,15 +115,26 @@ def food_network(db):
 	c = 0;
 	for recipe in grand_recipe_list:
 		ingredients = recipe[3]
+		recipe_name = recipe[0]
 		recipe = {
-		'recipe_name': recipe[0],
+		'recipe_name': recipe_name,
 		'recipe_image': recipe[1],
 		'recipe_link': recipe[2],
 		'recipe_ingredients': ingredients,
 		'recipe_categories': recipe[4],
 		}
+		found = False
+		all_recipes = db.child('recipe').get()
+		if all_recipes.each() != None:
+			for m_recipe in all_recipes.each():
+				_recipe_ = 	m_recipe.val()
+				if _recipe_["recipe_ingredients"] == ingredients and _recipe_["recipe_name"] == recipe_name:
+					found = True
+					break
 		
-		db.child('recipe').push(recipe)
+		if not found:
+			db.child('recipe').push(recipe)		
+		
 		for ingredient in ingredients:
 			_ingredient_ = {
 				c : ingredient,

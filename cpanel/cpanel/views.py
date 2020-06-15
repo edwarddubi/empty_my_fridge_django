@@ -35,7 +35,6 @@ def get_all_recipes():
     admin = db.child("admin").child("UPLwshBH98OmbVivV").get().val()
     if admin != None:
         if admin["scrape"]:
-            db.child("recipe").remove()
             db.child('all_ingredients').remove()
             food_network.food_network(db)
             scrape_db_population = False
