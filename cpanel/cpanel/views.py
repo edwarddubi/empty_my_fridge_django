@@ -56,17 +56,18 @@ def get_all_recipes():
             _key_ = str(key)
             _stars_ = 0
             fav = False
+            no_user = True
+            num_of_stars = db.child("recipe").child(_key_).child("stars").get().val()
+            if num_of_stars != None:
+                _stars_ = len(num_of_stars.items())
             if not m_user._isNone_():
+                no_user = False
                 uid = m_user._getUser_Id_()
-                num_of_stars = db.child("recipe").child(_key_).child("stars").get().val()
-                if num_of_stars != None:
-                    _stars_ = len(num_of_stars.items())
-                is_user_fav_recipe_ = db.child("recipe").child(_key_).child("stars").child(uid).get().val() != None
-                if is_user_fav_recipe_:
-                    fav = True
+                fav = db.child("recipe").child(_key_).child("stars").child(uid).get().val() != None
             recipe_details["recipe_id"] = _key_
             recipe_details["user_saved"] = fav
             recipe_details["likes"] = _stars_
+            recipe_details["no_user"] = no_user
 
             recipe_list.append(recipe_details)
 
@@ -75,7 +76,7 @@ def get_all_recipes():
 
 @csrf_exempt
 def login(request):
-    return render(request, 'login.html')
+    return render(request, 'login.html')  
 
 
 @csrf_exempt
@@ -107,12 +108,12 @@ def _login_(request):
         if request.session['token_id'] is not None:
             return render(request, "home.html", {"data": user_details, "recipes": recipes.get_all_recipes()})
     except KeyError:
-        return render(request, "login.html")
+        return HttpResponseRedirect("/login/")
 
 
 @csrf_exempt
 def register(request):
-    return render(request, 'register.html')
+    return render(request, 'register.html') 
 
 
 @csrf_exempt
@@ -129,7 +130,7 @@ def _register_(request):
             msg = error_message("WRONG_EMAIL")
             return render(request, "register.html", {"data": msg})
 
-    return render(request, "login.html")
+    return HttpResponseRedirect("/login/")
 
 
 def register_user(request, email, password, name):
@@ -163,7 +164,7 @@ def register_user(request, email, password, name):
 @csrf_exempt
 def profile(request):
     if m_user._isNone_():
-        return render(request, "login.html")
+        return HttpResponseRedirect("/login/") 
     else:
         uid = m_user._getUser_Id_()
         user = db.child("users").child(uid).get().val()
@@ -174,7 +175,7 @@ def profile(request):
 @csrf_exempt
 def edit_profile(request):
     if m_user._isNone_():
-        return render(request, "login.html")  
+        return HttpResponseRedirect("/login/")   
     else:
         user_details = m_user._getUser_()
         return render(request, 'edit_profile.html', {"data": user_details})
@@ -186,7 +187,7 @@ def save_profile(request):
     msg = error_message("err")
     msg_type = "error"
     if m_user._isNone_():
-        return render(request, "login.html") 
+        return HttpResponseRedirect("/login/") 
     else:
         if request.method == "POST":
             name = request.POST.get("name")
@@ -216,7 +217,7 @@ def save_profile(request):
 @csrf_exempt
 def account_settings(request):
     if m_user._isNone_():
-        return render(request, "login.html")
+        return HttpResponseRedirect("/login/")
     else:
         user_details = m_user._getUser_()
         return render(request, 'account_settings.html', {"data": user_details})
@@ -228,7 +229,7 @@ def recover_password(request):
     msg = error_message("err")
     msg_type = "error"
     if m_user._isNone_():
-        return render(request, "login.html") 
+        return HttpResponseRedirect("/login/") 
     else:
         if request.method == "POST":
             email = request.POST.get("email")
@@ -242,15 +243,10 @@ def recover_password(request):
     return render(request, 'account_settings.html', {"data": user_details, "message": msg, "msg_type" : msg_type})
 
 
-
-@csrf_exempt
-def _profile_(request):
-    return render(request, "settings")
-
 @csrf_exempt
 def user_fav_recipes(request):
     if m_user._isNone_():
-        return render(request, "login.html") 
+        return HttpResponseRedirect("/login/")  
     else:
         user_details = m_user._getUser_()
         uid = m_user._getUser_Id_()
@@ -271,9 +267,9 @@ def user_fav_recipes(request):
         return render(request, 'user_fav_recipes.html', {"data": user_details, "fav_recipes" : fav_recipes_list, "num_of_fav_recipes" : num_of_fav_recipes})
 
 @csrf_exempt
-def fav_recipe_onclick(request):
+def fav_recipe_onClick(request):
     if m_user._isNone_():
-        return render(request, "login.html") 
+        return HttpResponseRedirect("/login/") 
     else:
         if request.method == "POST":
             uid = m_user._getUser_Id_()
@@ -318,4 +314,4 @@ def _logout_(request):
         auth.logout(request)
     except KeyError:
         pass
-    return render(request, "login.html")
+    return HttpResponseRedirect("/login/")
