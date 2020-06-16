@@ -41,7 +41,7 @@
   <body>
     {% csrf_token %}
     <!--Navigation Bar-->
-    <div class="ui inverted top fixed menu">
+    <div class="ui inverted secondary top fixed menu">
       <div class="item">
         <h3>Empty My Fridge</h3>
       </div>
@@ -49,7 +49,7 @@
       <a onclick="location.href={% url 'home'%}" class="item">
         Home
       </a>
-      <a class="item">
+      <a onclick="location.href={% url 'recipes'%}" class="item">
         Recipes
       </a>
       <div class="ui link dropdown simple item">
@@ -110,7 +110,7 @@
         <a class="item">
           Friends
         </a>
-        <a class="item">
+        <a onclick="location.href={% url 'favorite_recipes'%}" class="item">
           My Favorite Recipes
         </a>
         <a class="item">

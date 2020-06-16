@@ -20,14 +20,17 @@ from . import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('home/', views.home, name='home'),
+    path('recipe_list/', views.recipe_list, name='recipes'),
     path('login/', views.login, name='login'),
     path('register/', views.register, name='register'),
     path('to_home/', views._login_, name='to_home'),
     path('to_signIn/', views._register_, name='_register_'),
-    path('to_profile/', views.profile, name='profile'),
+    path('profile/', views.profile, name='profile'),
     path('edit_profile/', views.edit_profile, name='edit_profile'),
     path('save_profile/', views.save_profile, name='save_profile'),
     path('account_settings/', views.account_settings, name='account_settings'),
     path('recover_password/', views.recover_password, name='recover_password'),
-    path('logout/', views._logout_, name='logout')
+    path('favorite_recipes/', views.user_fav_recipes, name='favorite_recipes'),
+    path('fav_recipe_onclick/', views.fav_recipe_onClick, name='fav_recipe_onclick'),
+    path('logout/', views._logout_, name='logout'),
 ]

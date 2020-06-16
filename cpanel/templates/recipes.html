@@ -1,15 +1,208 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8">
-    <title>Home Page</title>
+    <meta charset="UTF-8" />
+    <title>Recipes</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css"
     />
+
+    <style>
+    /* pagination position styling */ 
+    .pagination_section { 
+        position: relative;
+        margin-bottom: 50px;
+        margin-top: -25px;
+        text-align: center;
+    } 
+    /* pagination styling */ 
+    .pagination_section a { 
+        color: #031F3B; 
+        padding: 10px 18px; 
+        border: 2px solid #031F3B;
+        font-size: medium;
+        text-decoration: none; 
+    } 
+    /* pagination hover effect on non-active */ 
+    .pagination_section a:hover:not(.active) { 
+        background-color: #031F3B; 
+        color: white; 
+    } 
+    /* pagination hover effect on active*/ 
+      .pagination_section a:hover { 
+        background-color: #031F3B; 
+        color: white;
+        text-decoration: underline;
+    } 
+      
+    
+    .ui.inverted.menu {
+      background: #642b73; /* fallback for old browsers */
+      background: -webkit-linear-gradient(
+        to right,
+        #c6426e,
+        #642b73
+      ); /* Chrome 10-25, Safari 5.1-6 */
+      background: linear-gradient(
+        to right,
+        #c6426e,
+        #642b73
+      ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    }
+  
+    
+</style>
+    
   </head>
+
   <body>
     {% csrf_token %}
-    Welcome Home {{data}}
+    <!--Navigation Bar-->
+    <div class="ui top inverted secondary fixed menu">
+      <div class="item">
+        <h3>Empty My Fridge</h3>
+      </div>
+
+      <a onclick="location.href={% url 'home'%}" class="item">
+        Home
+      </a>
+      <a onclick="location.href={% url 'recipes'%}" class="item active">
+        Recipes
+      </a>
+
+      <div class="ui link dropdown simple item">
+        <span class="text">Browse</span>
+        <i class="dropdown icon"></i>
+        <div class="menu inverted">
+          <div class="item">Pastries</div>
+          <div class="item">Meals</div>
+          <div class="item">Appetizers</div>
+          <div class="item">Dessert</div>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="ui icon input">
+          <input type="text" placeholder="Search for recipes..." />
+          <i class="search icon"></i>
+        </div>
+      </div>
+      <div class="right menu">
+        <div onclick="location.href={% url 'profile'%}" class="item">
+          <img
+            id="image_profile"
+            class="ui avatar image mini"
+            src="https://react.semantic-ui.com/images/wireframe/square-image.png"
+          />
+          <p>{{data.name}}</p>
+        </div>
+        <a
+          id="login_btn"
+          style="display: flex;"
+          onclick="location.href={% url 'login'%}"
+          class="item"
+        >
+          Login
+        </a>
+        <a
+          id="logout_btn"
+          style="display: none;"
+          onclick="location.href={% url 'logout'%}"
+          class="item"
+        >
+          Logout
+        </a>
+      </div>
+    </div>
+    <!--End of Navigation Bar-->
+
+    <!--Recipe Cards-->
+    {% if recipes %}
+    <div
+      class="ui centered grid"
+      style="margin-top: 75px; margin-bottom: 75px;">
+      {% for recipe in recipes %}
+      <div class="item">
+        <div
+          class="ui link card"
+          style="margin: 10px; width: 300px; height: 380px;"
+        >
+          <a class="ui medium image">
+            <img src="{{recipe.recipe_image}}" />
+          </a>
+          <div class="content" style="text-align: center;">
+            <a class="header" href="{{recipe.recipe_link}}"
+              >{{recipe.recipe_name}}</a
+            >
+            <div class="description">
+              This is where the description will be.
+            </div>
+          </div>
+          <div class="extra content" bis_skin_checked="1">
+            <span class="left floated">
+              <div class="ui labeled button">
+                <div class="ui blue button">
+                  <i class="heart icon"></i> Stars
+                </div>
+                <a class="ui basic blue left pointing label">
+                  {{recipe.likes}}
+                </a>
+              </div>
+            </span>
+            <form action="/fav_recipe_onclick/" method="post" class="ui form">
+              <span class="right floated star">
+                <input
+                  style="display: none;"
+                  name="recipe_id"
+                  value="{{recipe.recipe_id}}"
+                />
+                <input
+                      style="display: none;"
+                      name="navigate"
+                      value="/recipe_list/"
+                    />
+                {% if recipe.user_saved %}
+                <button class="ui icon button" data-tooltip="Remove this from your Favorite Recipes">
+                  <i class="star icon yellow"></i>
+                </button>
+
+                {% else %}
+                <button class="ui icon button" data-tooltip="Add this to your Favorite Recipes">
+                  <i class="star icon"></i>
+                </button>
+                
+                {% endif %}
+              </span>
+            </form>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %} 
+    <!--End of Recipe Cards-->
+
+    <!--Pagination-->
+    <div class="pagination_section" style="font-size: xx-large;"> 
+      <a href="#" class="active"><< Previous</a> 
+      <a href="#" class="active">1</a> 
+      <a href="#" class="active">2</a> 
+      <a href="#" class="active">3</a> 
+      <a href="#" class="active">4</a> 
+      <a href="#" class="active">5</a> 
+      <a href="#" class="active">Next >></a> 
+    </div> 
+    <!--End of Pagination-->
+    
+    {% if data %}
+    <script>
+      document.getElementById("image_profile").src =
+        "https://react.semantic-ui.com/images/avatar/large/matthew.png";
+      document.getElementById("logout_btn").style.display = "flex";
+      document.getElementById("login_btn").style.display = "none";
+    </script>
+    {% endif %}
+
   </body>
 </html>
