@@ -112,7 +112,7 @@ def get_all_filtered_recipes():
 @csrf_exempt
 def recipe_page(request):
     recipes.set_is_searched_for_recipes(False)
-    #recipes.set_word_to_filter(None)
+    recipes.set_word_to_filter(None)
     return HttpResponseRedirect("/recipe_list/")
 
 @csrf_exempt
