@@ -87,7 +87,36 @@
 
     <!--End of Navigation Bar-->
 
-    
+    <!--Search Bar-->
+    <div class="item">
+      <div class="ui icon input">
+        <input type="text" placeholder="Search..." />
+        <i class="search icon"></i>
+      </div>
+    </div>
+    <!--End of Search Bar-->
+
+    <!--Category Cards-->
+    <div class="item">
+      <div
+        class="ui center-aligned card"
+        style="left: 200px; top: 400px; margin: 10px; width: 300px; height: 280px;"
+      >
+        <a class="ui medium image">
+          <img src="" />
+        </a>
+        <div class="content" style="text-align: center;">
+          <a class="header" href="{% url 'recipes'%}">
+            Dessert
+          </a>
+          <div class="description">
+            This is where the description will be.
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--End of Category Cards-->
+
     {% if data %}
     <script>
       document.getElementById("image_profile").src =

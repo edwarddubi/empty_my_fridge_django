@@ -13,6 +13,7 @@ from validate_email import validate_email
 from . import food_network
 from cpanel.model.recipes import Recipes
 import time
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 firebase = pyrebase.initialize_app(config.myConfig())
 
@@ -74,12 +75,22 @@ def get_all_recipes():
 
 @csrf_exempt
 def recipe_list(request):
-    recipe_list = get_all_recipes()
+    all_recipes = get_all_recipes()
+    paginator = Paginator(all_recipes, 8)
+    page = request.GET.get('page')
+
+    try:
+        curr_recipes = paginator.page(page)
+    except PageNotAnInteger:
+        curr_recipes = paginator.page(1)
+    except EmptyPage:
+        curr_recipes = paginator.page(paginator.num_pages)
+
     if m_user._isNone_():
-        return render(request, 'recipes.html', {"recipes": recipe_list})
+        return render(request, 'recipes.html', {"recipes": curr_recipes})
     else:
         user_details = m_user._getUser_()
-        return render(request, 'recipes.html', {"data": user_details, "recipes": recipe_list})
+        return render(request, 'recipes.html', {"data": user_details, "recipes": curr_recipes})
 
 
 @csrf_exempt
