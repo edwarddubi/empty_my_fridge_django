@@ -47,7 +47,7 @@
       <a onclick="location.href={% url 'home'%}" class="item">
         Home
       </a>
-      <a class="item">
+      <a onclick="location.href={% url 'recipe_page'%}" class="item">
         Recipes
       </a>
       <div class="ui link dropdown simple item">
@@ -61,12 +61,21 @@
         </div>
       </div>
 
+      <!--search and filter-->
       <div class="item">
-        <div class="ui icon input">
-          <input type="text" placeholder="Search for recipes..." />
-          <i class="search icon"></i>
-        </div>
+        <form action="/search_and_filter/" method="post" class="ui form">
+          <div class="ui icon input">
+            <input
+              type="text"
+              name="recipe_to_filter"
+              placeholder="Search for recipes..."
+            />
+            <i class="search icon"></i>
+          </div>
+          <button class="ui button white">Go</button>
+        </form>
       </div>
+      <!--End of search and filter ui-->
       <div class="right menu">
         <div onclick="location.href={% url 'profile'%}" class="item active">
           <img
