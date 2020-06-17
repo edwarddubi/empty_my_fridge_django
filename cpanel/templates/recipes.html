@@ -9,16 +9,15 @@
     />
 
     <style>
-    /* pagination position styling */ 
-    .pagination { 
-      margin-bottom: 50px;
-      margin-top: -30px;
-      text-align: center;
-      font-size: x-large;
-      padding: 0.5em;
-    } 
-
-    .pagination a {
+      /* pagination position styling */
+      .pagination {
+        position: relative;
+        margin-bottom: 50px;
+        margin-top: -25px;
+        text-align: center;
+      }
+      /* pagination styling */
+      .pagination a {
         color: #031f3b;
         padding: 10px 18px;
         border: 2px solid #031f3b;
@@ -37,23 +36,20 @@
         text-decoration: underline;
       }
 
-    .ui.inverted.menu {
-      background: #642b73; /* fallback for old browsers */
-      background: -webkit-linear-gradient(
-        to right,
-        #c6426e,
-        #642b73
-      ); /* Chrome 10-25, Safari 5.1-6 */
-      background: linear-gradient(
-        to right,
-        #c6426e,
-        #642b73
-      ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-    }
-  
-    
-</style>
-    
+      .ui.inverted.menu {
+        background: #642b73; /* fallback for old browsers */
+        background: -webkit-linear-gradient(
+          to right,
+          #c6426e,
+          #642b73
+        ); /* Chrome 10-25, Safari 5.1-6 */
+        background: linear-gradient(
+          to right,
+          #c6426e,
+          #642b73
+        ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+      }
+    </style>
   </head>
 
   <body>
@@ -118,9 +114,11 @@
     <!--End of Navigation Bar-->
 
     <!--Recipe Cards-->
+    {% if recipes %}
     <div
       class="ui centered grid"
-      style="margin-top: 75px; margin-bottom: 75px;">
+      style="margin-top: 75px; margin-bottom: 75px;"
+    >
       {% for recipe in recipes %}
       <div class="item">
         <div
@@ -157,19 +155,34 @@
                   value="{{recipe.recipe_id}}"
                 />
                 <input
-                      style="display: none;"
-                      name="navigate"
-                      value="/recipe_list/"
-                    />
+                  style="display: none;"
+                  name="navigate"
+                  value="/recipe_list/"
+                />
+                <input
+                  id="scrollY"
+                  style="display: none;"
+                  value=""
+                  name="scroll_y"
+                />
                 {% if recipe.user_saved %}
-                <button class="ui icon button" data-tooltip="Remove this from your Favorite Recipes">
+                <button
+                  id="like"
+                  class="ui icon button"
+                  data-tooltip="Remove this from your Favorite Recipes"
+                >
                   <i class="star icon yellow"></i>
                 </button>
 
                 {% else %}
-                <button class="ui icon button" data-tooltip="Add this to your Favorite Recipes">
+                <button
+                  id="like"
+                  class="ui icon button"
+                  data-tooltip="Add this to your Favorite Recipes"
+                >
                   <i class="star icon"></i>
                 </button>
+
                 {% endif %}
               </span>
             </form>
@@ -211,8 +224,17 @@
         "https://react.semantic-ui.com/images/avatar/large/matthew.png";
       document.getElementById("logout_btn").style.display = "flex";
       document.getElementById("login_btn").style.display = "none";
+      window.scrollTo(0, scrollTop)
+
+      window.addEventListener("scroll", function (event) {
+        var scrollY = this.scrollY;
+        if (scrollY) {
+          var elements = document.querySelectorAll("#scrollY");
+          for (var i = 0; i < elements.length; i++) elements[i].value = scrollY;
+          
+        }
+      });
     </script>
     {% endif %}
-
   </body>
 </html>

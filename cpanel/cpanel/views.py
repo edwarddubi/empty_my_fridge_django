@@ -294,6 +294,8 @@ def fav_recipe_onClick(request):
             uid = m_user._getUser_Id_()
             recipe_id = request.POST.get("recipe_id")
             navigate = request.POST.get("navigate")
+            scrollTop = request.POST.get("scroll_y")
+            recipes.set_recipe_list_position(scrollTop)
             today = date.today()
             time_now = time.time()
             time_liked = {

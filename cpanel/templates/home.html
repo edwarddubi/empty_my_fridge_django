@@ -83,40 +83,44 @@
           Logout
         </a>
       </div>
+
+      <div class="item">
+        <div class="ui icon input">
+          <input type="text" placeholder="Search for recipes..." />
+          <i class="search icon"></i>
+        </div>
+      </div>
+      <div class="right menu">
+        <div onclick="location.href={% url 'profile'%}" class="item">
+          <img
+            id="image_profile"
+            class="ui avatar image mini"
+            src="https://react.semantic-ui.com/images/wireframe/square-image.png"
+          />
+          <p>{{data.name}}</p>
+        </div>
+        <a
+          id="login_btn"
+          style="display: flex;"
+          onclick="location.href={% url 'login'%}"
+          class="item"
+        >
+          Login
+        </a>
+        <a
+          id="logout_btn"
+          style="display: none;"
+          onclick="location.href={% url 'logout'%}"
+          class="item"
+        >
+          Logout
+        </a>
+      </div>
     </div>
 
     <!--End of Navigation Bar-->
 
-    <!--Search Bar-->
-    <div class="item">
-      <div class="ui icon input">
-        <input type="text" placeholder="Search..." />
-        <i class="search icon"></i>
-      </div>
-    </div>
-    <!--End of Search Bar-->
-
-    <!--Category Cards-->
-    <div class="item">
-      <div
-        class="ui center-aligned card"
-        style="left: 200px; top: 400px; margin: 10px; width: 300px; height: 280px;"
-      >
-        <a class="ui medium image">
-          <img src="" />
-        </a>
-        <div class="content" style="text-align: center;">
-          <a class="header" href="{% url 'recipes'%}">
-            Dessert
-          </a>
-          <div class="description">
-            This is where the description will be.
-          </div>
-        </div>
-      </div>
-    </div>
-    <!--End of Category Cards-->
-
+    
     {% if data %}
     <script>
       document.getElementById("image_profile").src =
