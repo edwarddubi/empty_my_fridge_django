@@ -13,6 +13,7 @@ from validate_email import validate_email
 from . import food_network
 from cpanel.model.recipes import Recipes
 import time
+#from cpanel.model.Fridge import Fridge
 
 firebase = pyrebase.initialize_app(config.myConfig())
 
@@ -323,3 +324,20 @@ def _logout_(request):
     except KeyError:
         pass
     return HttpResponseRedirect("/login/")
+
+
+@csrf_exempt
+def fridge(request):
+    uid = m_user._getUser_Id_()
+    all_ingredients = db.child("all_ingredients").get().each()
+    context ={}
+    lst = []
+    for x in all_ingredients:
+        lst.append(x.val() )
+    context= {"ingredients" : lst}
+
+    #attempt dous
+    #result = Fridge.objects.all()
+        
+    #print (ingredients)
+    return render(request, 'fridge.html', context)
