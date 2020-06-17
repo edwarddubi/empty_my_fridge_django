@@ -10,14 +10,14 @@
 
     <style>
       /* pagination position styling */
-      .pagination_section {
+      .pagination {
         position: relative;
         margin-bottom: 50px;
         margin-top: -25px;
         text-align: center;
       }
       /* pagination styling */
-      .pagination_section a {
+      .pagination a {
         color: #031f3b;
         padding: 10px 18px;
         border: 2px solid #031f3b;
@@ -25,12 +25,12 @@
         text-decoration: none;
       }
       /* pagination hover effect on non-active */
-      .pagination_section a:hover:not(.active) {
+      .pagination a:hover:not(.active) {
         background-color: #031f3b;
         color: white;
       }
       /* pagination hover effect on active*/
-      .pagination_section a:hover {
+      .pagination a:hover {
         background-color: #031f3b;
         color: white;
         text-decoration: underline;
@@ -230,16 +230,28 @@
       {% endif %}
       <!--End of Recipe Cards-->
     </div>
-
     <!--Pagination-->
-    <div class="pagination_section" style="font-size: xx-large;">
-      <a href="#" class="active"><< Previous</a>
-      <a href="#" class="active">1</a>
-      <a href="#" class="active">2</a>
-      <a href="#" class="active">3</a>
-      <a href="#" class="active">4</a>
-      <a href="#" class="active">5</a>
-      <a href="#" class="active">Next >></a>
+      <div class="pagination">
+        <span class="step-links">
+            {% if recipes.has_previous %}
+                <a href="?page=1" title="First" style="border: none; background-color: white; color:#031f3b"><<</a>
+                <a href="?page={{ recipes.previous_page_number }}" style="border: none; background-color: white; color: #031f3b;">Previous</a>
+            {% endif %}
+    
+            <span class="current">
+                {% for num in recipes.paginator.page_range %}
+                  {% if recipes.number == num %}
+                    <a href="?page={{ num }}" style="background-color: #031f3b; color: white;">{{ num }}</a>
+                  {% else %}
+                    <a href="?page={{ num }}">{{ num }}</a>
+                  {% endif %}
+                {% endfor %}
+            </span>
+            {% if recipes.has_next %}
+                <a href="?page={{ recipes.next_page_number }}" style="border: none; background-color: white; color:#031f3b">Next</a>
+                <a href="?page={{ recipes.paginator.num_pages }}" title="Last" style="border: none; background-color: white; color:#031f3b">>></a>
+            {% endif %}
+        </span>
     </div>
     <!--End of Pagination-->
 
@@ -254,7 +266,6 @@
         "https://react.semantic-ui.com/images/avatar/large/matthew.png";
       document.getElementById("logout_btn").style.display = "flex";
       document.getElementById("login_btn").style.display = "none";
-
       window.addEventListener("scroll", function (event) {
         var scrollY = this.scrollY;
         if (scrollY) {

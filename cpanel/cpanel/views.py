@@ -14,6 +14,7 @@ from validate_email import validate_email
 from . import food_network
 from cpanel.model.recipes import Recipes
 import time
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 firebase = pyrebase.initialize_app(config.myConfig())
 
@@ -120,28 +121,38 @@ def recipe_list(request):
     found_results = False
     isSearch = False
     if recipes.get_is_searched_for_recipes():
-        recipe_list = get_all_filtered_recipes()
+        all_recipes = get_all_filtered_recipes()
         isSearch = True
         recipes.set_is_searched_for_recipes(False)
-        if len(recipe_list) == 0:
-            recipe_list = get_all_recipes()
+        if len(all_recipes) == 0:
+            all_recipes = get_all_recipes()
         else:
             found_results = True    
 
     else:
-        recipe_list = get_all_recipes()
+        all_recipes = get_all_recipes()
     scrollTop = 0
     keep_scroll_pos = False
     if recipes.get_is_recipe_liked():
         scrollTop = recipes.get_recipe_list_position()
         recipes.set_is_recipe_liked(False)
         keep_scroll_pos = True
+    
+    paginator = Paginator(all_recipes, 8)
+    page = request.GET.get('page')
+
+    try:
+        curr_recipes = paginator.page(page)
+    except PageNotAnInteger:
+        curr_recipes = paginator.page(1)
+    except EmptyPage:
+        curr_recipes = paginator.page(paginator.num_pages)
 
     if m_user._isNone_():
-        return render(request, 'recipes.html', {"recipes": recipe_list, "scrollTop" : scrollTop, "found_results" : found_results, "items" : len(recipe_list), "isSearch": isSearch})
+        return render(request, 'recipes.html', {"recipes": curr_recipes, "scrollTop" : scrollTop, "found_results" : found_results, "items" : len(curr_recipes), "isSearch": isSearch})
     else:
         user_details = m_user._getUser_()
-        return render(request, 'recipes.html', {"data": user_details, "recipes": recipe_list, "scrollTop" : scrollTop, "keep_scroll_pos" : keep_scroll_pos, "found_results" : found_results, "items" : len(recipe_list), "isSearch": isSearch})
+        return render(request, 'recipes.html', {"data": user_details, "recipes": curr_recipes, "scrollTop" : scrollTop, "keep_scroll_pos" : keep_scroll_pos, "found_results" : found_results, "items" : len(curr_recipes), "isSearch": isSearch})    
 
 ##Search Page
 @csrf_exempt
