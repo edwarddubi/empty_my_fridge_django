@@ -9,7 +9,7 @@ from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 import json
 from cpanel.model.user import User
-import dns
+import DNS
 from validate_email import validate_email
 from . import food_network
 from cpanel.model.recipes import Recipes

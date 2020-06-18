@@ -96,6 +96,107 @@
 
     <!--End of Navigation Bar-->
 
+    <!--Main Search Bar-->
+    <div class="item" style="size: 500px;">
+      <form action="/search_and_filter/" method="post" class="ui form">
+        <div class="ui massive fluid icon input focus" style="margin: 250px; top: -65px">
+          <input
+            type="text"
+            name="recipe_to_filter"
+            placeholder="Search for recipes..."
+          />
+          <i class="search icon"></i>
+        </div>
+      </form>
+    </div>
+    <!--End of Main Search-->
+
+    <!--Category Cards-->
+    <div class="ui four cards" style="position:absolute; left: 250px; top: 300px;">
+      <div
+        class="ui link card"
+        style="width: 200px; height: 200px; margin: 20px; background-color:rgba(176, 224, 230, 0.76);"
+      >
+        <a class="ui centered medium image" style="width: 200px; height: 150px;">
+          <img src="https://lh3.googleusercontent.com/proxy/QJ6cSm81RVcCzioZ2GFp7BLTwbBxwbVxmboT7JqpbCCauON7KD00JYyeKEqlSPYvs38JaciY_L-dPdSKnv01H76puRtmWhGBVyTnJs8" />
+        </a>
+        <div class="content" style="text-align: center; font-size: large;">
+          <a class="header" href="{% url 'recipes' %}">Breakfast</a>
+        </div>
+      </div>
+      <div
+        class="ui link card"
+        style="width: 200px; height: 200px; margin: 20px; background-color:rgba(255, 153, 106, 0.48);"
+      >
+        <a class="ui centered medium image" style="width: 200px; height: 150px;">
+          <img src="https://lh3.googleusercontent.com/proxy/3XTzDoN0zi_nAhW07UguD6hGerg4Dz58Wk27Xo0whYxGr6D1p3NiiDnJZbGm2bsOq4-cR6CuDY8Y0BZ8H56SQTuPMuK6L5kl4GKkAxl8W1zrCcKTUsE5VBNnM7OY" />
+        </a>
+        <div class="content" style="text-align: center; font-size: large;">
+          <a class="header" href="{% url 'recipes' %}">Lunch</a>
+        </div>
+      </div>
+      <div
+        class="ui link card"
+        style="width: 200px; height: 200px; margin: 20px; background-color: rgba(102, 231, 158, 0.48);"
+      >
+        <a class="ui centered medium image" style="width: 200px; height: 150px;">
+          <img src="https://i.ya-webdesign.com/images/pasta-transparent-cartoon-1.png" />
+        </a>
+        <div class="content" style="text-align: center; font-size: large;">
+          <a class="header" href="{% url 'recipes' %}">Dinner</a>
+        </div>
+      </div>
+      <div
+        class="ui link card"
+        style="width: 200px; height: 200px; margin: 20px; background-color: rgba(255, 239, 169, 0.76);"
+      >
+        <a class="ui centered medium image" style="width: 200px; height: 150px">
+          <img src="https://i.ya-webdesign.com/images/dessert-clipart-wallpaper-18.png" />
+        </a>
+        <div class="content" style="text-align: center; font-size: large;">
+          <a class="header" href="{% url 'recipes' %}"
+            >Dessert
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="ui three cards" style="position:absolute; left: 380px; top: 520px;">
+      <div
+        class="ui link card"
+        style="width: 200px; height: 200px; margin: 20px; background-color:rgba(226, 255, 145, 0.76);"
+      >
+        <a class="ui centered medium image" style="width: 200px; height: 150px;">
+          <img src="https://www.pngkey.com/png/full/106-1067931_stinky-tofu-stinky-tofu-cartoon.png" />
+        </a>
+        <div class="content" style="text-align: center; font-size: large;">
+          <a class="header" href="{% url 'recipes' %}">Vegetarian</a>
+        </div>
+      </div>
+      <div
+        class="ui link card"
+        style="width: 200px; height: 200px; margin: 20px; background-color:rgba(164, 108, 255, 0.50);"
+      >
+        <a class="ui centered medium image" style="width: 200px; height: 150px;">
+          <img src="https://lh3.googleusercontent.com/proxy/m259F8Gz3V_oGkubGxD618rIltbu12bJwTEg6GiRolDIDCoOJH692S-t3tYS8R-TGBwjjD3U5nwNBkxZctna1s0c" />
+        </a>
+        <div class="content" style="text-align: center; font-size: large;">
+          <a class="header" href="{% url 'recipes' %}">Vegan</a>
+        </div>
+      </div>
+      <div
+        class="ui link card"
+        style="width: 200px; height: 200px; margin: 20px; background-color: rgba(255, 155, 185, 0.64);"
+      >
+        <a class="ui centered medium image" style="width: 200px; height: 150px;">
+          <img src="https://i.pinimg.com/originals/41/bf/11/41bf1133c19e01c3da652ac0cd231862.png" />
+        </a>
+        <div class="content" style="text-align: center; font-size: large;">
+          <a class="header" href="{% url 'recipes' %}">Gluten Free</a>
+        </div>
+      </div>
+    </div>
+
     
     {% if data %}
     <script>
