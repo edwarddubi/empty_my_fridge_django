@@ -6,6 +6,7 @@ class Recipes:
         self.liked = False
         self.searched = False
         self.word_to_filter = None
+        self.recipes_current_page = "1"
 
     def __init__(self):
         self.recipe_list = None
@@ -13,6 +14,7 @@ class Recipes:
         self.liked = False
         self.searched = False
         self.word_to_filter = None
+        self.recipes_current_page = "1"
 
     def get_all_recipes(self):
         return self.recipe_list
@@ -42,4 +44,10 @@ class Recipes:
         self.word_to_filter = word
 
     def get_word_to_filter(self):
-        return self.word_to_filter                     
+        return self.word_to_filter
+
+    def set_recipes_current_page(self, page):
+        self.recipes_current_page = page    
+
+    def get_recipes_current_page(self):
+        return self.recipes_current_page                        

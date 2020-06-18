@@ -78,7 +78,7 @@ def get_all_recipes():
 ##get all filtered recipes
 def get_all_filtered_recipes():
     recipe_list = []
-    word = 'chick'
+    word = ''
     if recipes.get_word_to_filter():
         word = recipes.get_word_to_filter().lower()
     all_recipes = db.child("recipe").get()
@@ -114,7 +114,9 @@ def get_all_filtered_recipes():
 def recipe_page(request):
     recipes.set_is_searched_for_recipes(False)
     recipes.set_word_to_filter(None)
-    return HttpResponseRedirect("/recipe_list/")
+    navigate_to_recipe_page = "/recipe_list/"
+    navigate_to_recipe_page+="?page=1"
+    return HttpResponseRedirect(navigate_to_recipe_page)
 
 @csrf_exempt
 def recipe_list(request):
@@ -140,6 +142,8 @@ def recipe_list(request):
     
     paginator = Paginator(all_recipes, 8)
     page = request.GET.get('page')
+    print(page)
+    recipes.set_recipes_current_page(page)
 
     try:
         curr_recipes = paginator.page(page)
@@ -161,7 +165,9 @@ def search(request):
         recipe_to_filter = request.POST.get("recipe_to_filter")
         recipes.set_word_to_filter(recipe_to_filter)
         recipes.set_is_searched_for_recipes(True)
-    return HttpResponseRedirect("/recipe_list/")
+        navigate_to_recipe_page = "/recipe_list/"
+        navigate_to_recipe_page+="?page="+ recipes.get_recipes_current_page()
+    return HttpResponseRedirect(navigate_to_recipe_page)
 
 
 ##Actions (Recipe onClick)
@@ -176,6 +182,7 @@ def fav_recipe_onClick(request):
             navigate = request.POST.get("navigate")
             scrollTop = request.POST.get("scroll_y")
             isSearch = request.POST.get("isSearch")
+            
             if isSearch == "True":
                 recipes.set_is_searched_for_recipes(True)
             recipes.set_recipe_list_position(scrollTop)
@@ -192,7 +199,8 @@ def fav_recipe_onClick(request):
             else:
                 db.child("user_fav_recipes").child(uid).child(recipe_id).set(time_liked)
                 db.child("recipe").child(recipe_id).child("stars").child(uid).set(time_liked)
-            
+            if navigate == "/recipe_list/":
+                navigate+="?page="+ recipes.get_recipes_current_page()
             return HttpResponseRedirect(navigate)
 
 ##Authentication (Login and Register)
