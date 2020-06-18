@@ -61,22 +61,24 @@
               <h3>Getting started</h3>
 
               <div class="my_bar_search">
-                <div class="search-container">
+                
                   <form>
-                    <input type="text" placeholder="Search.." />
+                    <input name = 'search_ingredients'  placeholder="Search.." />
                     <button type="submit"><i></i></button>
                   </form>
-                </div>
+                
               </div>
             </span>
 
             <ul class="my_bar_list" data-tolist="b" data-fromlist="a">
+              
               {% for food in ingredients %}
               <form>
-                <input type="checkbox" />
+                <input type="checkbox" values = "{{food}}" />
                 <label> {{food}}</label><br />
               </form>
               {% endfor %}
+            
             </ul>
           </div>
           <div class="mybar_inner mybar_d">

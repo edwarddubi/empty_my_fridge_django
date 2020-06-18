@@ -45,6 +45,7 @@ class User:
         return False   
 
     def _set_fridge(self, fridge):
+    
         self.fridge = fridge 
 
     def _get_fridge(self):

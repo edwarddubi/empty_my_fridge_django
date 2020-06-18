@@ -13,7 +13,7 @@ from validate_email import validate_email
 from . import food_network
 from cpanel.model.recipes import Recipes
 import time
-#from cpanel.model.Fridge import Fridge
+from cpanel.model.Fridge import Fridge, Search
 
 firebase = pyrebase.initialize_app(config.myConfig())
 
@@ -154,7 +154,8 @@ def register_user(request, email, password, name):
         joined = today.strftime("%B %d, %y")
 
         userData = {
-            'name': name,
+            'Fridge': {},
+            'Name': name,
             'email': email,
             'joined': joined,
             'userID': uid,
@@ -328,16 +329,28 @@ def _logout_(request):
 
 @csrf_exempt
 def fridge(request):
-    uid = m_user._getUser_Id_()
-    all_ingredients = db.child("all_ingredients").get().each()
-    context ={}
-    lst = []
-    for x in all_ingredients:
-        lst.append(x.val() )
-    context= {"ingredients" : lst}
+    if m_user._isNone_():
+        fridge_ingredients = None
+    else:
+        db.child("user").child(m_user._getUser_Id_()).child("Fridge").set()
+        fridge_ingredients = db.child("user").child(m_user._getUser_Id_()).child("Fridge").get()
+        
+    all_ingredients = db.child("all_ingredients").get().val()
+    search_ing = request.GET.get('search_ingredients')
+    
+    if search_ing:
+        all_ingredients = [i for i in all_ingredients if search_ing in i]
 
+        
+    context= {"ingredients" : all_ingredients}
+
+    return render(request, 'fridge.html', context, )
+
+
+
+    #result = {"fring" : fridge_ingredients}
     #attempt dous
     #result = Fridge.objects.all()
+   # print(result)
+    #db.ref('user/'+ uid)
         
-    #print (ingredients)
-    return render(request, 'fridge.html', context)
