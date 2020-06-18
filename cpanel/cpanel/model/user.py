@@ -43,10 +43,3 @@ class User:
         if self.user is None and self.uid is None:
             return True
         return False   
-
-    def _set_fridge(self, fridge):
-    
-        self.fridge = fridge 
-
-    def _get_fridge(self):
-        return self.fridge

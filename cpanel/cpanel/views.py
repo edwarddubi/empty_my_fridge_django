@@ -13,7 +13,6 @@ from validate_email import validate_email
 from . import food_network
 from cpanel.model.recipes import Recipes
 import time
-from cpanel.model.Fridge import Fridge, Search
 
 firebase = pyrebase.initialize_app(config.myConfig())
 
@@ -21,6 +20,7 @@ auth_fb = firebase.auth()
 db = firebase.database()
 m_user = User()
 recipes = Recipes()
+
 
 
 @csrf_exempt
@@ -329,28 +329,49 @@ def _logout_(request):
 
 @csrf_exempt
 def fridge(request):
+
     if m_user._isNone_():
         fridge_ingredients = None
+
     else:
-        db.child("user").child(m_user._getUser_Id_()).child("Fridge").set()
-        fridge_ingredients = db.child("user").child(m_user._getUser_Id_()).child("Fridge").get()
+        pass
+        uid = "gPyoGBbTQdNMoHzJE4B3KLcUT6f2"
+        fridge_ingredients = db.child("users").child(uid).child("Fridge").get().val()
+        #db.child("users").child(m_user._getUser_Id_()).child("Fridge").set(item)
+    
+    fridge_ingredients = db.child("users").child(uid).child("Fridge").get().val()
         
-    all_ingredients = db.child("all_ingredients").get().val()
+    all_ingredients = sorted(db.child("all_ingredients").get().val())
     search_ing = request.GET.get('search_ingredients')
     
+        
+    context= {"ingredients" : all_ingredients, 'fing' : fridge_ingredients }
+    chk_food = request.POST.getlist('foods')
+
+    print("checked food\n",chk_food)
     if search_ing:
         all_ingredients = [i for i in all_ingredients if search_ing in i]
+    if chk_food:
+        if fridge_ingredients:
+            if (isinstance(chk_food, str)):
+                if chk_food in fridge_ingredients:
+                    pass
+                else:
+                    disj = [chk_food]
+            else:
+                disj = list(set(chk_food)-set(fridge_ingredients))
+            print("disjoint\n",disj)
+            fridge_ingredients.extend(disj)
+            
+        else:
+            print(chk_food)
+            if (isinstance(chk_food, str)):
+                chk_food = [chk_food]
+            print(chk_food)
+            fridge_ingredients = chk_food
+        db.child("users").child(uid).child("Fridge").set(sorted(fridge_ingredients))
 
-        
-    context= {"ingredients" : all_ingredients}
-
+    
+    
+    
     return render(request, 'fridge.html', context, )
-
-
-
-    #result = {"fring" : fridge_ingredients}
-    #attempt dous
-    #result = Fridge.objects.all()
-   # print(result)
-    #db.ref('user/'+ uid)
-        

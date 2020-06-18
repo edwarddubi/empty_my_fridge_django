@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en-GB" id="root_html" class="js mod_mybar loggedout">
   <head>
-    
     <base href="https://makemeacocktail.com/" />
     <link
       href="css/master.css?v=139"
@@ -10,16 +9,28 @@
       media="screen"
       async
     />
+    <script>
+      def getvalues():
+        print("getting values")
+        selected = []
+        checkbox = document.getElementById("tabl")
+        selchk = checkbox.getElementsByTagName('input')
+        for i in selchk:
+          if selchk[i].checked:
+            selected.append(selchk[i])
+        if selected:
+          document.getElementById("Disp_Food").innerHTML=selected
+    </script>
   </head>
   <body data-gr-c-s-loaded="true">
     <section id="main" role="main">
       <div class="page_content_mybar">
         <h1>My Fridge</h1>
         <p class="marg_bot_40">
-          Simply add the ingredients you have at home and we'll show you the
-          cocktails you can make.<br />
-          Make an account and we’ll save your ingredients list so you 
-          can come back to it at any time.
+          Simply add the ingredients you have at home and we'll show you recipes
+           you can make at home.<br />
+          Make an account and we’ll save your ingredients list so you can come
+          back to it at any time.
         </p>
         <div class="mybar_instructions">
           <ol class="numbered horizontal">
@@ -38,8 +49,8 @@
               <div class="text">
                 <h4>Select ingredients</h4>
                 <p>
-                  Click on the ingredients you want and see them appear in My
-                  Bar
+                  Click on the ingredients you have and see them appear in My
+                  Fridge
                 </p>
               </div>
             </li>
@@ -48,8 +59,8 @@
               <div class="text">
                 <h4>See what you can make</h4>
                 <p>
-                  Click 'Make Me A Cocktail' to find out what you can make with
-                  your bar
+                  Click 'Find Recipes' to find out what you can make with the
+                  ingredients in your fridge
                 </p>
               </div>
             </li>
@@ -60,34 +71,37 @@
             <span class="mybar_list_holder">
               <h3>Getting started</h3>
 
-              <div class="my_bar_search">
-                
-                  <form>
-                    <input name = 'search_ingredients'  placeholder="Search.." />
-                    <button type="submit"><i></i></button>
-                  </form>
-                
+              <div class="search-container">
+                <form>
+                  <input type="text" placeholder="Search.." name="search_ingredients" />
+                  <button type="submit"/>
+                </form>
               </div>
             </span>
 
             <ul class="my_bar_list" data-tolist="b" data-fromlist="a">
-              
               {% for food in ingredients %}
+              
               <form>
-                <input type="checkbox" values = "{{food}}" />
+                <input type="checkbox" name="foods" values="{{food}}" />
                 <label> {{food}}</label><br />
               </form>
               {% endfor %}
-            
+              <input id = "but01" type = "button" value = "update" onclick = "getvalues()"/>
             </ul>
           </div>
           <div class="mybar_inner mybar_d">
             <h3>
-              My Bar
+              My Fridge
               <span class="smaller"
                 >(<span class="num_mybar">0</span> ingredients)</span
               >
             </h3>
+            <ul>
+              {% for food in fing %}
+                <li>{{food}}</li>
+              {% endfor %}
+            </ul>
             <a
               href="javascript:;"
               class="fw_button small_fw_button"
@@ -146,7 +160,7 @@
                     ></line>
                   </g>
                 </svg> </i
-              ><span>Make me a cocktail</span
+              ><span>Find Recipes</span
               ><i class="icon icon-smallarrow"
                 ><svg
                   version="1.1"
