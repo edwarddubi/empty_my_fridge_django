@@ -136,10 +136,28 @@ def recipe_list(request):
         curr_recipes = paginator.page(paginator.num_pages)
 
     if m_user._isNone_():
-        return render(request, 'recipes.html', {"recipes": curr_recipes, "scrollTop" : scrollTop, "found_results" : found_results, "items" : len(curr_recipes), "isSearch": isSearch})
+        data = {
+            "recipes": curr_recipes,
+            "scrollTop": scrollTop,
+            "found_results": found_results,
+            "items": len(curr_recipes),
+            "isSearch": isSearch,
+
+        }
+        return render(request, 'recipes.html', {"data" : data})
     else:
-        user_details = m_user._getUser_()
-        return render(request, 'recipes.html', {"data": user_details, "recipes": curr_recipes, "scrollTop" : scrollTop, "keep_scroll_pos" : keep_scroll_pos, "found_results" : found_results, "items" : len(curr_recipes), "isSearch": isSearch})    
+        _user_= m_user._getUser_()
+        data = {
+            "user": _user_,
+            "recipes": curr_recipes,
+            "scrollTop": scrollTop,
+            "keep_scroll_pos": keep_scroll_pos,
+            "found_results": found_results,
+            "items": len(curr_recipes),
+            "isSearch": isSearch
+
+        }
+        return render(request, 'recipes.html', {"data" : data})    
 
 ##Search Page
 @csrf_exempt
@@ -209,7 +227,6 @@ def _login_(request):
                 m_user._setUser_(user_details)
                 request.session['token_id'] = user['idToken']
                 request.session['uid'] = uid
-                recipe_list = get_all_recipes()
                 #name = user_info['name']
             #user = auth.refresh(user['refreshToken'])
         except Exception as e:
@@ -221,7 +238,7 @@ def _login_(request):
             return render(request, "login.html", {"data": msg})
     try:
         if request.session['token_id'] is not None:
-            return render(request, "home.html", {"data": user_details, "recipes": recipes.get_all_recipes()})
+            return render(request, "home.html", {"data": user_details})
     except KeyError:
         return HttpResponseRedirect("/login/")
 
