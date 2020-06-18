@@ -52,62 +52,43 @@ def get_all_recipes():
     recipe_list = []
     if all_recipes.each() != None:
         for recipe in all_recipes.each():
-            key = recipe.key()
-            recipe_details = dict(recipe.val())
-            _key_ = str(key)
-            _stars_ = 0
-            fav = False
-            no_user_signed_in = True
-            num_of_stars = db.child("recipe").child(_key_).child("stars").get().val()
-            if num_of_stars != None:
-                _stars_ = len(num_of_stars.items())
-            if not m_user._isNone_():
-                no_user_signed_in = False
-                uid = m_user._getUser_Id_()
-                fav = db.child("recipe").child(_key_).child("stars").child(uid).get().val() != None
-            recipe_details["recipe_id"] = _key_
-            recipe_details["user_saved"] = fav
-            recipe_details["likes"] = _stars_
-            recipe_details["no_user_signed_in"] = no_user_signed_in
-
+            key = str(recipe.key())
+            recipe_details = get_recipe(dict(recipe.val()), key)
             recipe_list.append(recipe_details)
 
     recipes.set_all_recipes(recipe_list)
-    return recipe_list
 
 ##get all filtered recipes
 def get_all_filtered_recipes():
     recipe_list = []
-    word = ''
-    if recipes.get_word_to_filter():
-        word = recipes.get_word_to_filter().lower()
+    word = recipes.get_word_to_filter()
     all_recipes = db.child("recipe").get()
     if all_recipes.each() != None:
         for recipe in all_recipes.each():
-            recipe_name = recipe.val()["recipe_name"]
-            if recipe_name.lower().find(word) != -1:
-                key = recipe.key()
-                recipe_details = dict(recipe.val())
-                _key_ = str(key)
-                _stars_ = 0
-                fav = False
-                no_user_signed_in = True
-                num_of_stars = db.child("recipe").child(_key_).child("stars").get().val()
-                if num_of_stars != None:
-                    _stars_ = len(num_of_stars.items())
-                if not m_user._isNone_():
-                    no_user_signed_in = False
-                    uid = m_user._getUser_Id_()
-                    fav = db.child("recipe").child(_key_).child("stars").child(uid).get().val() != None
-                recipe_details["recipe_id"] = _key_
-                recipe_details["user_saved"] = fav
-                recipe_details["likes"] = _stars_
-                recipe_details["no_user_signed_in"] = no_user_signed_in
-
-                recipe_list.append(recipe_details)
-
-    recipes.set_all_recipes(recipe_list)
+            if recipe.val()["recipe_name"].lower().find(word.lower()) != -1:
+                key = str(recipe.key())
+                _recipe_ = get_recipe(dict(recipe.val()), key)
+                recipe_list.append(_recipe_)
     return recipe_list
+
+#get individual recipe as Json
+def get_recipe(recipe, key):
+    num_of_stars = 0
+    fav = False
+    no_user_signed_in = True
+    stars = db.child("recipe").child(key).child("stars").get().val()
+    if stars != None:
+        num_of_stars = len(stars.items())
+    if not m_user._isNone_():
+        no_user_signed_in = False
+        uid = m_user._getUser_Id_()
+        fav = db.child("recipe").child(key).child("stars").child(uid).get().val() != None
+    recipe["recipe_id"] = key
+    recipe["user_saved"] = fav
+    recipe["likes"] = num_of_stars
+    recipe["no_user_signed_in"] = no_user_signed_in
+
+    return recipe
 
 ##Recipe Page
 @csrf_exempt
@@ -122,17 +103,19 @@ def recipe_page(request):
 def recipe_list(request):
     found_results = False
     isSearch = False
+    all_recipes = []
     if recipes.get_is_searched_for_recipes():
         all_recipes = get_all_filtered_recipes()
         isSearch = True
         recipes.set_is_searched_for_recipes(False)
-        if len(all_recipes) == 0:
-            all_recipes = get_all_recipes()
-        else:
-            found_results = True    
-
+        if len(all_recipes) != 0:
+            found_results = True
     else:
-        all_recipes = get_all_recipes()
+        if recipes.get_all_recipes() != None:
+            all_recipes = recipes.get_all_recipes()
+        else:
+            get_all_recipes()
+            all_recipes = recipes.get_all_recipes()
     scrollTop = 0
     keep_scroll_pos = False
     if recipes.get_is_recipe_liked():
@@ -163,8 +146,9 @@ def recipe_list(request):
 def search(request):
     if request.method == "POST":
         recipe_to_filter = request.POST.get("recipe_to_filter")
-        recipes.set_word_to_filter(recipe_to_filter)
-        recipes.set_is_searched_for_recipes(True)
+        if len(recipe_to_filter) > 0:
+            recipes.set_word_to_filter(recipe_to_filter)
+            recipes.set_is_searched_for_recipes(True)
         navigate_to_recipe_page = "/recipe_list/"
         navigate_to_recipe_page+="?page="+ recipes.get_recipes_current_page()
     return HttpResponseRedirect(navigate_to_recipe_page)
@@ -187,6 +171,7 @@ def fav_recipe_onClick(request):
                 recipes.set_is_searched_for_recipes(True)
             recipes.set_recipe_list_position(scrollTop)
             recipes.set_is_recipe_liked(True)
+            recipes.set_all_recipes(None)
             today = date.today()
             time_now = time.time()
             time_liked = {
