@@ -7,20 +7,9 @@
       rel="stylesheet"
       type="text/css"
       media="screen"
-      async
+      async            
     />
-    <script>
-      def getvalues():
-        print("getting values")
-        selected = []
-        checkbox = document.getElementById("tabl")
-        selchk = checkbox.getElementsByTagName('input')
-        for i in selchk:
-          if selchk[i].checked:
-            selected.append(selchk[i])
-        if selected:
-          document.getElementById("Disp_Food").innerHTML=selected
-    </script>
+
   </head>
   <body data-gr-c-s-loaded="true">
     <section id="main" role="main">
@@ -79,15 +68,15 @@
               </div>
             </span>
 
-            <ul class="my_bar_list" data-tolist="b" data-fromlist="a">
-              {% for food in ingredients %}
-              
-              <form>
-                <input type="checkbox" name="foods" values="{{food}}" />
-                <label> {{food}}</label><br />
+            <ul class="" data-tolist="b" data-fromlist="a">
+              <form method = "post">
+                {% for food in ingredients %}
+                
+                  <input type="checkbox" name="sav_ing" value = "{{food}}" />
+                  <label> {{food}}</label><br /> 
+                {% endfor %}
+                <input id = "but01"  type = "submit" value = "{{foods}}" />
               </form>
-              {% endfor %}
-              <input id = "but01" type = "button" value = "update" onclick = "getvalues()"/>
             </ul>
           </div>
           <div class="mybar_inner mybar_d">

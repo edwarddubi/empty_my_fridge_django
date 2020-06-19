@@ -326,32 +326,29 @@ def _logout_(request):
         pass
     return HttpResponseRedirect("/login/")
 
-
+#@login_required
 @csrf_exempt
 def fridge(request):
-
+    uid = None
     if m_user._isNone_():
         fridge_ingredients = None
 
     else:
-        pass
-        uid = "gPyoGBbTQdNMoHzJE4B3KLcUT6f2"
-        fridge_ingredients = db.child("users").child(uid).child("Fridge").get().val()
-        #db.child("users").child(m_user._getUser_Id_()).child("Fridge").set(item)
-    
+        uid = m_user._getUser_Id_()
+            
+
     fridge_ingredients = db.child("users").child(uid).child("Fridge").get().val()
         
     all_ingredients = sorted(db.child("all_ingredients").get().val())
     search_ing = request.GET.get('search_ingredients')
-    
-        
-    context= {"ingredients" : all_ingredients, 'fing' : fridge_ingredients }
-    chk_food = request.POST.getlist('foods')
+   
+    chk_food = request.POST.getlist('sav_ing')
 
-    print("checked food\n",chk_food)
     if search_ing:
         all_ingredients = [i for i in all_ingredients if search_ing in i]
-    if chk_food:
+        if not all_ingredients:
+            all_ingredients = ["No ingredient found"]
+    if chk_food and uid:
         if fridge_ingredients:
             if (isinstance(chk_food, str)):
                 if chk_food in fridge_ingredients:
@@ -360,18 +357,13 @@ def fridge(request):
                     disj = [chk_food]
             else:
                 disj = list(set(chk_food)-set(fridge_ingredients))
-            print("disjoint\n",disj)
             fridge_ingredients.extend(disj)
             
         else:
-            print(chk_food)
             if (isinstance(chk_food, str)):
                 chk_food = [chk_food]
-            print(chk_food)
             fridge_ingredients = chk_food
         db.child("users").child(uid).child("Fridge").set(sorted(fridge_ingredients))
-
     
-    
-    
+    context= {"ingredients" : all_ingredients, 'fing' : fridge_ingredients }
     return render(request, 'fridge.html', context, )
