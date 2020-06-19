@@ -5,7 +5,7 @@ class Recipes:
         self.pos = 0
         self.liked = False
         self.searched = False
-        self.word_to_filter = None
+        self.recipe_name_to_find = None
         self.recipes_current_page = "1"
 
     def __init__(self):
@@ -13,7 +13,7 @@ class Recipes:
         self.pos = 0
         self.liked = False
         self.searched = False
-        self.word_to_filter = None
+        self.recipe_name_to_find = None
         self.recipes_current_page = "1"
 
     def get_all_recipes(self):
@@ -40,14 +40,21 @@ class Recipes:
     def get_is_searched_for_recipes(self):
         return self.searched
 
-    def set_word_to_filter(self, word):
+    def set_recipe_name_to_find(self, word):
         self.word_to_filter = word
 
-    def get_word_to_filter(self):
+    def get_recipe_name_to_find(self):
         return self.word_to_filter
 
     def set_recipes_current_page(self, page):
         self.recipes_current_page = page    
 
     def get_recipes_current_page(self):
-        return self.recipes_current_page                        
+        return self.recipes_current_page
+
+    def set_recipe_liked(self, key):
+        for recipe in self.recipe_list:
+            if recipe["recipe_id"] == key:
+                recipe["user_saved"] = True
+                recipe["likes"] = recipe["likes"] + 1
+                break                         

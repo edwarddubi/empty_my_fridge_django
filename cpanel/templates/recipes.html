@@ -36,6 +36,23 @@
         text-decoration: underline;
       }
 
+      .recipe_name {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: large;
+        color:black;
+        font-weight: bolder;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+      }
+
+      .recipe_name:hover{
+        color: #3460e2;
+        text-decoration: underline;
+      }
+      
+
       .ui.inverted.menu {
         background: #642b73; /* fallback for old browsers */
         background: -webkit-linear-gradient(
@@ -84,7 +101,7 @@
 
       <!--search and filter-->
       <div class="item">
-        <form action="/search_and_filter/" method="post" class="ui form">
+        <form action="/search_and_filter/" method="get" class="ui form">
           <div class="ui icon input">
             <input
               id="filter"
@@ -127,8 +144,7 @@
     </div>
     <!--End of Navigation Bar-->
 
-    {% if data.isSearch %} 
-    {% if data.found_results %}
+    {% if data.isSearch %} {% if data.found_results %}
     <div style="margin-top: 75px; padding-left: 90px;">
       <h2><i>Found Results ({{data.items}} Item(s))</i></h2>
     </div>
@@ -136,8 +152,7 @@
     <div style="margin-top: 75px; padding-left: 90px;">
       <h2><i>No Results Found! (0 Items)</i></h2>
     </div>
-    {% endif %} 
-    {% endif %}
+    {% endif %} {% endif %}
 
     <!--Container-->
     <div class="ui container center aligned">
@@ -149,13 +164,15 @@
         <div class="four wide column">
           <div
             class="ui link card"
-            style="margin: 10px; width: 300px; height: 325px;"
+            style="margin: 10px; width: 300px; height: 335px;"
           >
             <a class="ui medium image">
               <img src="{{recipe.recipe_image}}" />
             </a>
             <div class="content" style="text-align: center;">
-              <a class="header" href="{{recipe.recipe_link}}"
+              <a
+                class="recipe_name"
+                href="{{recipe.recipe_link}}"
                 >{{recipe.recipe_name}}</a
               >
             </div>
@@ -221,7 +238,7 @@
       {% endif %}
       <!--End of Recipe Cards-->
     </div>
-    
+
     <!--Pagination-->
     <div class="pagination">
       <span class="step-links">
@@ -240,8 +257,7 @@
         {% endif %}
 
         <span class="current">
-          {% for num in data.recipes.paginator.page_range %} 
-          {% if data.recipes.number == num %}
+          {% for num in data.recipes.paginator.page_range %} {% if data.recipes.number == num %}
           <a
             href="?page={{ num }}"
             style="background-color: #031f3b; color: white;"
@@ -249,8 +265,7 @@
           >
           {% else %}
           <a href="?page={{ num }}">{{ num }}</a>
-          {% endif %} 
-          {% endfor %}
+          {% endif %} {% endfor %}
         </span>
         {% if data.recipes.has_next %}
         <a
@@ -274,8 +289,7 @@
       var scrollTop = {{data.scrollTop}};
       window.scrollTo(0, scrollTop);
     </script>
-    {% endif %} 
-    {% if data.user %}
+    {% endif %} {% if data.user %}
     <script>
       document.getElementById("image_profile").src =
         "https://react.semantic-ui.com/images/avatar/large/matthew.png";

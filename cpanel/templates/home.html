@@ -53,7 +53,7 @@
 
       <!--search and filter-->
       <div class="item">
-        <form action="/search_and_filter/" method="post" class="ui form">
+        <form action="/search_and_filter/" method="get" class="ui form">
           <div class="ui icon input">
             <input
               type="text"
@@ -73,7 +73,7 @@
             class="ui avatar image mini"
             src="https://react.semantic-ui.com/images/wireframe/square-image.png"
           />
-          <p>{{data.name}}</p>
+          <p>{{data.user.name}}</p>
         </div>
         <a
           id="login_btn"
@@ -97,7 +97,7 @@
     <!--End of Navigation Bar-->
 
     
-    {% if data %}
+    {% if data.user %}
     <script>
       document.getElementById("image_profile").src =
         "https://react.semantic-ui.com/images/avatar/large/matthew.png";
