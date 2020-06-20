@@ -24,6 +24,8 @@ m_user = User()
 recipes = Recipes()
 
 # Home Page
+
+
 @csrf_exempt
 def home(request):
     if m_user._isNone_():
@@ -36,6 +38,8 @@ def home(request):
         return render(request, 'home.html', {"data": data})
 
 # get all recipes
+
+
 def get_all_recipes():
     admin = db.child("admin").child("UPLwshBH98OmbVivV").get().val()
     if admin != None:
@@ -135,10 +139,73 @@ def recipe_list(request):
         recipes.set_is_recipe_liked(False)
         keep_scroll_pos = True
 
-    paginator = Paginator(all_recipes, 8)
+    paginator = Paginator(all_recipes, 48)
     page = request.GET.get('page')
-    # print(page)
     recipes.set_recipes_current_page(page)
+
+    try:
+        curr_recipes = paginator.page(page)
+    except PageNotAnInteger:
+        curr_recipes = paginator.page(1)
+    except EmptyPage:
+        curr_recipes = paginator.page(paginator.num_pages)
+
+    if m_user._isNone_():
+        data = {
+            "recipes": curr_recipes,
+            "scrollTop": scrollTop,
+            "found_results": found_results,
+            "items": len(curr_recipes),
+            "isSearch": isSearch,
+
+        }
+        return render(request, 'recipes.html', {"data": data})
+    else:
+        _user_ = m_user._getUser_()
+        data = {
+            "user": _user_,
+            "recipes": curr_recipes,
+            "scrollTop": scrollTop,
+            "keep_scroll_pos": keep_scroll_pos,
+            "found_results": found_results,
+            "items": len(curr_recipes),
+            "isSearch": isSearch
+
+        }
+        return render(request, 'recipes.html', {"data": data})
+
+
+def get_category(category):
+    all_recipes = get_all_recipes()
+    filtered_recipes = []
+
+    return all_recipes
+
+
+@csrf_exempt
+def caterory_page(request):
+    found_results = False
+    isSearch = False
+    if recipes.get_is_searched_for_recipes():
+        all_recipes = get_all_filtered_recipes()
+        isSearch = True
+        recipes.set_is_searched_for_recipes(False)
+        if len(all_recipes) == 0:
+            all_recipes = get_all_recipes()
+        else:
+            found_results = True
+
+    else:
+        category_recipes = get_category('Dessert')
+    scrollTop = 0
+    keep_scroll_pos = False
+    if recipes.get_is_recipe_liked():
+        scrollTop = recipes.get_recipe_list_position()
+        recipes.set_is_recipe_liked(False)
+        keep_scroll_pos = True
+
+    paginator = Paginator(category_recipes, 50)
+    page = request.GET.get('page')
 
     try:
         curr_recipes = paginator.page(page)
@@ -225,9 +292,8 @@ def fav_recipe_onClick(request):
                 navigate += "?page=" + recipes.get_recipes_current_page()
             return HttpResponseRedirect(navigate)
 
+
 ##Authentication (Login and Register)
-
-
 @csrf_exempt
 def login(request):
     return render(request, 'login.html')
@@ -281,8 +347,7 @@ def _register_(request):
         email = request.POST.get('email')
         password = request.POST.get('pass')
         name = request.POST.get('name')
-        is_email_valid = validate_email(email_address=email, check_regex=True, check_mx=True, from_address='my@from.addr.ess',
-                                        helo_host='my.host.name', smtp_timeout=10, dns_timeout=10, use_blacklist=True, debug=True)
+        is_email_valid = validate_email(email_address=email, check_regex=True, check_mx=True, from_address='my@from.addr.ess',helo_host='my.host.name', smtp_timeout=10, dns_timeout=10, use_blacklist=True, debug=True)
         #is_email_valid = validate_email(email, verify=True)
         # is_email_valid = True #validate_email(email, verify=True)
         if is_email_valid:
@@ -326,6 +391,8 @@ def register_user(request, email, password, name):
             "message": msg
         }
         return render(request, "register.html", {"data": data})
+
+# Profile Page (Profile--about me, Edit Profile and Save new profile information, Account Settings, Recover Password, User Favorite Recipes)
 
 # Profile Page (Profile--about me, Edit Profile and Save new profile information, Account Settings, Recover Password, User Favorite Recipes)
 
@@ -442,9 +509,8 @@ def user_fav_recipes(request):
 
         return render(request, 'user_fav_recipes.html', {"data": user_details, "fav_recipes": fav_recipes_list, "num_of_fav_recipes": num_of_fav_recipes})
 
+
 # User Error Messages Display
-
-
 def error_message(type):
     return {
         "EMAIL_EXISTS": "This email is already in use. Try a different email!",
@@ -455,7 +521,6 @@ def error_message(type):
         "WRONG_EMAIL": "Please make sure you are using a valid email address."
 
     }.get(type, "An unknown error has occurred")
-
 
 # logOut
 @csrf_exempt
