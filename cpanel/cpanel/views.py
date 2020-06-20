@@ -239,8 +239,6 @@ def caterory_page(request):
         return render(request, 'recipes.html', {"data": data})
 
 # Search Page
-
-
 @csrf_exempt
 def search(request):
     if request.method == "GET":
@@ -535,3 +533,59 @@ def _logout_(request):
     except KeyError:
         pass
     return HttpResponseRedirect("/login/")
+
+@csrf_exempt
+def fridge(request):
+    uid = None
+    if m_user._isNone_():
+        fridge_ingredients = None
+        return HttpResponseRedirect("/login/")
+    else:
+        uid = m_user._getUser_Id_()
+            
+
+    fridge_ingredients = db.child("users").child(uid).child("Fridge").get().val()
+        
+    all_ingredients = sorted(db.child("all_ingredients").get().val())
+    search_ing = request.GET.get('search_ingredients')
+   
+    chk_food = request.POST.getlist('sav_ing')
+    del_food = request.POST.getlist('del_ing')
+    
+    if del_food:
+        if (isinstance(del_food, str)):
+            db.child("users").child(uid).child("Fridge").child(del_food).remove()
+        else:
+            for food in del_food:
+                db.child("users").child(uid).child("Fridge").child(food).remove()
+
+
+    if search_ing:
+        all_ingredients = [i for i in all_ingredients if search_ing in i]
+        if not all_ingredients:
+            all_ingredients = ["No ingredient found"]
+    if chk_food and uid:
+        if fridge_ingredients:
+            if (isinstance(chk_food, str)):
+                if chk_food in fridge_ingredients:
+                    disj = []
+                else:
+                    disj = [chk_food]
+            else:
+                disj = list(set(chk_food)-set(fridge_ingredients))
+            fridge_ingredients.extend(disj)
+            sorted(fridge_ingredients)
+            
+        else:
+            if (isinstance(chk_food, str)):
+                chk_food = [chk_food]
+            fridge_ingredients = chk_food
+        db.child("users").child(uid).child("Fridge").set(fridge_ingredients)
+    
+    if fridge_ingredients:
+        fing_len = fridge_ingredients.__len__
+    else:
+        fing_len = 0
+    
+    context= {"ingredients" : all_ingredients, 'fing' : fridge_ingredients, 'fing_amount' : fing_len}
+    return render(request, 'fridge.html', context )

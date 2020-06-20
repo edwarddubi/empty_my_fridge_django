@@ -19,6 +19,7 @@ from . import views
 #python manage.py runserver
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('fridge/',views.fridge, name='fridge'),
     path('home/', views.home, name='home'),
     path('recipe_list/', views.recipe_list, name='recipes'),
     path('recipe_page/', views.recipe_page, name='recipe_page'),

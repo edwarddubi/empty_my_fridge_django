@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>My Fridge</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css"
+    />
+    <base href="https://makemeacocktail.com/" />
+    <link
+      href="css/master.css?v=139"
+      rel="stylesheet"
+      type="text/css"
+      media="screen"
+      async/>
+
+      
+  </head>
+  <style>
+       .ui.inverted.menu {
+        background: #642b73; /* fallback for old browsers */
+        background: -webkit-linear-gradient(
+          to right,
+          #c6426e,
+          #642b73
+        ); /* Chrome 10-25, Safari 5.1-6 */
+        background: linear-gradient(
+          to right,
+          #c6426e,
+          #642b73
+        ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+      }
+  </style>
+  <body data-gr-c-s-loaded="true">
+       <!--Navigation Bar-->
+    <div class="ui top inverted secondary fixed menu">
+        <div class="item">
+          <h3>Empty My Fridge</h3>
+        </div>
+  
+        <a onclick="location.href={% url 'home'%}" class="item">
+          Home
+        </a>
+        <a onclick="location.href={% url 'recipe_page'%}" class="item active">
+          Recipes
+        </a>
+  
+        <div class="ui link dropdown simple item">
+          <span class="text">Browse</span>
+          <i class="dropdown icon"></i>
+          <div class="menu inverted">
+            <div class="item">Pastries</div>
+            <div class="item">Meals</div>
+            <div class="item">Appetizers</div>
+            <div class="item">Dessert</div>
+          </div>
+        </div>
+  
+        <!--search and filter-->
+        <div class="item">
+          <form action="/search_and_filter/" method="get" class="ui form">
+            <div class="ui icon input">
+              <input
+                id="filter"
+                type="text"
+                name="recipe_to_filter"
+                placeholder="Search for recipes..."
+              />
+              <i class="search icon"></i>
+            </div>
+            <button id="go" class="ui button white">Go</button>
+          </form>
+        </div>
+        <!--End of search and filter ui-->
+        <div class="right menu">
+            <a
+            id="login_btn"
+            style="display: flex;"
+            onclick="location.href={% url 'login'%}"
+            class="item"
+          >
+            My Fridge
+          </a>
+          <div onclick="location.href={% url 'profile'%}" class="item">
+            <img
+              id="image_profile"
+              class="ui avatar image mini"
+              src="https://react.semantic-ui.com/images/wireframe/square-image.png"
+            />
+            <p>{{data.user.name}}</p>
+          </div>
+          <a
+            id="login_btn"
+            style="display: flex;"
+            onclick="location.href={% url 'login'%}"
+            class="item"
+          >
+            Login
+          </a>
+          <a
+            id="logout_btn"
+            style="display: none;"
+            onclick="location.href={% url 'logout'%}"
+            class="item"
+          >
+            Logout
+          </a>
+        </div>
+      </div>
+      <!--End of Navigation Bar-->
+
+    <section style="margin-top: 120px;" id="main" role="main">
+      <div class="page_content_mybar">
+        <h1>My Fridge</h1>
+        <p class="marg_bot_40">
+          Simply add the ingredients you have at home and we'll show you recipes
+           you can make at home.<br />
+          Make an account and we’ll save your ingredients list so you can come
+          back to it at any time.
+        </p>
+        <div class="mybar_instructions">
+          <ol class="numbered horizontal">
+            <li>
+              <div class="number">1</div>
+              <div class="text">
+                <h4>Search ingredients</h4>
+                <p>
+                  Browse the categories or use the search bar to find your
+                  favourite ingredients
+                </p>
+              </div>
+            </li>
+            <li>
+              <div class="number">2</div>
+              <div class="text">
+                <h4>Select ingredients</h4>
+                <p>
+                  Click on the ingredients you have and see them appear in My
+                  Fridge
+                </p>
+              </div>
+            </li>
+            <li>
+              <div class="number">3</div>
+              <div class="text">
+                <h4>See what you can make</h4>
+                <p>
+                  Click 'Find Recipes' to find out what you can make with the
+                  ingredients in your fridge
+                </p>
+              </div>
+            </li>
+          </ol>
+        </div>
+        <div class="flex mybar main_bar_holder">
+          <div class="mybar_inner mybar_a">
+            <span class="mybar_list_holder">
+              <h3>Getting started</h3>
+
+              <div class="search-container">
+                <form>
+                  <input type="text" placeholder="Search.." name="search_ingredients" />
+                  <button type="submit"/>
+                </form>
+              </div>
+            </span>
+
+            <ul class="" data-tolist="b" data-fromlist="a">
+              <form method = "post">
+                {% for food in ingredients %}
+                
+                  <input type="checkbox" name="sav_ing" value = "{{food}}" />
+                  <label> {{food}}</label><br /> 
+                {% endfor %}
+                <input   type = "submit" value = "Add to Fridge" />
+              </form>
+            </ul>
+          </div>
+          <div class="mybar_inner mybar_d">
+            <h3>
+              My Fridge
+              <span class="smaller"
+                >(<span class="num_mybar">{{fing_amount}}</span> ingredients)</span
+              >
+            </h3>
+            <form method = "post">
+              <ul>
+                {% for food in fing %}
+                  <input type="checkbox" name="del_ing" value = "{{food}}" />
+                  <label> {{food}}</label><br /> 
+                {% endfor %}
+                <input  type = "submit" value = "Remove from Fridge" />
+              </ul>
+            </form>
+            <a
+              href="javascript:;"
+              class="fw_button small_fw_button"
+              id="makemeacocktail"
+            >
+              <i class="icon icon-mybar-nav"
+                ><svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="45"
+                  height="45"
+                  viewBox="0 0 45 45"
+                >
+                  <circle cx="22.5" cy="22.5" r="22.5" fill="#fff"></circle>
+                  <g transform="translate(-57.37 -36.569) rotate(-30) ">
+                    <line
+                      x2="19.001"
+                      transform="translate(31 81)"
+                      fill="none"
+                      stroke="#354d72"
+                      stroke-linecap="round"
+                      stroke-width="2"
+                    ></line>
+                    <line
+                      y1="11.736"
+                      x2="9.5"
+                      transform="translate(40.5 81)"
+                      fill="none"
+                      stroke="#354d72"
+                      stroke-linecap="round"
+                      stroke-width="2"
+                    ></line>
+                    <line
+                      x1="9.5"
+                      y1="11.736"
+                      transform="translate(31 81)"
+                      fill="none"
+                      stroke="#354d72"
+                      stroke-linecap="round"
+                      stroke-width="2"
+                    ></line>
+                    <line
+                      y2="11.177"
+                      transform="translate(40.5 92.736)"
+                      fill="none"
+                      stroke="#354d72"
+                      stroke-linecap="round"
+                      stroke-width="2"
+                    ></line>
+                    <line
+                      x1="7.824"
+                      transform="translate(36.588 103.913)"
+                      fill="none"
+                      stroke="#354d72"
+                      stroke-linecap="round"
+                      stroke-width="2"
+                    ></line>
+                  </g>
+                </svg> </i
+              ><span>Find Recipes</span
+              ><i class="icon icon-smallarrow"
+                ><svg
+                  version="1.1"
+                  id="Layer_1"
+                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns:xlink="http://www.w3.org/1999/xlink"
+                  x="0px"
+                  y="0px"
+                  viewBox="0 0 7.6 12.6"
+                  style="enable-background: new 0 0 7.6 12.6;"
+                  xml:space="preserve"
+                >
+                  <style type="text/css">
+                    .sarrow {
+                      fill: none;
+                      stroke: #ffffff;
+                      stroke-width: 2;
+                      stroke-linecap: round;
+                    }
+                  </style>
+                  <g transform="translate(33.089 1940.257) rotate(-90)">
+                    <path class="sarrow" d="M1933.8-26.9l-4.8-4.8"></path>
+                    <path class="sarrow" d="M1933.8-26.9l5-4.8"></path>
+                  </g>
+                </svg>
+              </i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>
