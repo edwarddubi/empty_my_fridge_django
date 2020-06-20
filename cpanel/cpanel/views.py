@@ -352,18 +352,24 @@ def fridge(request):
         if fridge_ingredients:
             if (isinstance(chk_food, str)):
                 if chk_food in fridge_ingredients:
-                    pass
+                    disj = []
                 else:
                     disj = [chk_food]
             else:
                 disj = list(set(chk_food)-set(fridge_ingredients))
             fridge_ingredients.extend(disj)
+            sorted(fridge_ingredients)
             
         else:
             if (isinstance(chk_food, str)):
                 chk_food = [chk_food]
             fridge_ingredients = chk_food
-        db.child("users").child(uid).child("Fridge").set(sorted(fridge_ingredients))
+        db.child("users").child(uid).child("Fridge").set(fridge_ingredients)
     
-    context= {"ingredients" : all_ingredients, 'fing' : fridge_ingredients }
+    if fridge_ingredients:
+        fing_len = fridge_ingredients.__len__
+    else:
+        fing_len = 0
+    
+    context= {"ingredients" : all_ingredients, 'fing' : fridge_ingredients, 'fing_amount' : fing_len}
     return render(request, 'fridge.html', context, )
