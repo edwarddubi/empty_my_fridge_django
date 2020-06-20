@@ -1,18 +1,130 @@
 <!DOCTYPE html>
+<<<<<<< HEAD
 <html lang="en-GB" id="root_html" class="js mod_mybar loggedout">
   <head>
+=======
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>My Fridge</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css"
+    />
+>>>>>>> master
     <base href="https://makemeacocktail.com/" />
     <link
       href="css/master.css?v=139"
       rel="stylesheet"
       type="text/css"
       media="screen"
+<<<<<<< HEAD
       async            
     />
 
   </head>
   <body data-gr-c-s-loaded="true">
     <section id="main" role="main">
+=======
+      async/>
+
+      
+  </head>
+  <style>
+       .ui.inverted.menu {
+        background: #642b73; /* fallback for old browsers */
+        background: -webkit-linear-gradient(
+          to right,
+          #c6426e,
+          #642b73
+        ); /* Chrome 10-25, Safari 5.1-6 */
+        background: linear-gradient(
+          to right,
+          #c6426e,
+          #642b73
+        ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+      }
+  </style>
+  <body data-gr-c-s-loaded="true">
+       <!--Navigation Bar-->
+    <div class="ui top inverted secondary fixed menu">
+        <div class="item">
+          <h3>Empty My Fridge</h3>
+        </div>
+  
+        <a onclick="location.href={% url 'home'%}" class="item">
+          Home
+        </a>
+        <a onclick="location.href={% url 'recipe_page'%}" class="item active">
+          Recipes
+        </a>
+  
+        <div class="ui link dropdown simple item">
+          <span class="text">Browse</span>
+          <i class="dropdown icon"></i>
+          <div class="menu inverted">
+            <div class="item">Pastries</div>
+            <div class="item">Meals</div>
+            <div class="item">Appetizers</div>
+            <div class="item">Dessert</div>
+          </div>
+        </div>
+  
+        <!--search and filter-->
+        <div class="item">
+          <form action="/search_and_filter/" method="get" class="ui form">
+            <div class="ui icon input">
+              <input
+                id="filter"
+                type="text"
+                name="recipe_to_filter"
+                placeholder="Search for recipes..."
+              />
+              <i class="search icon"></i>
+            </div>
+            <button id="go" class="ui button white">Go</button>
+          </form>
+        </div>
+        <!--End of search and filter ui-->
+        <div class="right menu">
+            <a
+            id="login_btn"
+            style="display: flex;"
+            onclick="location.href={% url 'login'%}"
+            class="item"
+          >
+            My Fridge
+          </a>
+          <div onclick="location.href={% url 'profile'%}" class="item">
+            <img
+              id="image_profile"
+              class="ui avatar image mini"
+              src="https://react.semantic-ui.com/images/wireframe/square-image.png"
+            />
+            <p>{{data.user.name}}</p>
+          </div>
+          <a
+            id="login_btn"
+            style="display: flex;"
+            onclick="location.href={% url 'login'%}"
+            class="item"
+          >
+            Login
+          </a>
+          <a
+            id="logout_btn"
+            style="display: none;"
+            onclick="location.href={% url 'logout'%}"
+            class="item"
+          >
+            Logout
+          </a>
+        </div>
+      </div>
+      <!--End of Navigation Bar-->
+
+    <section style="margin-top: 120px;" id="main" role="main">
+>>>>>>> master
       <div class="page_content_mybar">
         <h1>My Fridge</h1>
         <p class="marg_bot_40">

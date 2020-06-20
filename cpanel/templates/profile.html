@@ -49,7 +49,7 @@
       <a onclick="location.href={% url 'home'%}" class="item">
         Home
       </a>
-      <a onclick="location.href={% url 'recipes'%}" class="item">
+      <a onclick="location.href={% url 'recipe_page'%}" class="item">
         Recipes
       </a>
       <div class="ui link dropdown simple item">
@@ -63,20 +63,36 @@
         </div>
       </div>
 
+      <!--search and filter-->
       <div class="item">
-        <div class="ui icon input">
-          <input type="text" placeholder="Search for recipes..." />
-          <i class="search icon"></i>
-        </div>
+        <form action="/search_and_filter/" method="get" class="ui form">
+          <div class="ui icon input">
+            <input
+              type="text"
+              name="recipe_to_filter"
+              placeholder="Search for recipes..."
+            />
+            <i class="search icon"></i>
+          </div>
+          <button class="ui button white">Go</button>
+        </form>
       </div>
+      <!--End of search and filter ui-->
       <div class="right menu">
+        <a
+        id="fridge_btn"
+        style="display: flex;"
+        onclick="location.href={% url 'fridge'%}"
+        class="item">
+        My Fridge
+      </a>
         <div onclick="location.href={% url 'profile'%}" class="item active">
           <img
             id="image_profile"
             class="ui avatar image mini"
-            src="{{data.image}}"
+            src="{{data.user.image}}"
           />
-          <p id="hi_name">{{data.name}}</p>
+          <p id="hi_name">{{data.user.name}}</p>
         </div>
         <a onclick="location.href={% url 'logout'%}" class="item">
           Logout
@@ -95,7 +111,7 @@
           src="{{data.image}}"
         />
         <div style="margin-left: 5px; margin-top: 15%;">
-          <h2 style="color: bisque;">{{data.name}}</h2>
+          <h2 style="color: bisque;">{{data.user.name}}</h2>
         </div>
       </div>
     </div>
@@ -130,41 +146,44 @@
         <div class="ui form">
           <div style="width: 30%;" class="field">
             <label>Full Name</label>
-            <input value="{{data.name}}" readonly="" type="text" />
+            <input value="{{data.user.name}}" readonly="" type="text" />
           </div>
           <div style="width: 30%;" class="field">
             <label>Username</label>
-            <input value="@{{data.username}}" readonly="" type="text" />
+            <input value="@{{data.user.username}}" readonly="" type="text" />
           </div>
-          {% if data.bio %}
+          {% if data.user.bio %}
           <div style="width: 30%;" class="field">
             <label>Bio</label>
-            <textarea rows="3">{{data.bio}}</textarea>
+            <textarea readonly="" rows="3">{{data.user.bio}}</textarea>
           </div>
           {% else %}
           <div style="width: 30%;" class="field">
             <label>Bio</label>
-            <textarea rows="3">I am new here</textarea>
+            <textarea readonly="" rows="3">I am new here</textarea>
           </div>
-          {% endif %} {% if data.country %}
+          {% endif %} 
+          {% if data.user.country %}
           <div style="width: 60%;" class="two fields">
             <div class="field">
               <label>Country</label>
-              <input value="{{data.country}}" readonly="" type="text" />
+              <input value="{{data.user.country}}" readonly="" type="text" />
             </div>
             <div class="field">
               <label>State</label>
-              <input value="{{data.state}}" readonly="" type="text" />
+              <input value="{{data.user.state}}" readonly="" type="text" />
             </div>
           </div>
-          {% endif %} {% if data.country %} {% endif %} {% if data.blog %}
-          <a href="{{data.blog}}">Personal Blog</a>
           {% endif %}
+          {% if data.user.blog %}
+          <a href="{{data.user.blog}}">Personal Blog</a>
+          {% endif %}
+          <p>Joined: {{data.user.joined}}</p>
         </div>
       </div>
     </div>
 
-    {% if data %}
+    {% if data.user %}
     <script>
       //document.getElementById("hi_name").innerHTML = {{data.name}};
       document.getElementById("user_image").src =

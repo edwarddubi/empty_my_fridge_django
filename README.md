@@ -16,8 +16,6 @@ Semantic Ui or fomantic Ui css (currently, Semantic Ui)
 
 Validate Email
 
-Py3DNS
-
 ## Templates
 
 - HTML, CSS, and JS
@@ -67,9 +65,11 @@ pip install pyrebase
 
 pip install beautifulsoup4
 
-pip install validate_email
+pip install py3-validate-email
 
-pip install py3DNS
+git clone https://github.com/rthalley/dnspython
+cd dnspython\
+python setup.py install
 
 ## Get Firebase Database Config file Set up
 
