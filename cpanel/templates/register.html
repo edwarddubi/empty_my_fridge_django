@@ -7,7 +7,7 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css"
     />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>-->
   </head>
 
   <style>
@@ -69,12 +69,12 @@
           <div class="header">
             Error
           </div>
-          <p>{{data}}</p>
+          <p>{{data.message}}</p>
         </div>
       </div>
     </div>
 
-    {% if data %}
+    {% if data.message %}
     <script>
       document.getElementById('message').style.display = "block"
     </script>

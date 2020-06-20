@@ -36,7 +36,7 @@
       <a onclick="location.href={% url 'home'%}" class="item active">
         Home
       </a>
-      <a onclick="location.href={% url 'recipes'%}" class="item">
+      <a onclick="location.href={% url 'recipe_page'%}" class="item">
         Recipes
       </a>
 
@@ -51,12 +51,21 @@
         </div>
       </div>
 
+      <!--search and filter-->
       <div class="item">
-        <div class="ui icon input">
-          <input type="text" placeholder="Search for recipes..." />
-          <i class="search icon"></i>
-        </div>
+        <form action="/search_and_filter/" method="get" class="ui form">
+          <div class="ui icon input">
+            <input
+              type="text"
+              name="recipe_to_filter"
+              placeholder="Search for recipes..."
+            />
+            <i class="search icon"></i>
+          </div>
+          <button class="ui button white">Go</button>
+        </form>
       </div>
+      <!--End of search and filter ui-->
       <div class="right menu">
         <div onclick="location.href={% url 'profile'%}" class="item">
           <img
@@ -64,7 +73,7 @@
             class="ui avatar image mini"
             src="https://react.semantic-ui.com/images/wireframe/square-image.png"
           />
-          <p>{{data.name}}</p>
+          <p>{{data.user.name}}</p>
         </div>
         <a
           id="login_btn"
@@ -88,7 +97,7 @@
     <!--End of Navigation Bar-->
 
     
-    {% if data %}
+    {% if data.user %}
     <script>
       document.getElementById("image_profile").src =
         "https://react.semantic-ui.com/images/avatar/large/matthew.png";

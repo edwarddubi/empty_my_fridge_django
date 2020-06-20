@@ -10,14 +10,14 @@
 
     <style>
       /* pagination position styling */
-      .pagination_section {
+      .pagination {
         position: relative;
         margin-bottom: 50px;
         margin-top: -25px;
         text-align: center;
       }
       /* pagination styling */
-      .pagination_section a {
+      .pagination a {
         color: #031f3b;
         padding: 10px 18px;
         border: 2px solid #031f3b;
@@ -25,16 +25,33 @@
         text-decoration: none;
       }
       /* pagination hover effect on non-active */
-      .pagination_section a:hover:not(.active) {
+      .pagination a:hover:not(.active) {
         background-color: #031f3b;
         color: white;
       }
       /* pagination hover effect on active*/
-      .pagination_section a:hover {
+      .pagination a:hover {
         background-color: #031f3b;
         color: white;
         text-decoration: underline;
       }
+
+      .recipe_name {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: large;
+        color:black;
+        font-weight: bolder;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+      }
+
+      .recipe_name:hover{
+        color: #3460e2;
+        text-decoration: underline;
+      }
+      
 
       .ui.inverted.menu {
         background: #642b73; /* fallback for old browsers */
@@ -48,6 +65,10 @@
           #c6426e,
           #642b73
         ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+      }
+      .center {
+        margin: auto;
+        width: 50%;
       }
     </style>
   </head>
@@ -63,7 +84,7 @@
       <a onclick="location.href={% url 'home'%}" class="item">
         Home
       </a>
-      <a onclick="location.href={% url 'recipes'%}" class="item active">
+      <a onclick="location.href={% url 'recipe_page'%}" class="item active">
         Recipes
       </a>
 
@@ -78,12 +99,22 @@
         </div>
       </div>
 
+      <!--search and filter-->
       <div class="item">
-        <div class="ui icon input">
-          <input type="text" placeholder="Search for recipes..." />
-          <i class="search icon"></i>
-        </div>
+        <form action="/search_and_filter/" method="get" class="ui form">
+          <div class="ui icon input">
+            <input
+              id="filter"
+              type="text"
+              name="recipe_to_filter"
+              placeholder="Search for recipes..."
+            />
+            <i class="search icon"></i>
+          </div>
+          <button id="go" class="ui button white">Go</button>
+        </form>
       </div>
+      <!--End of search and filter ui-->
       <div class="right menu">
         <div onclick="location.href={% url 'profile'%}" class="item">
           <img
@@ -91,7 +122,7 @@
             class="ui avatar image mini"
             src="https://react.semantic-ui.com/images/wireframe/square-image.png"
           />
-          <p>{{data.name}}</p>
+          <p>{{data.user.name}}</p>
         </div>
         <a
           id="login_btn"
@@ -113,114 +144,162 @@
     </div>
     <!--End of Navigation Bar-->
 
-    <!--Recipe Cards-->
-    {% if recipes %}
-    <div
-      class="ui centered grid"
-      style="margin-top: 75px; margin-bottom: 75px;"
-    >
-      {% for recipe in recipes %}
-      <div class="item">
-        <div
-          class="ui link card"
-          style="margin: 10px; width: 300px; height: 380px;"
-        >
-          <a class="ui medium image">
-            <img src="{{recipe.recipe_image}}" />
-          </a>
-          <div class="content" style="text-align: center;">
-            <a class="header" href="{{recipe.recipe_link}}"
-              >{{recipe.recipe_name}}</a
-            >
-            <div class="description">
-              This is where the description will be.
+    {% if data.isSearch %} {% if data.found_results %}
+    <div style="margin-top: 75px; padding-left: 90px;">
+      <h2><i>Found Results ({{data.items}} Item(s))</i></h2>
+    </div>
+    {% else %}
+    <div style="margin-top: 75px; padding-left: 90px;">
+      <h2><i>No Results Found! (0 Items)</i></h2>
+    </div>
+    {% endif %} {% endif %}
+
+    <!--Container-->
+    <div class="ui container center aligned">
+      <!--Recipe Cards-->
+      {% if data.recipes %}
+      <div class="ui grid" style="margin-top: 75px; margin-bottom: 75px;">
+        <!--column-->
+        {% for recipe in data.recipes %}
+        <div class="four wide column">
+          <div
+            class="ui link card"
+            style="margin: 10px; width: 300px; height: 335px;"
+          >
+            <a class="ui medium image">
+              <img src="{{recipe.recipe_image}}" />
+            </a>
+            <div class="content" style="text-align: center;">
+              <a
+                class="recipe_name"
+                href="{{recipe.recipe_link}}"
+                >{{recipe.recipe_name}}</a
+              >
+            </div>
+            <div class="extra content" bis_skin_checked="1">
+              <span class="left floated">
+                <div class="ui labeled button">
+                  <div class="ui blue button">
+                    <i class="heart icon"></i> Stars
+                  </div>
+                  <a class="ui basic blue left pointing label">
+                    {{recipe.likes}}
+                  </a>
+                </div>
+              </span>
+              <form action="/fav_recipe_onclick/" method="post" class="ui form">
+                <span class="right floated star">
+                  <input
+                    style="display: none;"
+                    name="recipe_id"
+                    value="{{recipe.recipe_id}}"
+                  />
+                  <input
+                    style="display: none;"
+                    name="navigate"
+                    value="/recipe_list/"
+                  />
+                  <input
+                    id="scrollY"
+                    style="display: none;"
+                    value=""
+                    name="scroll_y"
+                  />
+                  <input
+                    style="display: none;"
+                    value="{{data.isSearch}}"
+                    name="isSearch"
+                  />
+                  {% if recipe.user_saved %}
+                  <button
+                    id="like"
+                    class="ui icon button"
+                    data-tooltip="Remove this from your Favorite Recipes"
+                  >
+                    <i class="star icon yellow"></i>
+                  </button>
+
+                  {% else %}
+                  <button
+                    id="like"
+                    class="ui icon button"
+                    data-tooltip="Add this to your Favorite Recipes"
+                  >
+                    <i class="star icon"></i>
+                  </button>
+                  {% endif %}
+                </span>
+              </form>
             </div>
           </div>
-          <div class="extra content" bis_skin_checked="1">
-            <span class="left floated">
-              <div class="ui labeled button">
-                <div class="ui blue button">
-                  <i class="heart icon"></i> Stars
-                </div>
-                <a class="ui basic blue left pointing label">
-                  {{recipe.likes}}
-                </a>
-              </div>
-            </span>
-            <form action="/fav_recipe_onclick/" method="post" class="ui form">
-              <span class="right floated star">
-                <input
-                  style="display: none;"
-                  name="recipe_id"
-                  value="{{recipe.recipe_id}}"
-                />
-                <input
-                  style="display: none;"
-                  name="navigate"
-                  value="/recipe_list/"
-                />
-                <input
-                  id="scrollY"
-                  style="display: none;"
-                  value=""
-                  name="scroll_y"
-                />
-                {% if recipe.user_saved %}
-                <button
-                  id="like"
-                  class="ui icon button"
-                  data-tooltip="Remove this from your Favorite Recipes"
-                >
-                  <i class="star icon yellow"></i>
-                </button>
-
-                {% else %}
-                <button
-                  id="like"
-                  class="ui icon button"
-                  data-tooltip="Add this to your Favorite Recipes"
-                >
-                  <i class="star icon"></i>
-                </button>
-
-                {% endif %}
-              </span>
-            </form>
-          </div>
         </div>
+        {% endfor %}
       </div>
-      {% endfor %}
+      {% endif %}
+      <!--End of Recipe Cards-->
     </div>
-    {% endif %}
-    <!--End of Recipe Cards-->
 
     <!--Pagination-->
-    <div class="pagination_section" style="font-size: xx-large;">
-      <a href="#" class="active"><< Previous</a>
-      <a href="#" class="active">1</a>
-      <a href="#" class="active">2</a>
-      <a href="#" class="active">3</a>
-      <a href="#" class="active">4</a>
-      <a href="#" class="active">5</a>
-      <a href="#" class="active">Next >></a>
+    <div class="pagination">
+      <span class="step-links">
+        {% if data.recipes.has_previous %}
+        <a
+          href="?page=1"
+          title="First"
+          style="border: none; background-color: white; color: #031f3b;"
+          ><<</a
+        >
+        <a
+          href="?page={{ data.recipes.previous_page_number }}"
+          style="border: none; background-color: white; color: #031f3b;"
+          >Previous</a
+        >
+        {% endif %}
+
+        <span class="current">
+          {% for num in data.recipes.paginator.page_range %} {% if data.recipes.number == num %}
+          <a
+            href="?page={{ num }}"
+            style="background-color: #031f3b; color: white;"
+            >{{ num }}</a
+          >
+          {% else %}
+          <a href="?page={{ num }}">{{ num }}</a>
+          {% endif %} {% endfor %}
+        </span>
+        {% if data.recipes.has_next %}
+        <a
+          href="?page={{ data.recipes.next_page_number }}"
+          style="border: none; background-color: white; color: #031f3b;"
+          >Next</a
+        >
+        <a
+          href="?page={{ data.recipes.paginator.num_pages }}"
+          title="Last"
+          style="border: none; background-color: white; color: #031f3b;"
+          >>></a
+        >
+        {% endif %}
+      </span>
     </div>
     <!--End of Pagination-->
 
-    {% if data %}
+    {% if data.keep_scroll_pos %}
     <script>
-      scrollTop = {{scrollTop}}
+      var scrollTop = {{data.scrollTop}};
+      window.scrollTo(0, scrollTop);
+    </script>
+    {% endif %} {% if data.user %}
+    <script>
       document.getElementById("image_profile").src =
         "https://react.semantic-ui.com/images/avatar/large/matthew.png";
       document.getElementById("logout_btn").style.display = "flex";
       document.getElementById("login_btn").style.display = "none";
-      window.scrollTo(0, scrollTop)
-
       window.addEventListener("scroll", function (event) {
         var scrollY = this.scrollY;
         if (scrollY) {
           var elements = document.querySelectorAll("#scrollY");
           for (var i = 0; i < elements.length; i++) elements[i].value = scrollY;
-          
         }
       });
     </script>
