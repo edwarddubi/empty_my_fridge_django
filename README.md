@@ -16,8 +16,6 @@ Semantic Ui or fomantic Ui css (currently, Semantic Ui)
 
 Validate Email
 
-Py3DNS
-
 ## Templates
 
 - HTML, CSS, and JS
