@@ -343,6 +343,15 @@ def fridge(request):
     search_ing = request.GET.get('search_ingredients')
    
     chk_food = request.POST.getlist('sav_ing')
+    del_food = request.POST.getlist('del_ing')
+    
+    if del_food:
+        if (isinstance(del_food, str)):
+            db.child("users").child(uid).child("Fridge").child(del_food).remove()
+        else:
+            for food in del_food:
+                db.child("users").child(uid).child("Fridge").child(food).remove()
+
 
     if search_ing:
         all_ingredients = [i for i in all_ingredients if search_ing in i]

@@ -75,7 +75,7 @@
                   <input type="checkbox" name="sav_ing" value = "{{food}}" />
                   <label> {{food}}</label><br /> 
                 {% endfor %}
-                <input id = "but01"  type = "submit" value = "{{foods}}" />
+                <input   type = "submit" value = "Add to Fridge" />
               </form>
             </ul>
           </div>
@@ -86,11 +86,15 @@
                 >(<span class="num_mybar">{{fing_amount}}</span> ingredients)</span
               >
             </h3>
-            <ul>
-              {% for food in fing %}
-                <li>{{food}}</li>
-              {% endfor %}
-            </ul>
+            <form method = "post">
+              <ul>
+                {% for food in fing %}
+                  <input type="checkbox" name="del_ing" value = "{{food}}" />
+                  <label> {{food}}</label><br /> 
+                {% endfor %}
+                <input  type = "submit" value = "Remove from Fridge" />
+              </ul>
+            </form>
             <a
               href="javascript:;"
               class="fw_button small_fw_button"
