@@ -2,59 +2,59 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Recipes</title>
+    <title>Home Page</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css"
     />
-
-    <style>
-      /* pagination position styling */
-      .pagination {
-        position: relative;
-        margin-bottom: 50px;
-        margin-top: -25px;
-        text-align: center;
-      }
-      /* pagination styling */
-      .pagination a {
-        color: #031f3b;
-        padding: 10px 18px;
-        border: 2px solid #031f3b;
-        font-size: medium;
-        text-decoration: none;
-      }
-      /* pagination hover effect on non-active */
-      .pagination a:hover:not(.active) {
-        background-color: #031f3b;
-        color: white;
-      }
-      /* pagination hover effect on active*/
-      .pagination a:hover {
-        background-color: #031f3b;
-        color: white;
-        text-decoration: underline;
-      }
-
-      .ui.inverted.menu {
-        background: #642b73; /* fallback for old browsers */
-        background: -webkit-linear-gradient(
-          to right,
-          #c6426e,
-          #642b73
-        ); /* Chrome 10-25, Safari 5.1-6 */
-        background: linear-gradient(
-          to right,
-          #c6426e,
-          #642b73
-        ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-      }
-      .center {
-      margin: auto;
-      width: 50%;
-    }
-    </style>
   </head>
+
+  <style>
+    /* pagination position styling */
+    .pagination {
+      position: relative;
+      margin-bottom: 50px;
+      margin-top: -25px;
+      text-align: center;
+    }
+    /* pagination styling */
+    .pagination a {
+      color: #031f3b;
+      padding: 10px 18px;
+      border: 2px solid #031f3b;
+      font-size: medium;
+      text-decoration: none;
+    }
+    /* pagination hover effect on non-active */
+    .pagination a:hover:not(.active) {
+      background-color: #031f3b;
+      color: white;
+    }
+    /* pagination hover effect on active*/
+    .pagination a:hover {
+      background-color: #031f3b;
+      color: white;
+      text-decoration: underline;
+    }
+
+    .ui.inverted.menu {
+      background: #642b73; /* fallback for old browsers */
+      background: -webkit-linear-gradient(
+        to right,
+        #c6426e,
+        #642b73
+      ); /* Chrome 10-25, Safari 5.1-6 */
+      background: linear-gradient(
+        to right,
+        #c6426e,
+        #642b73
+      ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    }
+    .center {
+    margin: auto;
+    width: 50%;
+  }
+  </style>
 
   <body>
     {% csrf_token %}
@@ -64,10 +64,10 @@
         <h3>Empty My Fridge</h3>
       </div>
 
-      <a onclick="location.href={% url 'home'%}" class="item">
+      <a onclick="location.href={% url 'home'%}" class="item active">
         Home
       </a>
-      <a onclick="location.href={% url 'recipe_page'%}" class="item active">
+      <a onclick="location.href={% url 'recipe_page'%}" class="item">
         Recipes
       </a>
 
@@ -82,21 +82,21 @@
         </div>
       </div>
 
-     <!--search and filter-->
-     <div class="item">
-      <form action="/search_and_filter/" method="post" class="ui form">
-        <div class="ui icon input">
-          <input
-            type="text"
-            name="recipe_to_filter"
-            placeholder="Search for recipes..."
-          />
-          <i class="search icon"></i>
-        </div>
-        <button class="ui button white">Go</button>
-      </form>
-    </div>
-    <!--End of search and filter ui-->
+      <!--search and filter-->
+      <div class="item">
+        <form action="/search_and_filter/" method="post" class="ui form">
+          <div class="ui icon input">
+            <input
+              type="text"
+              name="recipe_to_filter"
+              placeholder="Search for recipes..."
+            />
+            <i class="search icon"></i>
+          </div>
+          <button class="ui button white">Go</button>
+        </form>
+      </div>
+      <!--End of search and filter ui-->
       <div class="right menu">
         <div onclick="location.href={% url 'profile'%}" class="item">
           <img
@@ -124,23 +124,8 @@
         </a>
       </div>
     </div>
-    <!--End of Navigation Bar-->
 
-    {% if isSearch %} 
-    {% if found_results %}
-    <div style="margin-top: 75px; padding-left: 50px;">
-      <h2><i>Found Results ({{items}} Item(s))</i></h2>
-    </div>
-    {% else %}
-    <div style="margin-top: 75px; padding-left: 50px;">
-      <h2><i>No Results Found! (0 Items)</i></h2>
-    </div>
-    {% endif %} 
-    <script>
-     // var f = {{isSearch}} = False;
-      //console.log(f);
-    </script>
-    {% endif %}
+    <!--End of Navigation Bar-->
 
     <!--Container-->
     <div class="ui container center aligned">
@@ -164,6 +149,9 @@
               <a class="header" href="{{recipe.recipe_link}}"
                 >{{recipe.recipe_name}}</a
               >
+              <div class="description">
+                This is where the description will be.
+              </div>
             </div>
             <div class="extra content" bis_skin_checked="1">
               <span class="left floated">
@@ -252,24 +240,14 @@
     </div>
     <!--End of Pagination-->
 
-    {% if keep_scroll_pos %}
-    <script>
-      var scrollTop = {{scrollTop}};
-      window.scrollTo(0, scrollTop);
-    </script>
-    {% endif %} {% if data %}
+
+    
+    {% if data %}
     <script>
       document.getElementById("image_profile").src =
         "https://react.semantic-ui.com/images/avatar/large/matthew.png";
       document.getElementById("logout_btn").style.display = "flex";
       document.getElementById("login_btn").style.display = "none";
-      window.addEventListener("scroll", function (event) {
-        var scrollY = this.scrollY;
-        if (scrollY) {
-          var elements = document.querySelectorAll("#scrollY");
-          for (var i = 0; i < elements.length; i++) elements[i].value = scrollY;
-        }
-      });
     </script>
     {% endif %}
   </body>

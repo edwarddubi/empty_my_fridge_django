@@ -138,7 +138,7 @@ def recipe_list(request):
         recipes.set_is_recipe_liked(False)
         keep_scroll_pos = True
     
-    paginator = Paginator(all_recipes, 8)
+    paginator = Paginator(all_recipes, 48)
     page = request.GET.get('page')
 
     try:
@@ -153,6 +153,51 @@ def recipe_list(request):
     else:
         user_details = m_user._getUser_()
         return render(request, 'recipes.html', {"data": user_details, "recipes": curr_recipes, "scrollTop" : scrollTop, "keep_scroll_pos" : keep_scroll_pos, "found_results" : found_results, "items" : len(curr_recipes), "isSearch": isSearch})    
+
+def get_category(category):
+    all_recipes = get_all_recipes()
+    filtered_recipes = []
+    
+    return all_recipes
+
+
+@csrf_exempt
+def caterory_page(request):
+    found_results = False
+    isSearch = False
+    if recipes.get_is_searched_for_recipes():
+        all_recipes = get_all_filtered_recipes()
+        isSearch = True
+        recipes.set_is_searched_for_recipes(False)
+        if len(all_recipes) == 0:
+            all_recipes = get_all_recipes()
+        else:
+            found_results = True    
+
+    else:
+        category_recipes = get_category('Dessert')
+    scrollTop = 0
+    keep_scroll_pos = False
+    if recipes.get_is_recipe_liked():
+        scrollTop = recipes.get_recipe_list_position()
+        recipes.set_is_recipe_liked(False)
+        keep_scroll_pos = True
+    
+    paginator = Paginator(category_recipes, 50)
+    page = request.GET.get('page')
+
+    try:
+        curr_recipes = paginator.page(page)
+    except PageNotAnInteger:
+        curr_recipes = paginator.page(1)
+    except EmptyPage:
+        curr_recipes = paginator.page(paginator.num_pages)
+
+    if m_user._isNone_():
+        return render(request, 'category_page.html', {"recipes": curr_recipes, "scrollTop" : scrollTop, "found_results" : found_results, "items" : len(curr_recipes), "isSearch": isSearch})
+    else:
+        user_details = m_user._getUser_()
+        return render(request, 'category_page.html', {"data": user_details, "recipes": curr_recipes, "scrollTop" : scrollTop, "keep_scroll_pos" : keep_scroll_pos, "found_results" : found_results, "items" : len(curr_recipes), "isSearch": isSearch})
 
 ##Search Page
 @csrf_exempt
