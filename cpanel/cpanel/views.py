@@ -554,16 +554,8 @@ def fridge(request):
     chk_food = request.POST.getlist('sav_ing')
     del_food = request.POST.getlist('del_ing')
     
-    print(del_food)
     if del_food:
-        print("deleting")
-        # if (del_food.__len__ == 1):
-        #     print("one")
-        #     db.child("users").child(uid).child("Fridge").remove()
-        # else:
-        print("multi")
         for food in del_food:
-            print (food)
             db.child("users").child(uid).child("Fridge").child(food).remove()
 
 
@@ -594,7 +586,6 @@ def fridge(request):
                 for x in chk_food:
                     new_ingredients[x] = x
 
-            print (new_ingredients)
             db.child("users").child(uid).child("Fridge").set(new_ingredients)
     
     
