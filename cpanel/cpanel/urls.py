@@ -18,6 +18,7 @@ from django.urls import path
 from . import views
 #python manage.py runserver
 urlpatterns = [
+    path('fridge/',views.fridge, name='fridge'),
     path('admin/', admin.site.urls),
     path('fridge/',views.fridge, name='fridge'),
     path('home/', views.home, name='home'),
