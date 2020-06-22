@@ -9,8 +9,6 @@ from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 import json
 from cpanel.model.user import User
-import dns
-from validate_email import validate_email
 from . import food_network
 from cpanel.model.recipes import Recipes
 import time
@@ -345,9 +343,9 @@ def _register_(request):
         email = request.POST.get('email')
         password = request.POST.get('pass')
         name = request.POST.get('name')
-        is_email_valid = validate_email(email_address=email, check_regex=True, check_mx=True, from_address='my@from.addr.ess',helo_host='my.host.name', smtp_timeout=10, dns_timeout=10, use_blacklist=True, debug=True)
+        #is_email_valid = validate_email(email_address=email, check_regex=True, check_mx=True, from_address='my@from.addr.ess',helo_host='my.host.name', smtp_timeout=10, dns_timeout=10, use_blacklist=True, debug=True)
         #is_email_valid = validate_email(email, verify=True)
-        # is_email_valid = True #validate_email(email, verify=True)
+        is_email_valid = True #validate_email(email, verify=True)
         if is_email_valid:
             register_user(request, email, password, name)
         else:
@@ -543,22 +541,21 @@ def fridge(request):
     else:
         uid = m_user._getUser_Id_()
             
-
+    all_ingredients = []
     fridge_ingredients = db.child("users").child(uid).child("Fridge").get().val()
-        
-    all_ingredients = sorted(db.child("all_ingredients").get().val())
+    if fridge_ingredients:
+        sorted(fridge_ingredients)
+    if db.child("all_ingredients").get().val():    
+        all_ingredients = sorted(db.child("all_ingredients").get().val())
+
     search_ing = request.GET.get('search_ingredients')
    
     chk_food = request.POST.getlist('sav_ing')
     del_food = request.POST.getlist('del_ing')
     
     if del_food:
-        if (isinstance(del_food, str)):
-            db.child("users").child(uid).child("Fridge").child(del_food).remove()
-        else:
-            for food in del_food:
-                db.child("users").child(uid).child("Fridge").child(food).remove()
-
+        for food in del_food:
+            db.child("users").child(uid).child("Fridge").child(food).remove()
 
     if search_ing:
         all_ingredients = [i for i in all_ingredients if search_ing in i]
@@ -566,22 +563,30 @@ def fridge(request):
             all_ingredients = ["No ingredient found"]
     if chk_food and uid:
         if fridge_ingredients:
+            new_ingredients = {}
             if (isinstance(chk_food, str)):
                 if chk_food in fridge_ingredients:
                     disj = []
                 else:
-                    disj = [chk_food]
+                    new_ingredients[chk_food] = chk_food
             else:
                 disj = list(set(chk_food)-set(fridge_ingredients))
-            fridge_ingredients.extend(disj)
-            sorted(fridge_ingredients)
-            
+                for x in disj:
+                    new_ingredients[x] =x
+                db.child("users").child(uid).child("Fridge").update(new_ingredients)
+
         else:
             if (isinstance(chk_food, str)):
-                chk_food = [chk_food]
-            fridge_ingredients = chk_food
-        db.child("users").child(uid).child("Fridge").set(fridge_ingredients)
+                new_ingredients = {chk_food : chk_food}
+            else:
+                new_ingredients= {}
+                for x in chk_food:
+                    new_ingredients[x] = x
+
+            db.child("users").child(uid).child("Fridge").set(new_ingredients)
     
+    
+    fridge_ingredients = db.child("users").child(uid).child("Fridge").get().val()
     if fridge_ingredients:
         fing_len = fridge_ingredients.__len__
     else:
