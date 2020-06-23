@@ -183,6 +183,60 @@ def save_profile(request):
 
     return render(request, 'edit_profile.html', {"data": user_details, "message": msg, "msg_type" : msg_type})
 
+
+@csrf_exempt
+def personal_recipes(request):
+    user_details = m_user._getUser_()
+    uid = "wxShfkuEIoNoLs6j2gvSqqVjdr32"
+    #agrab user's custom recipes attribute
+    #user_recipes = m_user._getUser_Recipes_()
+
+    chk_ingredients = request.POST.getlist('sav_ing')
+
+    all_ingredients = sorted(db.child("all_ingredients").get().val())
+    
+    search_ing = request.GET.get('search_ingredients')
+    print("search_ingredients: ")
+    print(search_ing)
+
+    if search_ing:
+        all_ingredients = [i for i in all_ingredients if search_ing in i]
+        if not all_ingredients:
+            all_ingredients = ["No ingredient found"]
+    #research live ingredients
+    recipe_details = None
+    msg = None
+    msg_type = None
+    if m_user._isNone_():
+        return render(request, "login.html") 
+    else:
+        #if request.method == "POST":
+        if True:
+            title = request.POST.get("title")
+            ingredients = request.POST.get("ingredients")
+            description = request.POST.get("description")
+            steps = request.POST.get("steps")
+
+            userRecipe = {
+            'title': "Applie Pie",
+            'description': "the description",
+            'steps': "step 1, 2, 3",
+            'ingredients': ["apple", "pie crust"],
+            'privacy': 0
+            }
+            my_recipes = db.child("users").child(uid).child("recipes").get().val()
+            if my_recipes:
+                my_recipes.append(userRecipe)
+                db.child("users").child(uid).child("recipes").set(my_recipes)
+                msg = "Changes saved successfully."
+                msg_type = "success"
+            else:
+                userRecipe = [userRecipe]
+                db.child("users").child(uid).child("recipes").set(userRecipe)
+                pass
+    context = {"ingredients": all_ingredients}
+    return render(request, 'personal_recipes.html', {"data": recipe_details, "message": msg, "msg_type" : msg_type})
+
 @csrf_exempt
 def account_settings(request):
     if m_user._isNone_():

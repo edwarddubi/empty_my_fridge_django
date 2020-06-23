@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <title>Profile Page</title>
+    <meta charset="UTF-8">
+    <title>Personal Recipes Page</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css"
     />
   </head>
-  
   <body>
     {% csrf_token %}
     <!--Navigation Bar-->
@@ -74,7 +73,7 @@
     <div class="ui container" style="margin-top: 20px; margin-bottom: 250px;">
 
       <div class="ui pointing menu">
-        <a class="active item">
+        <a onclick="location.href={% url 'profile'%}" class="item">
           About Me
         </a>
         <a class="item">
@@ -83,12 +82,12 @@
         <a class="item">
           My Favorite Recipes
         </a>
-        <a onclick="location.href={% url 'personal_recipes'%}" class="item">
+        <a class="active item">
           Personal Recipes
         </a>
         
         <div class="right menu">
-          <a onclick="location.href={% url 'edit_profile'%}" class="item">
+          <a class="item">
             Edit Profile
           </a>
           <a onclick="location.href={% url 'account_settings'%}" class="item">
@@ -96,61 +95,105 @@
           </a>
         </div>
       </div>
-      <div style="margin-bottom: 50px;" class="ui raised segment">
-        <div class="ui form">
-          <div style="width: 30%;" class="field">
-            <label>Full Name</label>
-            <input value="{{data.name}}" readonly="" type="text">
-          </div>
-          <div style="width: 30%;" class="field">
-            <label>Username</label>
-            <input value="@{{data.username}}" readonly="" type="text">
-          </div>
-          {% if data.bio %}
-          <div style="width: 30%;" class="field">
-            <label>Bio</label>
-            <textarea rows="3">{{data.bio}}</textarea>
-          </div>
-          {% else %}
-          <div style="width: 30%;" class="field">
-            <label>Bio</label>
-            <textarea rows="3">I am new here</textarea>
-          </div>
-          {% endif %}
-          
-          {% if data.country %}
-          <div style="width: 60%;" class="two fields">
-            <div class="field">
-              <label>Country</label>
-              <input value="{{data.country}}" readonly="" type="text">
-            </div>
-            <div class="field">
-              <label>State</label>
-              <input value="{{data.state}}" readonly="" type="text">
-            </div>
-          </div>
-          {% endif %}
-          {% if data.country %}
-          {% endif %}
-          {% if data.blog %}
-          <a href="{{data.blog}}">Personal Blog</a>
-          {% endif %}
 
+      <div style="margin-bottom: 50px;" class="ui raised segment">
+        <form action="/save_profile/" method="post" class="ui form">
+          <div style="width: 30%;" class="field">
+            <label>Title of Recipe</label>
+            <input placeholder="Title of Recipe" required name="title" type="text">
+          </div>
+
+          <div style="width: 30%;" class="field">
+            <label>Description</label>
+            <input rows="3" placeholder="Description of Recipe" type="text" name="description">
+          </div>
+          
+          <div style="width: 30%;" class="field">
+            <label>Steps: </label>
+            <input placeholder="How to make the recipe" name="steps" type="text">
+          </div>
+
+          <span class="myfridge_list_holder">
+          <div style="width: 30%;" class="field">
+          <label>Add Ingredients</label>
+          </div>
+
+          <div class="search-container">
+            <form>
+              <input
+                type="text"
+                placeholder="Search.."
+                name="search_ingredients"
+                id="search"
+              />
+            <button class ="ui button blue" type="submit">Search</button>
+            </form>
+          </div>
+          <style>
+            #search{
+              display: inline-block;
+              width: 85%;
+            }
+            #search_but{
+              display: inline-block;
+            }
+          </style>
+          </span>
+
+          <div>
+          <ul class="">
+            <form method="post">
+              <input type="submit" value="Add to Recipe" /><br />
+              {% for food in ingredients %}
+              <input type="checkbox" name="sav_ing" value="{{food}}" />
+              <label> {{food}}</label><br />
+              {% endfor %}
+            </form>
+          </ul>
+        </div>
+
+          <!--dropdown w/out javascript-->
+          <div class="ui compact menu">
+            <div class="ui simple dropdown item">
+              Privacy
+              <i class="dropdown icon"></i>
+              <div class="menu">
+                <div class="item" data-value = "2">Public</div>
+                <div class="item" data-value = "1">Friends Only</div>
+                <div class="item" data-value = "0">Private</div>
+              </div>
+              <!--in python, assign data-value to another db attribute-->
+            </div>
+          </div>
+
+          <button class="ui button yellow" type="submit">Save New Recipe</button>
+
+        </form>
+        <div style="display: none;" id="message" class="ui {{msg_type}} message">
+          <div class="header">
+            {{msg_type}}
+          </div>
+          <p>{{message}}</p>
         </div>
       </div>
       
     </div>
 
-
+    {% if message %}
+    <script>
+      document.getElementById("message").style.display = "block";
+    </script>
+    {% endif %}
 
     {% if data %}
     <script>
-      //document.getElementById("hi_name").innerHTML = {{data.name}};
       document.getElementById("user_image").src =
         "https://react.semantic-ui.com/images/avatar/large/matthew.png";
       document.getElementById("image_profile").src =
         "https://react.semantic-ui.com/images/avatar/large/matthew.png";
     </script>
     {% endif %}
+
+    <!-- add code to list available personal recipes from database-->
   </body>
 </html>

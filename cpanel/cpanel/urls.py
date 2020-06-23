@@ -29,5 +29,6 @@ urlpatterns = [
     path('save_profile/', views.save_profile, name='save_profile'),
     path('account_settings/', views.account_settings, name='account_settings'),
     path('recover_password/', views.recover_password, name='recover_password'),
-    path('logout/', views._logout_, name='logout')
+    path('logout/', views._logout_, name='logout'),
+    path('personal_recipes/', views.personal_recipes, name='personal_recipes')
 ]
