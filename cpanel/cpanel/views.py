@@ -9,8 +9,11 @@ from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 import json
 from cpanel.model.user import User
+<<<<<<< HEAD
 #import dns
 from validate_email import validate_email
+=======
+>>>>>>> 5fdf59c741778446739a260aedddb073010b2926
 from . import food_network
 from cpanel.model.recipes import Recipes
 import time
@@ -345,9 +348,9 @@ def _register_(request):
         email = request.POST.get('email')
         password = request.POST.get('pass')
         name = request.POST.get('name')
-        is_email_valid = validate_email(email_address=email, check_regex=True, check_mx=True, from_address='my@from.addr.ess',helo_host='my.host.name', smtp_timeout=10, dns_timeout=10, use_blacklist=True, debug=True)
+        #is_email_valid = validate_email(email_address=email, check_regex=True, check_mx=True, from_address='my@from.addr.ess',helo_host='my.host.name', smtp_timeout=10, dns_timeout=10, use_blacklist=True, debug=True)
         #is_email_valid = validate_email(email, verify=True)
-        # is_email_valid = True #validate_email(email, verify=True)
+        is_email_valid = True #validate_email(email, verify=True)
         if is_email_valid:
             register_user(request, email, password, name)
         else:
@@ -543,11 +546,16 @@ def fridge(request):
     else:
         uid = m_user._getUser_Id_()
             
-
+    all_ingredients = []
     fridge_ingredients = db.child("users").child(uid).child("Fridge").get().val()
     if fridge_ingredients:
         sorted(fridge_ingredients)
+<<<<<<< HEAD
     all_ingredients = sorted(db.child("all_ingredients").get().val())
+=======
+    if db.child("all_ingredients").get().val():    
+        all_ingredients = sorted(db.child("all_ingredients").get().val())
+>>>>>>> 5fdf59c741778446739a260aedddb073010b2926
 
     search_ing = request.GET.get('search_ingredients')
    
@@ -557,8 +565,11 @@ def fridge(request):
     if del_food:
         for food in del_food:
             db.child("users").child(uid).child("Fridge").child(food).remove()
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 5fdf59c741778446739a260aedddb073010b2926
 
     if search_ing:
         all_ingredients = [i for i in all_ingredients if search_ing in i]
