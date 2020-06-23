@@ -92,10 +92,10 @@
         <span class="text">Browse</span>
         <i class="dropdown icon"></i>
         <div class="menu inverted">
-          <div class="item">Pastries</div>
-          <div class="item">Meals</div>
-          <div class="item">Appetizers</div>
-          <div class="item">Dessert</div>
+          <a class="item" href="{% url 'category' %}?category=pastry">Pastries</a>
+          <a class="item" href="{% url 'category' %}?category=main dish">Meals</a>
+          <a class="item" href="{% url 'category' %}?category=appetizer">Appetizers</a>
+          <a class="item" href="{% url 'category' %}?category=dessert">Dessert</a>
         </div>
       </div>
 
@@ -104,14 +104,13 @@
         <form action="/search_and_filter/" method="get" class="ui form">
           <div class="ui icon input">
             <input
-              id="filter"
               type="text"
               name="recipe_to_filter"
               placeholder="Search for recipes..."
             />
             <i class="search icon"></i>
           </div>
-          <button id="go" class="ui button white">Go</button>
+          <button class="ui button white">Go</button>
         </form>
       </div>
       <!--End of search and filter ui-->

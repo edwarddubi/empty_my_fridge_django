@@ -173,36 +173,77 @@ def recipe_list(request):
         return render(request, 'recipes.html', {"data": data})
 
 
-def get_category(category):
-    all_recipes = get_all_recipes()
-    filtered_recipes = []
+@csrf_exempt
+def category(request):
+    cat = request.GET.get('category')
+    recipe_lst = get_recipes_by_category(cat)
+    paginator = Paginator(recipe_lst, 48)
+    page = request.GET.get('page')
 
-    return all_recipes
+    try:
+        curr_recipes = paginator.page(page)
+    except PageNotAnInteger:
+        curr_recipes = paginator.page(1)
+    except EmptyPage:
+        curr_recipes = paginator.page(paginator.num_pages)
+    user = None
+
+    if not m_user._isNone_():
+        user = m_user._getUser_()
+    
+    data = {
+        "user": user,
+        "recipe_lst": curr_recipes
+    }
+
+    return render(request, 'category.html', {"data": data})
+
+def get_recipes_by_category(category):
+    all_recipes = db.child('recipe').get()
+    recipe_lst = []
+    for recipe in all_recipes.each():
+        recipe_details = recipe.val()
+        try:
+            categories = recipe_details["recipe_categories"]
+            if categories:
+                if any(category in c for c in categories):
+                    key = str(recipe.key())
+                    _recipe_ = get_recipe(dict(recipe_details), key)
+                    recipe_lst.append(_recipe_)
+        except KeyError:
+            pass
+    return recipe_lst
+
+def get_recipes_by_ingredients(ingredient):
+    all_recipes = db.child('recipe').get()
+    recipe_lst = []
+    for recipe in all_recipes.each():
+        #categories = recipe.val()["recipe_categories"]
+        recipe_details = recipe.val()
+        try:
+            ingredients = recipe_details["recipe_ingredients"]
+            if ingredients:
+                if any(ingredient in i for i in ingredients):
+                    key = str(recipe.key())
+                    _recipe_ = get_recipe(dict(recipe_details), key)
+                    recipe_lst.append(_recipe_)
+        except KeyError:
+            pass
+    return recipe_lst
 
 
 @csrf_exempt
-def caterory_page(request):
-    found_results = False
-    isSearch = False
-    if recipes.get_is_searched_for_recipes():
-        all_recipes = get_all_filtered_recipes()
-        isSearch = True
-        recipes.set_is_searched_for_recipes(False)
-        if len(all_recipes) == 0:
-            all_recipes = get_all_recipes()
-        else:
-            found_results = True
+def get_recipes_by_category_ingredients(request):
+    category_list = []
+    ingred_list = []
+    result_list = []
+    if request.method == "GET":
+        value = request.GET.get("value")
+        category_list = get_recipes_by_category(value)
+        ingred_list = get_recipes_by_ingredients(value)
+        result_list = category_list + ingred_list
 
-    else:
-        category_recipes = get_category('Dessert')
-    scrollTop = 0
-    keep_scroll_pos = False
-    if recipes.get_is_recipe_liked():
-        scrollTop = recipes.get_recipe_list_position()
-        recipes.set_is_recipe_liked(False)
-        keep_scroll_pos = True
-
-    paginator = Paginator(category_recipes, 50)
+    paginator = Paginator(result_list, 48)
     page = request.GET.get('page')
 
     try:
@@ -212,29 +253,18 @@ def caterory_page(request):
     except EmptyPage:
         curr_recipes = paginator.page(paginator.num_pages)
 
-    if m_user._isNone_():
-        data = {
-            "recipes": curr_recipes,
-            "scrollTop": scrollTop,
-            "found_results": found_results,
-            "items": len(curr_recipes),
-            "isSearch": isSearch,
+    user = None
 
-        }
-        return render(request, 'recipes.html', {"data": data})
-    else:
-        _user_ = m_user._getUser_()
-        data = {
-            "user": _user_,
-            "recipes": curr_recipes,
-            "scrollTop": scrollTop,
-            "keep_scroll_pos": keep_scroll_pos,
-            "found_results": found_results,
-            "items": len(curr_recipes),
-            "isSearch": isSearch
+    if not m_user._isNone_():
+        user = m_user._getUser_()
+    
+    data = {
+        "user": user,
+        "recipe_lst": curr_recipes
+    }
+        
+    return render(request, 'category.html', {"data":data})
 
-        }
-        return render(request, 'recipes.html', {"data": data})
 
 # Search Page
 @csrf_exempt
