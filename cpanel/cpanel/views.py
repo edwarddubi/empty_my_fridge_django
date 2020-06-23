@@ -589,7 +589,6 @@ def fridge(request):
                 for x in chk_food:
                     new_ingredients[x] = x
 
-            print (new_ingredients)
             db.child("users").child(uid).child("Fridge").set(new_ingredients)
     
     
@@ -625,3 +624,4 @@ def fridge(request):
     
     context = {"ingredients" : all_ingredients, 'fing' : fridge_ingredients, 'fing_amount' : fing_len}
     return render(request, 'fridge.html', context )
+    
