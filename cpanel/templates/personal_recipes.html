@@ -97,7 +97,7 @@
       </div>
 
       <div style="margin-bottom: 50px;" class="ui raised segment">
-        <form action="/save_profile/" method="post" class="ui form">
+        <form action="/personal_recipes/" method="post" class="ui form">
           <div style="width: 30%;" class="field">
             <label>Title of Recipe</label>
             <input placeholder="Title of Recipe" required name="title" type="text">
@@ -129,28 +129,63 @@
             <button class ="ui button blue" type="submit">Search</button>
             </form>
           </div>
-          <style>
-            #search{
-              display: inline-block;
-              width: 85%;
-            }
-            #search_but{
-              display: inline-block;
-            }
-          </style>
           </span>
 
-          <div>
-          <ul class="">
-            <form method="post">
-              <input type="submit" value="Add to Recipe" /><br />
-              {% for food in ingredients %}
-              <input type="checkbox" name="sav_ing" value="{{food}}" />
-              <label> {{food}}</label><br />
-              {% endfor %}
-            </form>
-          </ul>
+          <!-- CENTER BUTTON HOR and VERT-->
+          <style>
+            .container {
+              height: 200px;
+              position: relative;
+              border: 3px solid green;
+            }
+            
+            .vertical-center {
+              margin: 0;
+              position: absolute;
+              top: 50%;
+              -ms-transform: translateY(-50%);
+              transform: translateY(-50%);
+            }
+            </style>
+          <div class="ui grid">
+            <div class="two wide column" style="width: 30%;" class="field">
+              <label>Found Ingredients</label>
+              <textarea rows="8" placeholder="[Ingredients found listed here]" name="found"></textarea>
+            </div>
+            <div class="two wide column" style="width: 30%;">
+              
+          <!-- ADD TO RECIPE BUTTON-->
+          <div class="vertical-center">
+            <ul class="">
+              <form method="post">
+                <button class="ui button green" type="submit">Add to Recipe -></button>
+                {% for food in ingredients %}
+                <input type="checkbox" name="sav_ing" value="{{food}}" />
+                <label> {{food}}</label><br />
+                {% endfor %}
+              </form>
+            </ul>
+          <!-- REMOVE FROM RECIPE BUTTON
+          <div class="vertical-center">
+            <ul class="">
+              <form method="post">
+                <button class="ui button red" type="submit"><- Remove from Recipe</button>
+                {% for food in ingredients %}
+                <input type="checkbox" name="remove_ing" value="{{food}}" />
+                <label> {{food}}</label><br />
+                {% endfor %}
+              </form>
+            </ul> -->
+
+
         </div>
+            </div>
+            <div class="two wide column" style="width: 30%;" class="field">
+              <label>Added to Recipe</label>
+              <textarea rows="8" placeholder="[Ingredients currently in recipe listed here]" name="added"></textarea>
+            </div>
+          </div>
+         
 
           <!--dropdown w/out javascript-->
           <div class="ui compact menu">

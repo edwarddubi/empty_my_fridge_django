@@ -154,17 +154,6 @@ def food_network(db):
 				for food_ingredient in all_ingredients:
 					if food_ingredient == ingredient:
 						found = True
-<<<<<<< HEAD
-						break	
-				if not found:
-					db.child('all_ingredients').update(_ingredient_)
-					c+=1			
-			else:
-				db.child('all_ingredients').set(_ingredient_)
-				c+=1		
-		
-		
-=======
 						break
 			
 			if not found:
@@ -188,4 +177,3 @@ def food_network(db):
 					else:
 						db.child('all_ingredients').set(_ingredient_)
 						c+=1	
->>>>>>> 5fdf59c741778446739a260aedddb073010b2926

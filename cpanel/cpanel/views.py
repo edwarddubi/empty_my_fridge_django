@@ -9,11 +9,8 @@ from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 import json
 from cpanel.model.user import User
-<<<<<<< HEAD
 #import dns
 from validate_email import validate_email
-=======
->>>>>>> 5fdf59c741778446739a260aedddb073010b2926
 from . import food_network
 from cpanel.model.recipes import Recipes
 import time
@@ -484,20 +481,21 @@ def personal_recipes(request):
     if m_user._isNone_():
         return render(request, "login.html") 
     else:
-        #if request.method == "POST":
-        if True:
+        if request.method == "POST":
+        #if True:
             title = request.POST.get("title")
             ingredients = request.POST.get("ingredients")
             description = request.POST.get("description")
             steps = request.POST.get("steps")
 
             userRecipe = {
-            'title': "Applie Pie",
-            'description': "the description",
-            'steps': "step 1, 2, 3",
-            'ingredients': ["apple", "pie crust"],
+            'title': title,
+            'description': description,
+            'steps': steps,
+            'ingredients': ingredients,
             'privacy': 0
             }
+            
             my_recipes = db.child("users").child(uid).child("recipes").get().val()
             if my_recipes:
                 my_recipes.append(userRecipe)
@@ -604,12 +602,8 @@ def fridge(request):
     fridge_ingredients = db.child("users").child(uid).child("Fridge").get().val()
     if fridge_ingredients:
         sorted(fridge_ingredients)
-<<<<<<< HEAD
-    all_ingredients = sorted(db.child("all_ingredients").get().val())
-=======
     if db.child("all_ingredients").get().val():    
         all_ingredients = sorted(db.child("all_ingredients").get().val())
->>>>>>> 5fdf59c741778446739a260aedddb073010b2926
 
     search_ing = request.GET.get('search_ingredients')
    
@@ -619,11 +613,6 @@ def fridge(request):
     if del_food:
         for food in del_food:
             db.child("users").child(uid).child("Fridge").child(food).remove()
-<<<<<<< HEAD
-
-
-=======
->>>>>>> 5fdf59c741778446739a260aedddb073010b2926
 
     if search_ing:
         all_ingredients = [i for i in all_ingredients if search_ing in i]
