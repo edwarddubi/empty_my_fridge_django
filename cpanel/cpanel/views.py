@@ -581,15 +581,9 @@ def fridge(request):
     fridge_ingredients = db.child("users").child(uid).child("Fridge").get().val()
     if fridge_ingredients:
         sorted(fridge_ingredients)
-<<<<<<< HEAD
     if db.child("all_ingredients").get().val():    
         all_ingredients = sorted(db.child("all_ingredients").get().val())
 
-=======
-    all_ingredients = sorted(db.child("all_ingredients").get().val())
-    
-    
->>>>>>> 6388c639e3ca343398a404d416448aeb48b284aa
     search_ing = request.GET.get('search_ingredients')
    
     chk_food = request.POST.getlist('sav_ing')
@@ -598,11 +592,6 @@ def fridge(request):
     if del_food:
         for food in del_food:
             db.child("users").child(uid).child("Fridge").child(food).remove()
-<<<<<<< HEAD
-=======
-
-
->>>>>>> 6388c639e3ca343398a404d416448aeb48b284aa
 
     if search_ing:
         all_ingredients = [i for i in all_ingredients if search_ing in i]
@@ -633,26 +622,13 @@ def fridge(request):
                     new_ingredients[x] = x
 
             db.child("users").child(uid).child("Fridge").set(new_ingredients)
-<<<<<<< HEAD
     
     
-=======
-    
-    
->>>>>>> 6388c639e3ca343398a404d416448aeb48b284aa
     fridge_ingredients = db.child("users").child(uid).child("Fridge").get().val()
     if fridge_ingredients:
         fing_len = fridge_ingredients.__len__
     else:
         fing_len = 0
-<<<<<<< HEAD
-    data = {
-        "user": user
-    }
-    context = {"ingredients": all_ingredients, 'fing': fridge_ingredients, 'fing_amount': fing_len, "data" : data}
-    
-    return render(request, 'fridge.html', context)
-=======
 
 
     if False:#buttonclick
@@ -681,4 +657,3 @@ def fridge(request):
     context = {"ingredients" : all_ingredients, 'fing' : fridge_ingredients, 'fing_amount' : fing_len}
     return render(request, 'fridge.html', context )
     
->>>>>>> 6388c639e3ca343398a404d416448aeb48b284aa
