@@ -540,6 +540,7 @@ def fridge(request):
         return HttpResponseRedirect("/login/")
     else:
         uid = m_user._getUser_Id_()
+        user = m_user._getUser_()
             
     all_ingredients = []
     fridge_ingredients = db.child("users").child(uid).child("Fridge").get().val()
@@ -591,6 +592,9 @@ def fridge(request):
         fing_len = fridge_ingredients.__len__
     else:
         fing_len = 0
+    data = {
+        "user": user
+    }
+    context = {"ingredients": all_ingredients, 'fing': fridge_ingredients, 'fing_amount': fing_len, "data" : data}
     
-    context= {"ingredients" : all_ingredients, 'fing' : fridge_ingredients, 'fing_amount' : fing_len}
-    return render(request, 'fridge.html', context )
+    return render(request, 'fridge.html', context)

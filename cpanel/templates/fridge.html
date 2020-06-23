@@ -33,7 +33,7 @@
       <a onclick="location.href={% url 'home'%}" class="item">
         Home
       </a>
-      <a onclick="location.href={% url 'recipe_page'%}" class="item active">
+      <a onclick="location.href={% url 'recipe_page'%}" class="item">
         Recipes
       </a>
 
@@ -66,13 +66,12 @@
       <!--End of search and filter ui-->
       <div class="right menu">
         <a
-          id="login_btn"
-          style="display: flex;"
-          onclick="location.href={% url 'login'%}"
-          class="item"
-        >
-          My Fridge
-        </a>
+        id="fridge_btn"
+        style="display: flex;"
+        onclick="location.href={% url 'fridge'%}"
+        class="item active">
+        My Fridge
+      </a>
         <div onclick="location.href={% url 'profile'%}" class="item">
           <img
             id="image_profile"
@@ -327,5 +326,14 @@
         </div>
       </div>
     </section>
+   
+    {% if data.user %}
+    <script>
+      document.getElementById("image_profile").src =
+        "https://react.semantic-ui.com/images/avatar/large/matthew.png";
+      document.getElementById("logout_btn").style.display = "flex";
+      document.getElementById("login_btn").style.display = "none";
+    </script>
+    {% endif %}
   </body>
 </html>
