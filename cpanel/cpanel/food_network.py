@@ -36,6 +36,18 @@ def parser(item):
 	if type(item) != str:
 		return
 	parsed_word = ''
+
+	# Removes unnecessary special characters
+	item = item.replace('-', ' ')
+	item = item.replace(':', ' ')
+	item = item.replace(';', ' ')
+	item = item.replace('\'', '')
+	item = item.replace('\"', '')
+	item = item.replace('%', '')
+
+
+
+	# Breaks each word into a string array
 	split_item = item.split(" ")
 	for word in split_item:
 		word = word.lower()
