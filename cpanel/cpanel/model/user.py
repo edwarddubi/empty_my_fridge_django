@@ -42,4 +42,4 @@ class User:
     def _isNone_(self):
         if self.user is None and self.uid is None:
             return True
-        return False                               
+        return False   

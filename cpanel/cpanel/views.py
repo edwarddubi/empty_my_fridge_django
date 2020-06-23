@@ -9,6 +9,11 @@ from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 import json
 from cpanel.model.user import User
+<<<<<<< HEAD
+=======
+#import dns
+from validate_email import validate_email
+>>>>>>> 6388c639e3ca343398a404d416448aeb48b284aa
 from . import food_network
 from cpanel.model.recipes import Recipes
 import time
@@ -576,9 +581,15 @@ def fridge(request):
     fridge_ingredients = db.child("users").child(uid).child("Fridge").get().val()
     if fridge_ingredients:
         sorted(fridge_ingredients)
+<<<<<<< HEAD
     if db.child("all_ingredients").get().val():    
         all_ingredients = sorted(db.child("all_ingredients").get().val())
 
+=======
+    all_ingredients = sorted(db.child("all_ingredients").get().val())
+    
+    
+>>>>>>> 6388c639e3ca343398a404d416448aeb48b284aa
     search_ing = request.GET.get('search_ingredients')
    
     chk_food = request.POST.getlist('sav_ing')
@@ -587,11 +598,18 @@ def fridge(request):
     if del_food:
         for food in del_food:
             db.child("users").child(uid).child("Fridge").child(food).remove()
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 6388c639e3ca343398a404d416448aeb48b284aa
 
     if search_ing:
         all_ingredients = [i for i in all_ingredients if search_ing in i]
         if not all_ingredients:
             all_ingredients = ["No ingredient found"]
+
+
     if chk_food and uid:
         if fridge_ingredients:
             new_ingredients = {}
@@ -615,16 +633,52 @@ def fridge(request):
                     new_ingredients[x] = x
 
             db.child("users").child(uid).child("Fridge").set(new_ingredients)
+<<<<<<< HEAD
     
     
+=======
+    
+    
+>>>>>>> 6388c639e3ca343398a404d416448aeb48b284aa
     fridge_ingredients = db.child("users").child(uid).child("Fridge").get().val()
     if fridge_ingredients:
         fing_len = fridge_ingredients.__len__
     else:
         fing_len = 0
+<<<<<<< HEAD
     data = {
         "user": user
     }
     context = {"ingredients": all_ingredients, 'fing': fridge_ingredients, 'fing_amount': fing_len, "data" : data}
     
     return render(request, 'fridge.html', context)
+=======
+
+
+    if False:#buttonclick
+        all_recipes = db.child("recipe").get().val()
+        lst = []
+        for recipe in all_recipes:
+            recipe_ingredients = db.child("recipe").child(recipe).child("recipe_ingredients").get().val()
+            if set(fridge_ingredients).issubset(set(recipe_ingredients)):
+                    lst.append(db.child("recipe").child(recipe).get())
+        if lst:     
+            data = {
+                    "user": m_user._getUser_(),
+                    "recipes": lst,
+                    "scrollTop": 0,
+                    "keep_scroll_pos": False,
+                    "found_results": True,
+                    "items": len(lst),
+                    "isSearch": True
+                }
+        else:
+            data = None
+        
+        return render(request, 'recipes.html', {"data": data})
+
+    
+    context = {"ingredients" : all_ingredients, 'fing' : fridge_ingredients, 'fing_amount' : fing_len}
+    return render(request, 'fridge.html', context )
+    
+>>>>>>> 6388c639e3ca343398a404d416448aeb48b284aa

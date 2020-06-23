@@ -8,6 +8,7 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css"
     />
   </head>
+  
   <style>
     .ui.inverted.menu {
       background: #642b73; /* fallback for old browsers */
@@ -27,13 +28,21 @@
     <!--Navigation Bar-->
     <div class="ui top inverted secondary fixed menu">
       <div class="item">
+<<<<<<< HEAD
         <h3>Empty My Fridge</h3>
+=======
+        <h3 id = "title">Empty My Fridge</h3>
+>>>>>>> 6388c639e3ca343398a404d416448aeb48b284aa
       </div>
 
       <a onclick="location.href={% url 'home'%}" class="item">
         Home
       </a>
+<<<<<<< HEAD
       <a onclick="location.href={% url 'recipe_page'%}" class="item">
+=======
+      <a onclick="location.href={% url 'recipe_page'%}" class="item active">
+>>>>>>> 6388c639e3ca343398a404d416448aeb48b284aa
         Recipes
       </a>
 
@@ -41,10 +50,17 @@
         <span class="text">Browse</span>
         <i class="dropdown icon"></i>
         <div class="menu inverted">
+<<<<<<< HEAD
           <a class="item" href="{% url 'category' %}?category=pastry">Pastries</a>
           <a class="item" href="{% url 'category' %}?category=main dish">Meals</a>
           <a class="item" href="{% url 'category' %}?category=appetizer">Appetizers</a>
           <a class="item" href="{% url 'category' %}?category=dessert">Dessert</a>
+=======
+          <div class="item">Pastries</div>
+          <div class="item">Meals</div>
+          <div class="item">Appetizers</div>
+          <div class="item">Dessert</div>
+>>>>>>> 6388c639e3ca343398a404d416448aeb48b284aa
         </div>
       </div>
 
@@ -62,6 +78,7 @@
           </div>
           <button id="go" class="ui button white">Go</button>
         </form>
+<<<<<<< HEAD
       </div>
       <!--End of search and filter ui-->
       <div class="right menu">
@@ -101,6 +118,48 @@
     <!--End of Navigation Bar-->
 
     <section style="margin-top: 120px;" id="main" role="main">
+=======
+      </div>
+      <!--End of search and filter ui-->
+      <div class="right menu">
+        <a
+          id="login_btn"
+          style="display: flex;"
+          onclick="location.href={% url 'login'%}"
+          class="item"
+        >
+          My Fridge
+        </a>
+        <div onclick="location.href={% url 'profile'%}" class="item">
+          <img
+            id="image_profile"
+            class="ui avatar image mini"
+            src="https://react.semantic-ui.com/images/wireframe/square-image.png"
+          />
+          <p>{{data.user.name}}</p>
+        </div>
+        <a
+          id="login_btn"
+          style="display: flex;"
+          onclick="location.href={% url 'login'%}"
+          class="item"
+        >
+          Login
+        </a>
+        <a
+          id="logout_btn"
+          style="display: none;"
+          onclick="location.href={% url 'logout'%}"
+          class="item"
+        >
+          Logout
+        </a>
+      </div>
+    </div>
+    <!--End of Navigation Bar-->
+
+    <section style="margin-top: 80px;" id="main" role="main">
+>>>>>>> 6388c639e3ca343398a404d416448aeb48b284aa
       <h1>My Fridge</h1>
       <p class="description">
         Simply add the ingredients you have at home and we'll show you recipes
@@ -109,6 +168,12 @@
         back to it at any time.
       </p>
       <style>
+<<<<<<< HEAD
+=======
+        #main {
+          margin: 30px;
+        }
+>>>>>>> 6388c639e3ca343398a404d416448aeb48b284aa
         .body {
           color: #333;
           font-family: proxima-nova, "Segoe UI", "Droid Sans", "Helvetica Neue",
@@ -129,6 +194,12 @@
           width: 100%;
           display: flex;
         }
+<<<<<<< HEAD
+=======
+        #title{
+          color: white
+        }
+>>>>>>> 6388c639e3ca343398a404d416448aeb48b284aa
         .myfridge_instructions ol li {
           list-style: none;
           display: flex;
@@ -180,6 +251,18 @@
           border-top-right-radius: 4px;
           border-top-left-radius: 4px;
         }
+<<<<<<< HEAD
+=======
+        ul{
+          display: block;
+          list-style-type: disc;
+          margin-block-start: 1em;
+          margin-block-end: 1em;
+          margin-inline-start: 0px;
+          margin-inline-end: 0px;
+          padding-inline-start: 10px;
+        }
+>>>>>>> 6388c639e3ca343398a404d416448aeb48b284aa
         a.fw_button.small_fw_button {
           font-size: 1.4rem;
           padding: 15px 20px;
@@ -199,6 +282,33 @@
         }
         a.fw_button span+.icon path {
           stroke: #642b73;
+<<<<<<< HEAD
+=======
+        }
+        h1, h2, h3, h4, h5, h6 {
+          font-weight: inherit;
+          color: #344c72;
+          margin: 5px 0;
+          display: block;
+          line-height: 1.2em;
+        }
+        h1 {
+          font-size: 3rem;
+          font-family: rockwell-nova,Rockwell,"Hoefler Text",Garamond,Georgia;
+          font-weight: 200;
+        }
+        h3 {
+          font-size: 1.8rem;
+        }
+        h4 {
+          display: block;
+          margin-block-start: 1.33em;
+          margin-block-end: 1.33em;
+          margin-inline-start: 0px;
+          margin-inline-end: 0px;
+          font-weight: bold;
+          font-size: 1.6rem;
+>>>>>>> 6388c639e3ca343398a404d416448aeb48b284aa
       }
       </style>
       <div class="myfridge_instructions">
@@ -247,6 +357,7 @@
                   placeholder="Search.."
                   name="search_ingredients"
                   id="search"
+                  
                 />
                 <button type="submit" id = "search_but" >Search</button>
               </form>
@@ -254,7 +365,12 @@
             <style>
               #search{
                 display: inline-block;
-                width: 85%;
+                width: 80%;
+                border: 2px solid #bdc3c7;
+                color: #344c72;
+                padding: 8px 12px;
+                border-radius: 4px;
+                height: 55px;
               }
               #search_but{
                 display: inline-block;
@@ -262,7 +378,7 @@
             </style>
           </span>
 
-          <ul class="" data-tolist="b" data-fromlist="a">
+          <ul>
             <form method="post">
               <input type="submit" value="Add to Fridge" /><br />
               {% for food in ingredients %}
