@@ -54,10 +54,10 @@
         <span class="text">Browse</span>
         <i class="dropdown icon"></i>
         <div class="menu inverted">
-          <div class="item">Pastries</div>
-          <div class="item">Meals</div>
-          <div class="item">Appetizers</div>
-          <div class="item">Dessert</div>
+          <a class="item" href="{% url 'category' %}?category=pastry">Pastries</a>
+          <a class="item" href="{% url 'category' %}?category=main dish">Meals</a>
+          <a class="item" href="{% url 'category' %}?category=appetizer">Appetizers</a>
+          <a class="item" href="{% url 'category' %}?category=dessert">Dessert</a>
         </div>
       </div>
 

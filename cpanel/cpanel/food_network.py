@@ -214,7 +214,7 @@ def food_network(db):
 			if recipe_cat != None:
 				for cat in recipe_cat:
 					#print(cat.text)
-					category_list.append(cat.text)
+					category_list.append(cat.text.lower())
 			add_to_grand_list.append(category_list)
 
 

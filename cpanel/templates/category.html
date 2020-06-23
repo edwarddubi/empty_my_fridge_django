@@ -75,16 +75,16 @@
         <span class="text">Browse</span>
         <i class="dropdown icon"></i>
         <div class="menu inverted">
-          <div class="item">Pastries</div>
-          <div class="item">Meals</div>
-          <div class="item">Appetizers</div>
-          <div class="item">Dessert</div>
+          <a class="item" href="{% url 'category' %}?category=pastry">Pastries</a>
+          <a class="item" href="{% url 'category' %}?category=main dish">Meals</a>
+          <a class="item" href="{% url 'category' %}?category=appetizer">Appetizers</a>
+          <a class="item" href="{% url 'category' %}?category=dessert">Dessert</a>
         </div>
       </div>
 
       <!--search and filter-->
       <div class="item">
-        <form action="/search_and_filter/" method="post" class="ui form">
+        <form action="/search_and_filter/" method="get" class="ui form">
           <div class="ui icon input">
             <input
               type="text"
@@ -98,13 +98,20 @@
       </div>
       <!--End of search and filter ui-->
       <div class="right menu">
+        <a
+        id="fridge_btn"
+        style="display: flex;"
+        onclick="location.href={% url 'fridge'%}"
+        class="item">
+        My Fridge
+      </a>
         <div onclick="location.href={% url 'profile'%}" class="item">
           <img
             id="image_profile"
             class="ui avatar image mini"
             src="https://react.semantic-ui.com/images/wireframe/square-image.png"
           />
-          <p>{{data.name}}</p>
+          <p>{{data.user.name}}</p>
         </div>
         <a
           id="login_btn"
@@ -124,19 +131,18 @@
         </a>
       </div>
     </div>
-
     <!--End of Navigation Bar-->
 
     <!--Container-->
     <div class="ui container center aligned">
       <!--Recipe Cards-->
-      {% if recipes %}
+      {% if data.recipe_lst %}
       <div
         class="ui grid"
         style="margin-top: 75px; margin-bottom: 75px;"
       >
       <!--column-->
-        {% for recipe in recipes %}
+        {% for recipe in data.recipe_lst %}
         <div class="four wide column">
           <div
             class="ui link card"
@@ -149,9 +155,6 @@
               <a class="header" href="{{recipe.recipe_link}}"
                 >{{recipe.recipe_name}}</a
               >
-              <div class="description">
-                This is where the description will be.
-              </div>
             </div>
             <div class="extra content" bis_skin_checked="1">
               <span class="left floated">
@@ -218,31 +221,29 @@
     <!--Pagination-->
       <div class="pagination">
         <span class="step-links">
-            {% if recipes.has_previous %}
+            {% if data.recipes_lst.has_previous %}
                 <a href="?page=1" title="First" style="border: none; background-color: white; color:#031f3b"><<</a>
                 <a href="?page={{ recipes.previous_page_number }}" style="border: none; background-color: white; color: #031f3b;">Previous</a>
             {% endif %}
     
             <span class="current">
-                {% for num in recipes.paginator.page_range %}
-                  {% if recipes.number == num %}
+                {% for num in data.recipe_lst.paginator.page_range %}
+                  {% if data.recipe_lst.number == num %}
                     <a href="?page={{ num }}" style="background-color: #031f3b; color: white;">{{ num }}</a>
                   {% else %}
                     <a href="?page={{ num }}">{{ num }}</a>
                   {% endif %}
                 {% endfor %}
             </span>
-            {% if recipes.has_next %}
+            {% if data.recipe_lst.has_next %}
                 <a href="?page={{ recipes.next_page_number }}" style="border: none; background-color: white; color:#031f3b">Next</a>
                 <a href="?page={{ recipes.paginator.num_pages }}" title="Last" style="border: none; background-color: white; color:#031f3b">>></a>
             {% endif %}
         </span>
     </div>
     <!--End of Pagination-->
-
-
     
-    {% if data %}
+    {% if data.user %}
     <script>
       document.getElementById("image_profile").src =
         "https://react.semantic-ui.com/images/avatar/large/matthew.png";
