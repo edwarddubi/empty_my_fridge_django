@@ -28,21 +28,13 @@
     <!--Navigation Bar-->
     <div class="ui top inverted secondary fixed menu">
       <div class="item">
-<<<<<<< HEAD
-        <h3>Empty My Fridge</h3>
-=======
         <h3 id = "title">Empty My Fridge</h3>
->>>>>>> 6388c639e3ca343398a404d416448aeb48b284aa
       </div>
 
       <a onclick="location.href={% url 'home'%}" class="item">
         Home
       </a>
-<<<<<<< HEAD
-      <a onclick="location.href={% url 'recipe_page'%}" class="item">
-=======
       <a onclick="location.href={% url 'recipe_page'%}" class="item active">
->>>>>>> 6388c639e3ca343398a404d416448aeb48b284aa
         Recipes
       </a>
 
@@ -50,17 +42,10 @@
         <span class="text">Browse</span>
         <i class="dropdown icon"></i>
         <div class="menu inverted">
-<<<<<<< HEAD
-          <a class="item" href="{% url 'category' %}?category=pastry">Pastries</a>
-          <a class="item" href="{% url 'category' %}?category=main dish">Meals</a>
-          <a class="item" href="{% url 'category' %}?category=appetizer">Appetizers</a>
-          <a class="item" href="{% url 'category' %}?category=dessert">Dessert</a>
-=======
           <div class="item">Pastries</div>
           <div class="item">Meals</div>
           <div class="item">Appetizers</div>
           <div class="item">Dessert</div>
->>>>>>> 6388c639e3ca343398a404d416448aeb48b284aa
         </div>
       </div>
 
@@ -78,47 +63,6 @@
           </div>
           <button id="go" class="ui button white">Go</button>
         </form>
-<<<<<<< HEAD
-      </div>
-      <!--End of search and filter ui-->
-      <div class="right menu">
-        <a
-        id="fridge_btn"
-        style="display: flex;"
-        onclick="location.href={% url 'fridge'%}"
-        class="item active">
-        My Fridge
-      </a>
-        <div onclick="location.href={% url 'profile'%}" class="item">
-          <img
-            id="image_profile"
-            class="ui avatar image mini"
-            src="https://react.semantic-ui.com/images/wireframe/square-image.png"
-          />
-          <p>{{data.user.name}}</p>
-        </div>
-        <a
-          id="login_btn"
-          style="display: flex;"
-          onclick="location.href={% url 'login'%}"
-          class="item"
-        >
-          Login
-        </a>
-        <a
-          id="logout_btn"
-          style="display: none;"
-          onclick="location.href={% url 'logout'%}"
-          class="item"
-        >
-          Logout
-        </a>
-      </div>
-    </div>
-    <!--End of Navigation Bar-->
-
-    <section style="margin-top: 120px;" id="main" role="main">
-=======
       </div>
       <!--End of search and filter ui-->
       <div class="right menu">
@@ -159,7 +103,6 @@
     <!--End of Navigation Bar-->
 
     <section style="margin-top: 80px;" id="main" role="main">
->>>>>>> 6388c639e3ca343398a404d416448aeb48b284aa
       <h1>My Fridge</h1>
       <p class="description">
         Simply add the ingredients you have at home and we'll show you recipes
@@ -168,12 +111,9 @@
         back to it at any time.
       </p>
       <style>
-<<<<<<< HEAD
-=======
         #main {
           margin: 30px;
         }
->>>>>>> 6388c639e3ca343398a404d416448aeb48b284aa
         .body {
           color: #333;
           font-family: proxima-nova, "Segoe UI", "Droid Sans", "Helvetica Neue",
@@ -194,12 +134,9 @@
           width: 100%;
           display: flex;
         }
-<<<<<<< HEAD
-=======
         #title{
           color: white
         }
->>>>>>> 6388c639e3ca343398a404d416448aeb48b284aa
         .myfridge_instructions ol li {
           list-style: none;
           display: flex;
@@ -251,8 +188,6 @@
           border-top-right-radius: 4px;
           border-top-left-radius: 4px;
         }
-<<<<<<< HEAD
-=======
         ul{
           display: block;
           list-style-type: disc;
@@ -262,7 +197,6 @@
           margin-inline-end: 0px;
           padding-inline-start: 10px;
         }
->>>>>>> 6388c639e3ca343398a404d416448aeb48b284aa
         a.fw_button.small_fw_button {
           font-size: 1.4rem;
           padding: 15px 20px;
@@ -282,8 +216,6 @@
         }
         a.fw_button span+.icon path {
           stroke: #642b73;
-<<<<<<< HEAD
-=======
         }
         h1, h2, h3, h4, h5, h6 {
           font-weight: inherit;
@@ -308,7 +240,6 @@
           margin-inline-end: 0px;
           font-weight: bold;
           font-size: 1.6rem;
->>>>>>> 6388c639e3ca343398a404d416448aeb48b284aa
       }
       </style>
       <div class="myfridge_instructions">
