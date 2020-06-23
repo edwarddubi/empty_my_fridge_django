@@ -8,10 +8,38 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css"
     />
   </head>
+  <style>
+    .ui.inverted.menu {
+      background: #642b73; /* fallback for old browsers */
+      background: -webkit-linear-gradient(
+        to right,
+        #c6426e,
+        #642b73
+      ); /* Chrome 10-25, Safari 5.1-6 */
+      background: linear-gradient(
+        to right,
+        #c6426e,
+        #642b73
+      ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    }
+    .ui.inverted.segment {
+      background: #642b73; /* fallback for old browsers */
+      background: -webkit-linear-gradient(
+        to right,
+        #c6426e,
+        #642b73
+      ); /* Chrome 10-25, Safari 5.1-6 */
+      background: linear-gradient(
+        to right,
+        #c6426e,
+        #642b73
+      ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    }
+  </style>
   <body>
     {% csrf_token %}
     <!--Navigation Bar-->
-    <div class="ui pointing inverted top fixed menu">
+    <div class="ui secondary inverted top fixed menu">
       <div class="item">
         <h3>Empty My Fridge</h3>
       </div>
@@ -19,7 +47,7 @@
       <a onclick="location.href={% url 'home'%}" class="item">
         Home
       </a>
-      <a class="item">
+      <a onclick="location.href={% url 'recipe_page'%}" class="item">
         Recipes
       </a>
       <div class="ui link dropdown simple item">
@@ -33,13 +61,30 @@
         </div>
       </div>
 
+      <!--search and filter-->
       <div class="item">
-        <div class="ui icon input">
-          <input type="text" placeholder="Search for recipes..." />
-          <i class="search icon"></i>
-        </div>
+        <form action="/search_and_filter/" method="get" class="ui form">
+          <div class="ui icon input">
+            <input
+              type="text"
+              name="recipe_to_filter"
+              placeholder="Search for recipes..."
+            />
+            <i class="search icon"></i>
+          </div>
+          <button class="ui button white">Go</button>
+        </form>
       </div>
+      <!--End of search and filter ui-->
       <div class="right menu">
+        <a
+        id="login_btn"
+        style="display: flex;"
+        onclick="location.href={% url 'fridge'%}"
+        class="item"
+      >
+        My Fridge
+      </a>
         <div onclick="location.href={% url 'profile'%}" class="item active">
           <img
             id="image_profile"
@@ -80,10 +125,10 @@
         <a class="item">
           Friends
         </a>
-        <a class="item">
+        <a onclick="location.href={% url 'favorite_recipes'%}" class="item">
           My Favorite Recipes
         </a>
-        <a class="item">
+        <a onclick="location.href={% url 'recipes'%}" class="item">
           Personal Recipes
         </a>
 

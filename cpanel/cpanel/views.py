@@ -9,9 +9,15 @@ from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 import json
 from cpanel.model.user import User
+<<<<<<< HEAD
+#import dns
 from validate_email import validate_email
+=======
+>>>>>>> 5fdf59c741778446739a260aedddb073010b2926
 from . import food_network
 from cpanel.model.recipes import Recipes
+import time
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 firebase = pyrebase.initialize_app(config.myConfig())
 
@@ -20,30 +26,275 @@ db = firebase.database()
 m_user = User()
 recipes = Recipes()
 
+# Home Page
+
 
 @csrf_exempt
 def home(request):
+    if m_user._isNone_():
+        return render(request, 'home.html')
+    else:
+        user = m_user._getUser_()
+        data = {
+            "user": user,
+        }
+        return render(request, 'home.html', {"data": data})
+
+# get all recipes
+
+
+def get_all_recipes():
     admin = db.child("admin").child("UPLwshBH98OmbVivV").get().val()
-    if admin["scrape"]:
-        db.child("recipe").remove()
-        food_network.food_network()
-        scrape_db_population = False
-        db.child("admin").child("UPLwshBH98OmbVivV").child("scrape").set(scrape_db_population)
+    if admin != None:
+        if admin["scrape"]:
+            db.child('all_ingredients').remove()
+            food_network.food_network(db)
+            scrape_and_populate_db = False
+            db.child("admin").child("UPLwshBH98OmbVivV").child(
+                "scrape").set(scrape_and_populate_db)
+    else:
+        scrape = {
+            "scrape": False,
+        }
+        db.child("admin").child("UPLwshBH98OmbVivV").set(scrape)
 
     all_recipes = db.child("recipe").get()
+
     recipe_list = []
-    for recipe in all_recipes.each():
-        recipe_details = dict(recipe.val())
-        recipe_list.append(recipe_details)
+    if all_recipes.each() != None:
+        for recipe in all_recipes.each():
+            key = str(recipe.key())
+            _recipe_ = get_recipe(dict(recipe.val()), key)
+            recipe_list.append(_recipe_)
 
-    recipes.set_all_recipes(recipe_list)    
-    if m_user._isNone_():
-        return render(request, 'home.html', {"recipes": recipe_list})
+    recipes.set_all_recipes(recipe_list)
+
+# get all filtered recipes
+
+
+def get_all_filtered_recipes():
+    recipe_list = []
+    word = recipes.get_recipe_name_to_find()
+    all_recipes = db.child("recipe").get()
+    if all_recipes.each() != None:
+        for recipe in all_recipes.each():
+            if recipe.val()["recipe_name"].lower().find(word.lower()) != -1:
+                key = str(recipe.key())
+                _recipe_ = get_recipe(dict(recipe.val()), key)
+                recipe_list.append(_recipe_)
+    return recipe_list
+
+# get individual recipe as Json
+
+
+def get_recipe(recipe, key):
+    num_of_stars = 0
+    favorite = False
+    no_user_signed_in = True
+    stars = db.child("recipe").child(key).child("stars").get().val()
+    if stars != None:
+        num_of_stars = len(stars.items())
+    if not m_user._isNone_():
+        no_user_signed_in = False
+        uid = m_user._getUser_Id_()
+        favorite = db.child("recipe").child(key).child(
+            "stars").child(uid).get().val() != None
+    recipe["recipe_id"] = key
+    recipe["user_saved"] = favorite
+    recipe["likes"] = num_of_stars
+    recipe["no_user_signed_in"] = no_user_signed_in
+
+    return recipe
+
+# Recipe Page
+
+
+@csrf_exempt
+def recipe_page(request):
+    recipes.set_is_searched_for_recipes(False)
+    recipes.set_recipe_name_to_find(None)
+    navigate_to_recipe_page = "/recipe_list/"
+    navigate_to_recipe_page += "?page=1"
+    return HttpResponseRedirect(navigate_to_recipe_page)
+
+
+@csrf_exempt
+def recipe_list(request):
+    found_results = False
+    isSearch = False
+    all_recipes = []
+    if recipes.get_is_searched_for_recipes():
+        all_recipes = get_all_filtered_recipes()
+        isSearch = True
+        recipes.set_is_searched_for_recipes(False)
+        if len(all_recipes) != 0:
+            found_results = True
     else:
-        user_details = m_user._getUser_()
-        return render(request, 'home.html', {"data": user_details, "recipes": recipe_list})
+        if recipes.get_all_recipes() != None:
+            all_recipes = recipes.get_all_recipes()
+        else:
+            get_all_recipes()
+            all_recipes = recipes.get_all_recipes()
+    scrollTop = 0
+    keep_scroll_pos = False
+    if recipes.get_is_recipe_liked():
+        scrollTop = recipes.get_recipe_list_position()
+        recipes.set_is_recipe_liked(False)
+        keep_scroll_pos = True
+
+    paginator = Paginator(all_recipes, 48)
+    page = request.GET.get('page')
+    recipes.set_recipes_current_page(page)
+
+    try:
+        curr_recipes = paginator.page(page)
+    except PageNotAnInteger:
+        curr_recipes = paginator.page(1)
+    except EmptyPage:
+        curr_recipes = paginator.page(paginator.num_pages)
+
+    if m_user._isNone_():
+        data = {
+            "recipes": curr_recipes,
+            "scrollTop": scrollTop,
+            "found_results": found_results,
+            "items": len(curr_recipes),
+            "isSearch": isSearch,
+
+        }
+        return render(request, 'recipes.html', {"data": data})
+    else:
+        _user_ = m_user._getUser_()
+        data = {
+            "user": _user_,
+            "recipes": curr_recipes,
+            "scrollTop": scrollTop,
+            "keep_scroll_pos": keep_scroll_pos,
+            "found_results": found_results,
+            "items": len(curr_recipes),
+            "isSearch": isSearch
+
+        }
+        return render(request, 'recipes.html', {"data": data})
 
 
+def get_category(category):
+    all_recipes = get_all_recipes()
+    filtered_recipes = []
+
+    return all_recipes
+
+
+@csrf_exempt
+def caterory_page(request):
+    found_results = False
+    isSearch = False
+    if recipes.get_is_searched_for_recipes():
+        all_recipes = get_all_filtered_recipes()
+        isSearch = True
+        recipes.set_is_searched_for_recipes(False)
+        if len(all_recipes) == 0:
+            all_recipes = get_all_recipes()
+        else:
+            found_results = True
+
+    else:
+        category_recipes = get_category('Dessert')
+    scrollTop = 0
+    keep_scroll_pos = False
+    if recipes.get_is_recipe_liked():
+        scrollTop = recipes.get_recipe_list_position()
+        recipes.set_is_recipe_liked(False)
+        keep_scroll_pos = True
+
+    paginator = Paginator(category_recipes, 50)
+    page = request.GET.get('page')
+
+    try:
+        curr_recipes = paginator.page(page)
+    except PageNotAnInteger:
+        curr_recipes = paginator.page(1)
+    except EmptyPage:
+        curr_recipes = paginator.page(paginator.num_pages)
+
+    if m_user._isNone_():
+        data = {
+            "recipes": curr_recipes,
+            "scrollTop": scrollTop,
+            "found_results": found_results,
+            "items": len(curr_recipes),
+            "isSearch": isSearch,
+
+        }
+        return render(request, 'recipes.html', {"data": data})
+    else:
+        _user_ = m_user._getUser_()
+        data = {
+            "user": _user_,
+            "recipes": curr_recipes,
+            "scrollTop": scrollTop,
+            "keep_scroll_pos": keep_scroll_pos,
+            "found_results": found_results,
+            "items": len(curr_recipes),
+            "isSearch": isSearch
+
+        }
+        return render(request, 'recipes.html', {"data": data})
+
+# Search Page
+@csrf_exempt
+def search(request):
+    if request.method == "GET":
+        recipe_name_to_find = request.GET.get("recipe_to_filter")
+        if len(recipe_name_to_find) > 0:
+            recipes.set_recipe_name_to_find(recipe_name_to_find)
+            recipes.set_is_searched_for_recipes(True)
+        navigate_to_recipe_page = "/recipe_list/"
+        navigate_to_recipe_page += "?page=" + recipes.get_recipes_current_page()
+    return HttpResponseRedirect(navigate_to_recipe_page)
+
+
+# Actions (Recipe onClick)
+@csrf_exempt
+def fav_recipe_onClick(request):
+    if m_user._isNone_():
+        return HttpResponseRedirect("/login/")
+    else:
+        if request.method == "POST":
+            uid = m_user._getUser_Id_()
+            recipe_id = request.POST.get("recipe_id")
+            navigate = request.POST.get("navigate")
+            scrollTop = request.POST.get("scroll_y")
+            isSearch = request.POST.get("isSearch")
+
+            if isSearch == "True":
+                recipes.set_is_searched_for_recipes(True)
+            recipes.set_recipe_list_position(scrollTop)
+            recipes.set_is_recipe_liked(True)
+            recipes.set_recipe_liked(recipe_id)
+            today = date.today()
+            time_now = time.time()
+            time_liked = {
+                "time": time_now,
+            }
+            _recipe_data_ = db.child("user_fav_recipes").child(
+                uid).child(recipe_id).get().val()
+            if _recipe_data_ != None:
+                db.child("user_fav_recipes").child(
+                    uid).child(recipe_id).remove()
+                db.child("recipe").child(recipe_id).child(
+                    "stars").child(uid).remove()
+            else:
+                db.child("user_fav_recipes").child(
+                    uid).child(recipe_id).set(time_liked)
+                db.child("recipe").child(recipe_id).child(
+                    "stars").child(uid).set(time_liked)
+            if navigate == "/recipe_list/":
+                navigate += "?page=" + recipes.get_recipes_current_page()
+            return HttpResponseRedirect(navigate)
+
+
+##Authentication (Login and Register)
 @csrf_exempt
 def login(request):
     return render(request, 'login.html')
@@ -56,7 +307,7 @@ def _login_(request):
         password = request.GET.get('pass')
         try:
             user = auth_fb.sign_in_with_email_and_password(email, password)
-            if user is not None:
+            if user != None:
                 uid = user["localId"]
                 _user_ = db.child("users").child(uid).get().val()
                 m_user._setUser_Id_(uid)
@@ -72,12 +323,18 @@ def _login_(request):
             error = response.json()['error']
             print(error['message'])
             msg = error_message(error['message'])
-            return render(request, "login.html", {"data": msg})
+            data = {
+                "message": msg
+            }
+            return render(request, "login.html", {"data": data})
     try:
         if request.session['token_id'] is not None:
-            return render(request, "home.html", {"data": user_details, "recipes": recipes.get_all_recipes()})
+            data = {
+                "user": user_details
+            }
+            return render(request, "home.html", {"data": data})
     except KeyError:
-        return render(request, "login.html")
+        return HttpResponseRedirect("/login/")
 
 
 @csrf_exempt
@@ -91,15 +348,19 @@ def _register_(request):
         email = request.POST.get('email')
         password = request.POST.get('pass')
         name = request.POST.get('name')
+        #is_email_valid = validate_email(email_address=email, check_regex=True, check_mx=True, from_address='my@from.addr.ess',helo_host='my.host.name', smtp_timeout=10, dns_timeout=10, use_blacklist=True, debug=True)
         #is_email_valid = validate_email(email, verify=True)
         is_email_valid = True #validate_email(email, verify=True)
         if is_email_valid:
             register_user(request, email, password, name)
         else:
             msg = error_message("WRONG_EMAIL")
-            return render(request, "register.html", {"data": msg})
+            data = {
+                "message": msg
+            }
+            return render(request, "register.html", {"data": data})
 
-    return render(request, "login.html")
+    return HttpResponseRedirect("/login/")
 
 
 def register_user(request, email, password, name):
@@ -111,7 +372,7 @@ def register_user(request, email, password, name):
         index_of_at = email.find("@")
         username = email[:index_of_at]
         today = date.today()
-        joined = today.strftime("%B %d, %y")
+        joined = today.strftime("%B %d, %Y")
 
         userData = {
             'name': name,
@@ -127,27 +388,39 @@ def register_user(request, email, password, name):
         response = e.args[0].response
         error = response.json()['error']
         msg = error_message(error['message'])
-        return render(request, "register.html", {"data": msg})
+        data = {
+            "message": msg
+        }
+        return render(request, "register.html", {"data": data})
+
+# Profile Page (Profile--about me, Edit Profile and Save new profile information, Account Settings, Recover Password, User Favorite Recipes)
+
+# Profile Page (Profile--about me, Edit Profile and Save new profile information, Account Settings, Recover Password, User Favorite Recipes)
 
 
 @csrf_exempt
 def profile(request):
     if m_user._isNone_():
-        return render(request, "login.html")
+        return HttpResponseRedirect("/login/")
     else:
         uid = m_user._getUser_Id_()
         user = db.child("users").child(uid).get().val()
         user_details = dict(user)
         m_user._setUser_(user_details)
-        return render(request, "profile.html", {"data": user_details})
+        data = {
+            "user": user_details
+        }
+        return render(request, "profile.html", {"data": data})
+
 
 @csrf_exempt
 def edit_profile(request):
     if m_user._isNone_():
-        return render(request, "login.html")  
+        return HttpResponseRedirect("/login/")
     else:
         user_details = m_user._getUser_()
         return render(request, 'edit_profile.html', {"data": user_details})
+
 
 @csrf_exempt
 def save_profile(request):
@@ -156,7 +429,7 @@ def save_profile(request):
     msg = error_message("err")
     msg_type = "error"
     if m_user._isNone_():
-        return render(request, "login.html") 
+        return HttpResponseRedirect("/login/")
     else:
         if request.method == "POST":
             name = request.POST.get("name")
@@ -181,7 +454,8 @@ def save_profile(request):
             except Exception as e:
                 pass
 
-    return render(request, 'edit_profile.html', {"data": user_details, "message": msg, "msg_type" : msg_type})
+    return render(request, 'edit_profile.html', {"data": user_details, "message": msg, "msg_type": msg_type})
+
 
 
 @csrf_exempt
@@ -240,10 +514,11 @@ def personal_recipes(request):
 @csrf_exempt
 def account_settings(request):
     if m_user._isNone_():
-        return render(request, "login.html")
+        return HttpResponseRedirect("/login/")
     else:
         user_details = m_user._getUser_()
         return render(request, 'account_settings.html', {"data": user_details})
+
 
 @csrf_exempt
 def recover_password(request):
@@ -252,7 +527,7 @@ def recover_password(request):
     msg = error_message("err")
     msg_type = "error"
     if m_user._isNone_():
-        return render(request, "login.html") 
+        return HttpResponseRedirect("/login/")
     else:
         if request.method == "POST":
             email = request.POST.get("email")
@@ -261,17 +536,36 @@ def recover_password(request):
                 msg = "A password recovery link has been sent to your email."
                 msg_type = "success"
             except Exception as e:
-                print(e)    
+                print(e)
 
-    return render(request, 'account_settings.html', {"data": user_details, "message": msg, "msg_type" : msg_type})
-
+    return render(request, 'account_settings.html', {"data": user_details, "message": msg, "msg_type": msg_type})
 
 
 @csrf_exempt
-def _profile_(request):
-    return render(request, "settings")
+def user_fav_recipes(request):
+    if m_user._isNone_():
+        return HttpResponseRedirect("/login/")
+    else:
+        user_details = m_user._getUser_()
+        uid = m_user._getUser_Id_()
+        fav_recipes_list = []
+        fav_recipes = db.child("user_fav_recipes").child(uid).get()
+        num_of_fav_recipes = 0
+        if fav_recipes.each() != None:
+            for recipe in fav_recipes.each():
+                _key_ = str(recipe.key())
+                user_fav_recipe = db.child("recipe").child(_key_).get().val()
+                recipe_details = dict(user_fav_recipe)
+                recipe_details["user_saved"] = True
+                recipe_details["recipe_id"] = _key_
+                fav_recipes_list.append(recipe_details)
+
+        num_of_fav_recipes = len(fav_recipes_list)
+
+        return render(request, 'user_fav_recipes.html', {"data": user_details, "fav_recipes": fav_recipes_list, "num_of_fav_recipes": num_of_fav_recipes})
 
 
+# User Error Messages Display
 def error_message(type):
     return {
         "EMAIL_EXISTS": "This email is already in use. Try a different email!",
@@ -283,7 +577,7 @@ def error_message(type):
 
     }.get(type, "An unknown error has occurred")
 
-
+# logOut
 @csrf_exempt
 def _logout_(request):
     m_user._setUser_(None)
@@ -295,4 +589,76 @@ def _logout_(request):
         auth.logout(request)
     except KeyError:
         pass
-    return render(request, "login.html")
+    return HttpResponseRedirect("/login/")
+
+@csrf_exempt
+def fridge(request):
+    uid = None
+    if m_user._isNone_():
+        fridge_ingredients = None
+        return HttpResponseRedirect("/login/")
+    else:
+        uid = m_user._getUser_Id_()
+            
+    all_ingredients = []
+    fridge_ingredients = db.child("users").child(uid).child("Fridge").get().val()
+    if fridge_ingredients:
+        sorted(fridge_ingredients)
+<<<<<<< HEAD
+    all_ingredients = sorted(db.child("all_ingredients").get().val())
+=======
+    if db.child("all_ingredients").get().val():    
+        all_ingredients = sorted(db.child("all_ingredients").get().val())
+>>>>>>> 5fdf59c741778446739a260aedddb073010b2926
+
+    search_ing = request.GET.get('search_ingredients')
+   
+    chk_food = request.POST.getlist('sav_ing')
+    del_food = request.POST.getlist('del_ing')
+    
+    if del_food:
+        for food in del_food:
+            db.child("users").child(uid).child("Fridge").child(food).remove()
+<<<<<<< HEAD
+
+
+=======
+>>>>>>> 5fdf59c741778446739a260aedddb073010b2926
+
+    if search_ing:
+        all_ingredients = [i for i in all_ingredients if search_ing in i]
+        if not all_ingredients:
+            all_ingredients = ["No ingredient found"]
+    if chk_food and uid:
+        if fridge_ingredients:
+            new_ingredients = {}
+            if (isinstance(chk_food, str)):
+                if chk_food in fridge_ingredients:
+                    disj = []
+                else:
+                    new_ingredients[chk_food] = chk_food
+            else:
+                disj = list(set(chk_food)-set(fridge_ingredients))
+                for x in disj:
+                    new_ingredients[x] =x
+                db.child("users").child(uid).child("Fridge").update(new_ingredients)
+
+        else:
+            if (isinstance(chk_food, str)):
+                new_ingredients = {chk_food : chk_food}
+            else:
+                new_ingredients= {}
+                for x in chk_food:
+                    new_ingredients[x] = x
+
+            db.child("users").child(uid).child("Fridge").set(new_ingredients)
+    
+    
+    fridge_ingredients = db.child("users").child(uid).child("Fridge").get().val()
+    if fridge_ingredients:
+        fing_len = fridge_ingredients.__len__
+    else:
+        fing_len = 0
+    
+    context= {"ingredients" : all_ingredients, 'fing' : fridge_ingredients, 'fing_amount' : fing_len}
+    return render(request, 'fridge.html', context )

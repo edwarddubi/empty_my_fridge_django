@@ -14,10 +14,6 @@ BeautifulSoup
 
 Semantic Ui or fomantic Ui css (currently, Semantic Ui)
 
-Validate Email
-
-Py3DNS
-
 ## Templates
 
 - HTML, CSS, and JS
@@ -66,10 +62,6 @@ pip install Django==3.0.7
 pip install pyrebase
 
 pip install beautifulsoup4
-
-pip install validate_email
-
-pip install py3DNS
 
 ## Get Firebase Database Config file Set up
 

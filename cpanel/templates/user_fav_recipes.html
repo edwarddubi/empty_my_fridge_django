@@ -36,6 +36,10 @@
         #642b73
       ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
     }
+    .center {
+      margin: auto;
+      width: 50%;
+    }
   </style>
 
   <body>
@@ -90,9 +94,9 @@
           <img
             id="image_profile"
             class="ui avatar image mini"
-            src="{{data.user.image}}"
+            src="{{data.image}}"
           />
-          <p id="hi_name">{{data.user.name}}</p>
+          <p id="hi_name">{{data.name}}</p>
         </div>
         <a onclick="location.href={% url 'logout'%}" class="item">
           Logout
@@ -111,7 +115,7 @@
           src="{{data.image}}"
         />
         <div style="margin-left: 5px; margin-top: 15%;">
-          <h2 style="color: bisque;">{{data.user.name}}</h2>
+          <h2 style="color: bisque;">{{data.name}}</h2>
         </div>
       </div>
     </div>
@@ -120,16 +124,19 @@
 
     <div class="ui container" style="margin-top: 20px; margin-bottom: 250px;">
       <div class="ui pointing menu">
-        <a class="active item">
+        <a onclick="location.href={% url 'profile'%}" class="item">
           About Me
         </a>
         <a class="item">
           Friends
         </a>
-        <a onclick="location.href={% url 'favorite_recipes'%}" class="item">
+        <a
+          onclick="location.href={% url 'favorite_recipes'%}"
+          class="item active"
+        >
           My Favorite Recipes
         </a>
-        <a onclick="location.href={% url 'personal_recipes'%}" class="item">
+        <a class="item">
           Personal Recipes
         </a>
 
@@ -142,48 +149,89 @@
           </a>
         </div>
       </div>
-      <div style="margin-bottom: 50px;" class="ui raised segment">
-        <div class="ui form">
-          <div style="width: 30%;" class="field">
-            <label>Full Name</label>
-            <input value="{{data.user.name}}" readonly="" type="text" />
-          </div>
-          <div style="width: 30%;" class="field">
-            <label>Username</label>
-            <input value="@{{data.user.username}}" readonly="" type="text" />
-          </div>
-          {% if data.user.bio %}
-          <div style="width: 30%;" class="field">
-            <label>Bio</label>
-            <textarea readonly="" rows="3">{{data.user.bio}}</textarea>
+
+      <!--favorite list card-->
+      <div
+        style="margin-bottom: 50px; padding: 20px;"
+        class="ui raised segment"
+      >
+        {% if fav_recipes %} {% if num_of_fav_recipes == 1 %}
+        <p>
+          List of all Your Favorite Recipes ({{num_of_fav_recipes}} Item)
+        </p>
+        {% else %}
+        <p>
+          List of all Your Favorite Recipes ({{num_of_fav_recipes}} Items)
+        </p>
+        {% endif %}
+        <div class="ui container center aligned">
+          <div class="ui grid" style="margin-top: 15px; margin-bottom: 75px;">
+            {% for recipe in fav_recipes %}
+            <div class="four wide column">
+              <div
+                class="ui link card"
+                style="width: 300px; height: 325px;"
+              >
+                <a class="ui medium image">
+                  <img src="{{recipe.recipe_image}}" />
+                </a>
+                <div class="content" style="text-align: center;">
+                  <a class="header" href="{{recipe.recipe_link}}"
+                    >{{recipe.recipe_name}}</a
+                  >
+                </div>
+                <div class="extra content" bis_skin_checked="1">
+                  <form
+                    action="/fav_recipe_onclick/"
+                    method="post"
+                    class="ui form"
+                  >
+                    <span class="right floated star">
+                      <input
+                        style="display: none;"
+                        name="recipe_id"
+                        value="{{recipe.recipe_id}}"
+                      />
+                      <input
+                        style="display: none;"
+                        name="navigate"
+                        value="/favorite_recipes/"
+                      />
+                      {% if recipe.user_saved %}
+                      <button
+                        class="ui icon button"
+                        data-tooltip="Remove this from your Favorite Recipes"
+                      >
+                        <i class="star icon yellow"></i>
+                      </button>
+
+                      {% else %}
+                      <button
+                        class="ui icon button"
+                        data-tooltip="Add this to your Favorite Recipes"
+                      >
+                        <i class="star icon"></i>
+                      </button>
+
+                      {% endif %}
+                    </span>
+                  </form>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
           </div>
           {% else %}
-          <div style="width: 30%;" class="field">
-            <label>Bio</label>
-            <textarea readonly="" rows="3">I am new here</textarea>
-          </div>
-          {% endif %} 
-          {% if data.user.country %}
-          <div style="width: 60%;" class="two fields">
-            <div class="field">
-              <label>Country</label>
-              <input value="{{data.user.country}}" readonly="" type="text" />
-            </div>
-            <div class="field">
-              <label>State</label>
-              <input value="{{data.user.state}}" readonly="" type="text" />
-            </div>
-          </div>
+          <h2 style="padding: 100px;">
+            Your Favorite Recipe List is Empty. Try adding a few.
+          </h2>
           {% endif %}
-          {% if data.user.blog %}
-          <a href="{{data.user.blog}}">Personal Blog</a>
-          {% endif %}
-          <p>Joined: {{data.user.joined}}</p>
         </div>
       </div>
+      <!--end of favorite list card-->
     </div>
 
-    {% if data.user %}
+    {% if data %}
     <script>
       //document.getElementById("hi_name").innerHTML = {{data.name}};
       document.getElementById("user_image").src =
