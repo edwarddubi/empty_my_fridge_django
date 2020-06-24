@@ -192,13 +192,14 @@ def category(request):
 
     if not m_user._isNone_():
         user = m_user._getUser_()
-    
+
     data = {
         "user": user,
         "recipe_lst": curr_recipes
     }
 
     return render(request, 'category.html', {"data": data})
+
 
 def get_recipes_by_category(category):
     all_recipes = db.child('recipe').get()
@@ -215,6 +216,7 @@ def get_recipes_by_category(category):
         except KeyError:
             pass
     return recipe_lst
+
 
 def get_recipes_by_ingredients(ingredient):
     all_recipes = db.child('recipe').get()
@@ -259,13 +261,13 @@ def get_recipes_by_category_ingredients(request):
 
     if not m_user._isNone_():
         user = m_user._getUser_()
-    
+
     data = {
         "user": user,
         "recipe_lst": curr_recipes
     }
-        
-    return render(request, 'category.html', {"data":data})
+
+    return render(request, 'category.html', {"data": data})
 
 
 # Search Page
@@ -377,7 +379,7 @@ def _register_(request):
         name = request.POST.get('name')
         #is_email_valid = validate_email(email_address=email, check_regex=True, check_mx=True, from_address='my@from.addr.ess',helo_host='my.host.name', smtp_timeout=10, dns_timeout=10, use_blacklist=True, debug=True)
         #is_email_valid = validate_email(email, verify=True)
-        is_email_valid = True #validate_email(email, verify=True)
+        is_email_valid = True  # validate_email(email, verify=True)
         if is_email_valid:
             register_user(request, email, password, name)
         else:
@@ -450,6 +452,61 @@ def edit_profile(request):
 
 
 @csrf_exempt
+def personal_recipes(request):
+    if m_user._isNone_():
+        return render(request, "login.html")
+    else:
+        chk_ingredients = request.POST.getlist('sav_ing')
+        all_ingredients = db.child("all_ingredients").get().val()
+        search_ing = request.GET.get('search_ingredients')
+        print("search_ingredients: ")
+        print(search_ing)
+
+        if search_ing:
+            all_ingredients = [i for i in all_ingredients if search_ing in i]
+            if not all_ingredients:
+                all_ingredients = ["No ingredient found"]
+        # research live ingredients
+        recipe_details = None
+        msg = None
+        msg_type = None
+        user = m_user._getUser_()
+        uid = m_user._getUser_Id_()
+        if request.method == "POST":
+            title = request.POST.get("title")
+            ingredients = request.POST.get("ingredients")
+            description = request.POST.get("description")
+            steps = request.POST.get("steps")
+
+            userRecipe = {
+                'title': title,
+                    'description': description,
+                    'steps': steps,
+                    'ingredients': ingredients,
+                    'privacy': 0
+                }
+            try:
+                db.child("users").child(uid).child("recipes").push(userRecipe)
+                my_recipes = db.child("users").child(uid).child("recipes").get()
+                #print(dict(my_recipes.each()))
+                msg = "Your new recipe is saved successfully."
+                msg_type = "success"
+            except:
+                msg = "An Error occurred."
+                msg_type = "error"
+
+                #context = {"ingredients": all_ingredients}
+        data = {
+            "user": user,
+            "message": msg,
+            "msg_type": msg_type,
+            "ingredients": all_ingredients,
+
+        }
+        return render(request, 'personal_recipes.html', {"data": data})
+
+
+@csrf_exempt
 def save_profile(request):
     user_details = m_user._getUser_()
     uid = m_user._getUser_Id_()
@@ -519,7 +576,7 @@ def user_fav_recipes(request):
     if m_user._isNone_():
         return HttpResponseRedirect("/login/")
     else:
-        user_details = m_user._getUser_()
+        user = m_user._getUser_()
         uid = m_user._getUser_Id_()
         fav_recipes_list = []
         fav_recipes = db.child("user_fav_recipes").child(uid).get()
@@ -528,14 +585,20 @@ def user_fav_recipes(request):
             for recipe in fav_recipes.each():
                 _key_ = str(recipe.key())
                 user_fav_recipe = db.child("recipe").child(_key_).get().val()
-                recipe_details = dict(user_fav_recipe)
-                recipe_details["user_saved"] = True
-                recipe_details["recipe_id"] = _key_
-                fav_recipes_list.append(recipe_details)
+                if user_fav_recipe:
+                    recipe_details = dict(user_fav_recipe)
+                    recipe_details["user_saved"] = True
+                    recipe_details["recipe_id"] = _key_
+                    fav_recipes_list.append(recipe_details)
 
         num_of_fav_recipes = len(fav_recipes_list)
+        data = {
+            "user": user,
+            "fav_recipes": fav_recipes_list,
+            "num_of_fav_recipes": num_of_fav_recipes,
+        }
 
-        return render(request, 'user_fav_recipes.html', {"data": user_details, "fav_recipes": fav_recipes_list, "num_of_fav_recipes": num_of_fav_recipes})
+        return render(request, 'user_fav_recipes.html', {"data": data})
 
 
 # User Error Messages Display
@@ -551,6 +614,8 @@ def error_message(type):
     }.get(type, "An unknown error has occurred")
 
 # logOut
+
+
 @csrf_exempt
 def _logout_(request):
     m_user._setUser_(None)
@@ -563,6 +628,7 @@ def _logout_(request):
     except KeyError:
         pass
     return HttpResponseRedirect("/login/")
+
 
 @csrf_exempt
 def fridge(request):
@@ -583,7 +649,7 @@ def fridge(request):
    
     chk_food = request.POST.getlist('sav_ing')
     del_food = request.POST.getlist('del_ing')
-    
+
     if del_food:
         for food in del_food:
             db.child("users").child(uid).child("Fridge").child(food).remove()
@@ -608,9 +674,9 @@ def fridge(request):
             for x in chk_food:
                 new_ingredients[x] = x
             db.child("users").child(uid).child("Fridge").set(new_ingredients)
-    
-    
-    fridge_ingredients = db.child("users").child(uid).child("Fridge").get().val()
+
+    fridge_ingredients = db.child("users").child(
+        uid).child("Fridge").get().val()
     if fridge_ingredients:
         fing_len = len(fridge_ingredients)
     else: 
