@@ -7,6 +7,7 @@ class Recipes:
         self.searched = False
         self.recipe_name_to_find = None
         self.recipes_current_page = "1"
+        self.word_to_filter = None
 
     def __init__(self):
         self.recipe_list = None
@@ -15,6 +16,7 @@ class Recipes:
         self.searched = False
         self.recipe_name_to_find = None
         self.recipes_current_page = "1"
+        self.word_to_filter = None
 
     def get_all_recipes(self):
         return self.recipe_list

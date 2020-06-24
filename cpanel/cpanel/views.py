@@ -645,7 +645,7 @@ def fridge(request):
     if fridge_ingredients:
         sorted(fridge_ingredients)
 
-    search_ing = request.GET.getlist('search_ingredients')
+    search_ing = request.GET.get('search_ingredients')
    
     chk_food = request.POST.getlist('sav_ing')
     del_food = request.POST.getlist('del_ing')
@@ -653,7 +653,7 @@ def fridge(request):
     if del_food:
         for food in del_food:
             db.child("users").child(uid).child("Fridge").child(food).remove()
-
+ 
     if search_ing:
         all_ingredients = [i for i in all_ingredients if search_ing in i]
         if not all_ingredients:
