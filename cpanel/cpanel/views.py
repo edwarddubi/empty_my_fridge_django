@@ -649,7 +649,9 @@ def fridge(request):
    
     chk_food = request.POST.getlist('sav_ing')
     del_food = request.POST.getlist('del_ing')
-
+    
+    all_ingredients = all_ingredients[:50]
+    
     if del_food:
         for food in del_food:
             db.child("users").child(uid).child("Fridge").child(food).remove()
@@ -682,7 +684,7 @@ def fridge(request):
     else: 
         fing_len = 0
 
-    btnclick = request.POST.get('serepbt')
+    btnclick = request.POST.get('find_Recipe')
 
     print(btnclick)
     if btnclick:#buttonclick
