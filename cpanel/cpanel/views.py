@@ -9,11 +9,8 @@ from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 import json
 from cpanel.model.user import User
-<<<<<<< HEAD
-=======
 #import dns
 from validate_email import validate_email
->>>>>>> 6388c639e3ca343398a404d416448aeb48b284aa
 from . import food_network
 from cpanel.model.recipes import Recipes
 import time
@@ -575,16 +572,14 @@ def fridge(request):
         return HttpResponseRedirect("/login/")
     else:
         uid = m_user._getUser_Id_()
-        user = m_user._getUser_()
+        #user = m_user._getUser_()
             
-    all_ingredients = []
-    fridge_ingredients = db.child("users").child(uid).child("Fridge").get().val()
+    all_ingredients = db.child("all_ingredients").get().val() #sorted(db.child("all_ingredients").get().val()) leave commented until 
+    fridge_ingredients = db.child("users").child(uid).child("Fridge").get().val() # database is cleared of null values
     if fridge_ingredients:
         sorted(fridge_ingredients)
-    if db.child("all_ingredients").get().val():    
-        all_ingredients = sorted(db.child("all_ingredients").get().val())
 
-    search_ing = request.GET.get('search_ingredients')
+    search_ing = request.GET.getlist('search_ingredients')
    
     chk_food = request.POST.getlist('sav_ing')
     del_food = request.POST.getlist('del_ing')
@@ -598,62 +593,83 @@ def fridge(request):
         if not all_ingredients:
             all_ingredients = ["No ingredient found"]
 
-
+    chk_food=['sugar', 'cranberries', 'thyme', 'orange marmalade', 'orange liqueur', 'unsalted butter', 'parmesan', 'black pepper', 'egg yolks', 'purpose flour',
+'chicken wings', 'salt', 'chicken base', 'garlic powder', 'ginger powder', 'white pepper', 'egg', 'purpose flour', 'rice flour', 'vegetable', 'dark sugar', 'vinegar', 'oyster sauce', 'soy sauce', 'rice wine', 'honey', 'sesame oil', 'white pepper', 'chili garlic paste', 'spiced water', 'orange slice', 'scallions', 'sesame seeds', 'vegetable', 'garlic', 'chile flakes', 'sichuan peppercorns',
+ 'brussels sprouts', 'slab bacon', 'lemons', 'grain mustard', 'caraway', 'salt', 'pepper','No ingredients']
     if chk_food and uid:
+        new_ingredients= {}
         if fridge_ingredients:
-            new_ingredients = {}
-            if (isinstance(chk_food, str)):
-                if chk_food in fridge_ingredients:
-                    disj = []
-                else:
-                    new_ingredients[chk_food] = chk_food
-            else:
-                disj = list(set(chk_food)-set(fridge_ingredients))
-                for x in disj:
-                    new_ingredients[x] =x
-                db.child("users").child(uid).child("Fridge").update(new_ingredients)
+            disj = list(set(chk_food)-set(fridge_ingredients))
+            for x in disj:
+                new_ingredients[x] =x
+            db.child("users").child(uid).child("Fridge").update(new_ingredients)
 
         else:
-            if (isinstance(chk_food, str)):
-                new_ingredients = {chk_food : chk_food}
-            else:
-                new_ingredients= {}
-                for x in chk_food:
-                    new_ingredients[x] = x
-
+            for x in chk_food:
+                new_ingredients[x] = x
             db.child("users").child(uid).child("Fridge").set(new_ingredients)
     
     
     fridge_ingredients = db.child("users").child(uid).child("Fridge").get().val()
     if fridge_ingredients:
-        fing_len = fridge_ingredients.__len__
-    else:
+        fing_len = len(fridge_ingredients)
+    else: 
         fing_len = 0
 
+    btnclick = request.POST.get('serepbt')
 
-    if False:#buttonclick
+    print(btnclick)
+    if btnclick:#buttonclick
         all_recipes = db.child("recipe").get().val()
-        lst = []
+        possible_recipes = []
         for recipe in all_recipes:
             recipe_ingredients = db.child("recipe").child(recipe).child("recipe_ingredients").get().val()
-            if set(fridge_ingredients).issubset(set(recipe_ingredients)):
-                    lst.append(db.child("recipe").child(recipe).get())
-        if lst:     
+            if set(recipe_ingredients).issubset(set(fridge_ingredients)):
+                possible_recipes.append(db.child("recipe").child(recipe).get().val())
+
+        scrollTop = 0
+        keep_scroll_pos = False
+        if recipes.get_is_recipe_liked():
+            scrollTop = recipes.get_recipe_list_position()
+            recipes.set_is_recipe_liked(False)
+            keep_scroll_pos = True
+
+        # paginator = Paginator(all_recipes, 48)
+        # page = request.GET.get('page')
+        # recipes.set_recipes_current_page(page)
+
+        # try:
+        #     curr_recipes = paginator.page(page)
+        # except PageNotAnInteger:
+        #     curr_recipes = paginator.page(1)
+        # except EmptyPage:
+        #     curr_recipes = paginator.page(paginator.num_pages)
+        
+        
+        if possible_recipes:
             data = {
                     "user": m_user._getUser_(),
-                    "recipes": lst,
-                    "scrollTop": 0,
-                    "keep_scroll_pos": False,
+                    "recipes": possible_recipes,
+                    "scrollTop": scrollTop,
+                    "keep_scroll_pos": keep_scroll_pos,
                     "found_results": True,
-                    "items": len(lst),
+                    "items": len(possible_recipes),
                     "isSearch": True
                 }
         else:
-            data = None
+            data = {
+                    "user": m_user._getUser_(),
+                    "recipes": possible_recipes,
+                    "scrollTop": scrollTop,
+                    "keep_scroll_pos": keep_scroll_pos,
+                    "found_results": True,
+                    "items":0,
+                    "isSearch": True
+                }
         
         return render(request, 'recipes.html', {"data": data})
 
     
-    context = {"ingredients" : all_ingredients, 'fing' : fridge_ingredients, 'fing_amount' : fing_len}
+    context = {"ingredients" : all_ingredients, 'fing' : fridge_ingredients, "user": m_user._getUser_(),'fing_amount' : fing_len, }
     return render(request, 'fridge.html', context )
     
