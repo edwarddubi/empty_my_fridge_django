@@ -60,10 +60,10 @@
         <span class="text">Browse</span>
         <i class="dropdown icon"></i>
         <div class="menu inverted">
-          <div class="item">Pastries</div>
-          <div class="item">Meals</div>
-          <div class="item">Appetizers</div>
-          <div class="item">Dessert</div>
+          <a class="item" href="{% url 'category' %}?category=pastry">Pastries</a>
+        <a class="item" href="{% url 'category' %}?category=main dish">Meals</a>
+        <a class="item" href="{% url 'category' %}?category=appetizer">Appetizers</a>
+        <a class="item" href="{% url 'category' %}?category=dessert">Dessert</a>
         </div>
       </div>
 
@@ -94,9 +94,9 @@
           <img
             id="image_profile"
             class="ui avatar image mini"
-            src="{{data.image}}"
+            src="{{data.user.image}}"
           />
-          <p id="hi_name">{{data.name}}</p>
+          <p id="hi_name">{{data.user.name}}</p>
         </div>
         <a onclick="location.href={% url 'logout'%}" class="item">
           Logout
@@ -112,10 +112,10 @@
         <img
           id="user_image"
           class="ui avatar image small"
-          src="{{data.image}}"
+          src="{{data.user.image}}"
         />
         <div style="margin-left: 5px; margin-top: 15%;">
-          <h2 style="color: bisque;">{{data.name}}</h2>
+          <h2 style="color: bisque;">{{data.user.name}}</h2>
         </div>
       </div>
     </div>
@@ -136,7 +136,7 @@
         >
           My Favorite Recipes
         </a>
-        <a class="item">
+        <a onclick="location.href={% url 'personal_recipes'%}" class="item">
           Personal Recipes
         </a>
 
@@ -155,18 +155,18 @@
         style="margin-bottom: 50px; padding: 20px;"
         class="ui raised segment"
       >
-        {% if fav_recipes %} {% if num_of_fav_recipes == 1 %}
+        {% if data.fav_recipes %} {% if data.num_of_fav_recipes == 1 %}
         <p>
-          List of all Your Favorite Recipes ({{num_of_fav_recipes}} Item)
+          List of all Your Favorite Recipes ({{data.num_of_fav_recipes}} Item)
         </p>
         {% else %}
         <p>
-          List of all Your Favorite Recipes ({{num_of_fav_recipes}} Items)
+          List of all Your Favorite Recipes ({{data.num_of_fav_recipes}} Items)
         </p>
         {% endif %}
         <div class="ui container center aligned">
           <div class="ui grid" style="margin-top: 15px; margin-bottom: 75px;">
-            {% for recipe in fav_recipes %}
+            {% for recipe in data.fav_recipes %}
             <div class="four wide column">
               <div
                 class="ui link card"
@@ -212,7 +212,6 @@
                       >
                         <i class="star icon"></i>
                       </button>
-
                       {% endif %}
                     </span>
                   </form>
@@ -231,7 +230,7 @@
       <!--end of favorite list card-->
     </div>
 
-    {% if data %}
+    {% if data.user %}
     <script>
       //document.getElementById("hi_name").innerHTML = {{data.name}};
       document.getElementById("user_image").src =
