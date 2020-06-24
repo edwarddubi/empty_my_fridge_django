@@ -464,17 +464,17 @@ def personal_recipes(request):
 
     chk_ingredients = request.POST.getlist('sav_ing')
 
-    all_ingredients = sorted(db.child("all_ingredients").get().val())
+    # all_ingredients = sorted(db.child("all_ingredients").get().val())
     
-    search_ing = request.GET.get('search_ingredients')
-    print("search_ingredients: ")
-    print(search_ing)
+    # search_ing = request.GET.get('search_ingredients')
+    # print("search_ingredients: ")
+    # print(search_ing)
 
-    if search_ing:
-        all_ingredients = [i for i in all_ingredients if search_ing in i]
-        if not all_ingredients:
-            all_ingredients = ["No ingredient found"]
-    #research live ingredients
+    # if search_ing:
+    #     all_ingredients = [i for i in all_ingredients if search_ing in i]
+    #     if not all_ingredients:
+    #         all_ingredients = ["No ingredient found"]
+    # #research live ingredients
     recipe_details = None
     msg = None
     msg_type = None
@@ -506,7 +506,7 @@ def personal_recipes(request):
                 userRecipe = [userRecipe]
                 db.child("users").child(uid).child("recipes").set(userRecipe)
                 pass
-    context = {"ingredients": all_ingredients}
+    #context = {"ingredients": all_ingredients}
     return render(request, 'personal_recipes.html', {"data": recipe_details, "message": msg, "msg_type" : msg_type})
 
 @csrf_exempt
