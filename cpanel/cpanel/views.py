@@ -659,9 +659,9 @@ def fridge(request):
         if not all_ingredients:
             all_ingredients = ["No ingredient found"]
 
-    chk_food=['sugar', 'cranberries', 'thyme', 'orange marmalade', 'orange liqueur', 'unsalted butter', 'parmesan', 'black pepper', 'egg yolks', 'purpose flour',
-'chicken wings', 'salt', 'chicken base', 'garlic powder', 'ginger powder', 'white pepper', 'egg', 'purpose flour', 'rice flour', 'vegetable', 'dark sugar', 'vinegar', 'oyster sauce', 'soy sauce', 'rice wine', 'honey', 'sesame oil', 'white pepper', 'chili garlic paste', 'spiced water', 'orange slice', 'scallions', 'sesame seeds', 'vegetable', 'garlic', 'chile flakes', 'sichuan peppercorns',
- 'brussels sprouts', 'slab bacon', 'lemons', 'grain mustard', 'caraway', 'salt', 'pepper','No ingredients']
+    # chk_food=['sugar', 'cranberries', 'thyme', 'orange marmalade', 'orange liqueur', 'unsalted butter', 'parmesan', 'black pepper', 'egg yolks', 'purpose flour',
+    # 'chicken wings', 'salt', 'chicken base', 'garlic powder', 'ginger powder', 'white pepper', 'egg', 'purpose flour', 'rice flour', 'vegetable', 'dark sugar', 'vinegar', 'oyster sauce', 'soy sauce', 'rice wine', 'honey', 'sesame oil', 'white pepper', 'chili garlic paste', 'spiced water', 'orange slice', 'scallions', 'sesame seeds', 'vegetable', 'garlic', 'chile flakes', 'sichuan peppercorns',
+    # 'brussels sprouts', 'slab bacon', 'lemons', 'grain mustard', 'caraway', 'salt', 'pepper','No ingredients']
     if chk_food and uid:
         new_ingredients= {}
         if fridge_ingredients:
