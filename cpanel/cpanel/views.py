@@ -462,11 +462,12 @@ def personal_recipes(request):
     #agrab user's custom recipes attribute
     #user_recipes = m_user._getUser_Recipes_()
 
-    chk_ingredients = request.POST.getlist('sav_ing')
+    #chk_ingredients = request.POST.getlist('sav_ing')
 
     # all_ingredients = sorted(db.child("all_ingredients").get().val())
-    
-    # search_ing = request.GET.get('search_ingredients')
+    #search_ing = request.GET.get('search_ingredients')
+    #if search_ing:
+    #    search_ing = request.GET.get('search_ingredients').split(",")
     # print("search_ingredients: ")
     # print(search_ing)
 
@@ -478,25 +479,26 @@ def personal_recipes(request):
     recipe_details = None
     msg = None
     msg_type = None
+    userRecipe = None
+    my_recipes = db.child("users").child(uid).child("recipes").get().val()
     if m_user._isNone_():
         return render(request, "login.html") 
     else:
         if request.method == "POST":
         #if True:
             title = request.POST.get("title")
-            ingredients = request.POST.get("ingredients")
+            ingredients = request.POST.get("search_ingredients").split(",")
             description = request.POST.get("description")
             steps = request.POST.get("steps")
-
+            privacy = request.POST.get("privacy")
             userRecipe = {
             'title': title,
             'description': description,
             'steps': steps,
             'ingredients': ingredients,
-            'privacy': 0
+            'privacy': privacy
             }
             
-            my_recipes = db.child("users").child(uid).child("recipes").get().val()
             if my_recipes:
                 my_recipes.append(userRecipe)
                 db.child("users").child(uid).child("recipes").set(my_recipes)
@@ -507,7 +509,11 @@ def personal_recipes(request):
                 db.child("users").child(uid).child("recipes").set(userRecipe)
                 pass
     #context = {"ingredients": all_ingredients}
-    return render(request, 'personal_recipes.html', {"data": recipe_details, "message": msg, "msg_type" : msg_type})
+    return render(request, 'personal_recipes.html', {"data": recipe_details, "message": msg, "msg_type" : msg_type, "my_recipes": my_recipes})
+
+# @csrf_exempt
+# def add_to_recipe(request):
+
 
 @csrf_exempt
 def account_settings(request):

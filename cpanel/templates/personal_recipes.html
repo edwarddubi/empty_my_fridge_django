@@ -96,7 +96,10 @@
         </div>
       </div>
 
-      <div style="margin-bottom: 50px;" class="ui raised segment">
+      <div class="ui grid">
+        <div class="eight wide column">
+               <div style="margin-bottom: 50px;" class="ui raised segment">
+                <h3>ADD A NEW RECIPE</h3>
         <form action="/personal_recipes/" method="post" class="ui form">
           <div style="width: 30%;" class="field">
             <label>Title of Recipe</label>
@@ -109,35 +112,24 @@
           </div>
           
           <div style="width: 30%;" class="field">
-            <label>Steps: </label>
-            <input placeholder="How to make the recipe" name="steps" type="text">
+            <label>Steps </label>
+            <textarea placeholder="How to make the recipe" name="steps"></textarea>
           </div>
 
           <span class="myfridge_list_holder">
           <div style="width: 30%;" class="field">
-          <label>Add Ingredients</label>
-          </div>
-
-          <div class="search-container">
-            <form>
-              <input
+          <label>Ingredients You Want</label>
+          <input
                 type="text"
-                placeholder="Search.."
+                placeholder="food1,food2,food3,..."
                 name="search_ingredients"
                 id="search"
               />
-            <button class ="ui button blue" type="submit">Search</button>
-            </form>
           </div>
           </span>
 
           <!-- CENTER BUTTON HOR and VERT-->
           <style>
-            .container {
-              height: 200px;
-              position: relative;
-            }
-            
             .vertical-center {
               margin: 0;
               position: absolute;
@@ -146,15 +138,15 @@
               transform: translateY(-50%);
             }
             </style>
-          <div class="ui grid">
+          <!-- <div class="ui grid">
             <div class="two wide column" style="width: 30%;" class="field">
-              <label>Found Ingredients</label>
-              <textarea rows="8" placeholder="[Ingredients found listed here]" name="found"></textarea>
+              <label>Recipe Ingredients</label>
+              <textarea rows="8" placeholder="Currently, there are no ingredients added!" name="found"></textarea>
             </div>
-            <div class="two wide column" style="width: 30%;"></div>
-            <div class="two wide column" style="width: 30%;">
+            
+           <div class="two wide column" style="width: 30%;">
               
-          <!-- ADD TO RECIPE BUTTON-->
+           ADD TO RECIPE BUTTON
           <div class="vertical-center">
             <ul class="">
               <form method="post">
@@ -165,7 +157,7 @@
                 {% endfor %}
               </form>
             </ul>
-          <!-- REMOVE FROM RECIPE BUTTON
+           REMOVE FROM RECIPE BUTTON
           <div class="vertical-center">
             <ul class="">
               <form method="post">
@@ -175,33 +167,32 @@
                 <label> {{food}}</label><br />
                 {% endfor %}
               </form>
-            </ul> -->
-        </div>
-            </div>
-            <div class="two wide column" style="width: 30%;"></div>
+            </ul>
+        </div> 
+            </div>-->
+            <!-- <div class="two wide column" style="width: 30%;"></div>
             <div class="two wide column" style="width: 30%;" class="field">
               <label>Added to Recipe</label>
               <textarea rows="8" placeholder="[Ingredients currently in recipe listed here]" name="added"></textarea>
             </div>
-          </div>
+          </div> -->
          
 
           <!--dropdown w/out javascript-->
-          <div class="ui compact menu">
-            <div class="ui simple dropdown item">
-              Privacy
-              <i class="dropdown icon"></i>
-              <div class="menu">
-                <div class="item" data-value = "2">Public</div>
-                <div class="item" data-value = "1">Friends Only</div>
-                <div class="item" data-value = "0">Private</div>
-              </div>
+          <div class="ui form">
+            <div class="four wide field">
+              <select name="privacy">
+                <option value="">Privacy</option>
+                <option value="2">Public</option>
+                <option value="1">Friends Only</option>
+                <option value="0">Private</option>
+              </select>
               <!--in python, assign data-value to another db attribute-->
             </div>
           </div>
 
-          <button class="ui button yellow" type="submit">Save New Recipe</button>
-
+          <!--SUBMIT FORM-->
+            <button class ="ui button blue" type="submit">Add New Recipe</button>
         </form>
         <div style="display: none;" id="message" class="ui {{msg_type}} message">
           <div class="header">
@@ -209,7 +200,28 @@
           </div>
           <p>{{message}}</p>
         </div>
+      </div> 
+        </div>
+
+        <!--LIST ALL CURRENT USER RECIPES IF PRESENT-->
+        <div class="eight wide column">
+          <div style="margin-bottom: 50px;" class="ui raised segment">
+            <h3>YOUR CURRENT RECIPES</h3>
+            <div class="ui list">
+              {% for each in my_recipes %}
+              <div class="item">
+                <i class="right triangle icon"></i>
+                <div class="content">
+                  <a class="header">{{each.title}}</a>
+                  <div class="description">{{each.description}}</div>
+                </div>
+              </div>
+              {%endfor%}
+              </div>
+          </div>
+        </div>
       </div>
+
       
     </div>
 
