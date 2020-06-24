@@ -84,8 +84,6 @@ def parser(item, food_array):
 	item = item.replace('\"', '')
 	item = item.replace('%', '')
 
-
-
 	# Breaks each word into a string array
 	split_item = item.split(" ")
 
