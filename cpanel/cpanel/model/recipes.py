@@ -1,6 +1,6 @@
 
 class Recipes:
-    def __init__(self, recipe_list):
+    def __init__(self, recipe_list, db):
         self.recipe_list = recipe_list
         self.pos = 0
         self.liked = False
@@ -9,7 +9,7 @@ class Recipes:
         self.recipes_current_page = "1"
         self.word_to_filter = None
 
-    def __init__(self):
+    def __init__(self, db):
         self.recipe_list = None
         self.pos = 0
         self.liked = False
@@ -43,13 +43,13 @@ class Recipes:
         return self.searched
 
     def set_recipe_name_to_find(self, word):
-        self.word_to_filter = word
+        self.recipe_name_to_find = word
 
     def get_recipe_name_to_find(self):
-        return self.word_to_filter
+        return self.recipe_name_to_find
 
     def set_recipes_current_page(self, page):
-        self.recipes_current_page = page    
+        self.recipes_current_page = page
 
     def get_recipes_current_page(self):
         return self.recipes_current_page
@@ -59,4 +59,11 @@ class Recipes:
             if recipe["recipe_id"] == key:
                 recipe["user_saved"] = True
                 recipe["likes"] = recipe["likes"] + 1
-                break                         
+                break
+
+    def set_recipe_unLiked(self, key):
+        for recipe in self.recipe_list:
+            if recipe["recipe_id"] == key:
+                recipe["user_saved"] = False
+                recipe["likes"] = recipe["likes"] - 1
+                break                                     

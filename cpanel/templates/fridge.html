@@ -28,7 +28,7 @@
     <!--Navigation Bar-->
     <div class="ui top inverted secondary fixed menu">
       <div class="item">
-        <h3 id = "title">Empty My Fridge</h3>
+        <p style="color: white; font-weight: bold; font-size: large;">Empty My Fridge</p>
       </div>
 
       <a onclick="location.href={% url 'home'%}" class="item">
@@ -67,10 +67,8 @@
       <!--End of search and filter ui-->
       <div class="right menu">
         <a
-          id="login_btn"
-          style="display: flex;"
-          onclick="location.href={% url 'login'%}"
-          class="item"
+          onclick="location.href={% url 'fridge'%}"
+          class="item active"
         >
           My Fridge
         </a>
@@ -80,7 +78,7 @@
             class="ui avatar image mini"
             src="https://react.semantic-ui.com/images/wireframe/square-image.png"
           />
-          <p>{{data.user.name}}</p>
+          <p>{{user.name}}</p>
         </div>
         <a
           id="login_btn"
