@@ -19,13 +19,18 @@ firebase = pyrebase.initialize_app(config.myConfig())
 auth_fb = firebase.auth()
 db = firebase.database()
 m_user = User()
-recipes = Recipes()
+recipes = Recipes(db)
 
 # Home Page
 
 
 @csrf_exempt
 def home(request):
+    """
+    if recipes.get_all_recipes() == None:
+        get_all_recipes()
+    """
+        
     if m_user._isNone_():
         return render(request, 'home.html')
     else:
@@ -298,7 +303,6 @@ def fav_recipe_onClick(request):
                 recipes.set_is_searched_for_recipes(True)
             recipes.set_recipe_list_position(scrollTop)
             recipes.set_is_recipe_liked(True)
-            recipes.set_recipe_liked(recipe_id)
             today = date.today()
             time_now = time.time()
             time_liked = {
@@ -307,11 +311,13 @@ def fav_recipe_onClick(request):
             _recipe_data_ = db.child("user_fav_recipes").child(
                 uid).child(recipe_id).get().val()
             if _recipe_data_ != None:
+                recipes.set_recipe_unLiked(recipe_id)
                 db.child("user_fav_recipes").child(
                     uid).child(recipe_id).remove()
                 db.child("recipe").child(recipe_id).child(
                     "stars").child(uid).remove()
             else:
+                recipes.set_recipe_liked(recipe_id)
                 db.child("user_fav_recipes").child(
                     uid).child(recipe_id).set(time_liked)
                 db.child("recipe").child(recipe_id).child(
@@ -359,7 +365,7 @@ def _login_(request):
             data = {
                 "user": user_details
             }
-            return render(request, "home.html", {"data": data})
+            return HttpResponseRedirect("/home/")
     except KeyError:
         return HttpResponseRedirect("/login/")
 
@@ -636,18 +642,22 @@ def fridge(request):
         return HttpResponseRedirect("/login/")
     else:
         uid = m_user._getUser_Id_()
-        user = m_user._getUser_()
-
+        #user = m_user._getUser_()
+    
     all_ingredients = []
-    fridge_ingredients = db.child("users").child(
-        uid).child("Fridge").get().val()
+    _all_ingredients_ = db.child("all_ingredients").get().val()
+    for ingredient in _all_ingredients_:
+        if ingredient:
+            all_ingredients.append(ingredient)
+    
+    if len(all_ingredients) > 0:
+        sorted(all_ingredients)
+    fridge_ingredients = db.child("users").child(uid).child("Fridge").get().val() # database is cleared of null values
     if fridge_ingredients:
         sorted(fridge_ingredients)
-    if db.child("all_ingredients").get().val():
-        all_ingredients = sorted(db.child("all_ingredients").get().val())
 
     search_ing = request.GET.get('search_ingredients')
-
+   
     chk_food = request.POST.getlist('sav_ing')
     del_food = request.POST.getlist('del_ing')
 
@@ -659,41 +669,87 @@ def fridge(request):
         all_ingredients = [i for i in all_ingredients if search_ing in i]
         if not all_ingredients:
             all_ingredients = ["No ingredient found"]
+
+    # chk_food=['sugar', 'cranberries', 'thyme', 'orange marmalade', 'orange liqueur', 'unsalted butter', 'parmesan', 'black pepper', 'egg yolks', 'purpose flour',
+    # 'chicken wings', 'salt', 'chicken base', 'garlic powder', 'ginger powder', 'white pepper', 'egg', 'purpose flour', 'rice flour', 'vegetable', 'dark sugar', 'vinegar', 'oyster sauce', 'soy sauce', 'rice wine', 'honey', 'sesame oil', 'white pepper', 'chili garlic paste', 'spiced water', 'orange slice', 'scallions', 'sesame seeds', 'vegetable', 'garlic', 'chile flakes', 'sichuan peppercorns',
+    # 'brussels sprouts', 'slab bacon', 'lemons', 'grain mustard', 'caraway', 'salt', 'pepper','No ingredients']
     if chk_food and uid:
+        new_ingredients= {}
         if fridge_ingredients:
-            new_ingredients = {}
-            if (isinstance(chk_food, str)):
-                if chk_food in fridge_ingredients:
-                    disj = []
-                else:
-                    new_ingredients[chk_food] = chk_food
-            else:
-                disj = list(set(chk_food)-set(fridge_ingredients))
-                for x in disj:
-                    new_ingredients[x] = x
-                db.child("users").child(uid).child(
-                    "Fridge").update(new_ingredients)
+            disj = list(set(chk_food)-set(fridge_ingredients))
+            for x in disj:
+                new_ingredients[x] =x
+            db.child("users").child(uid).child("Fridge").update(new_ingredients)
 
         else:
-            if (isinstance(chk_food, str)):
-                new_ingredients = {chk_food: chk_food}
-            else:
-                new_ingredients = {}
-                for x in chk_food:
-                    new_ingredients[x] = x
-
+            for x in chk_food:
+                new_ingredients[x] = x
             db.child("users").child(uid).child("Fridge").set(new_ingredients)
 
-    fridge_ingredients = db.child("users").child(
-        uid).child("Fridge").get().val()
+    fridge_ingredients = db.child("users").child(uid).child("Fridge").get().val()
     if fridge_ingredients:
-        fing_len = fridge_ingredients.__len__
-    else:
+        fing_len = len(fridge_ingredients)
+    else: 
         fing_len = 0
-    data = {
-        "user": user
-    }
-    context = {"ingredients": all_ingredients,
-               'fing': fridge_ingredients, 'fing_amount': fing_len, "data": data}
 
-    return render(request, 'fridge.html', context)
+    btnclick = request.POST.get('serepbt')
+
+    #print(btnclick)
+    if btnclick:#buttonclick
+        all_recipes = db.child("recipe").get()
+        possible_recipes = []
+        for recipe in all_recipes.each():
+            recipe_details = recipe.val()
+            #this code takes long to get the recipe per ingredient
+            """
+            recipe_ingredients = db.child("recipe").child(recipe).child("recipe_ingredients").get().val()
+            if set(recipe_ingredients).issubset(set(fridge_ingredients)):
+                possible_recipes.append(db.child("recipe").child(recipe).get().val())
+            """
+            #this is an optimization and doesn't take long
+            try:
+                recipe_ingredients = recipe_details["recipe_ingredients"]
+                if set(recipe_ingredients).issubset(set(fridge_ingredients)):
+                    key = str(recipe.key())
+                    possible_recipes.append(get_recipe(dict(recipe_details), key))
+
+            except KeyError:
+                pass        
+
+        scrollTop = 0
+        keep_scroll_pos = False
+        found_results = False
+        if recipes.get_is_recipe_liked():
+            scrollTop = recipes.get_recipe_list_position()
+            recipes.set_is_recipe_liked(False)
+            keep_scroll_pos = True
+
+        if len(possible_recipes) > 0:
+            found_results = True
+
+        paginator = Paginator(possible_recipes, 48)
+        page = request.GET.get('page')
+        recipes.set_recipes_current_page(page)
+
+        try:
+            curr_recipes = paginator.page(page)
+        except PageNotAnInteger:
+            curr_recipes = paginator.page(1)
+        except EmptyPage:
+            curr_recipes = paginator.page(paginator.num_pages)
+        
+        data = {
+            "user": m_user._getUser_(),
+            "recipes": curr_recipes,
+            "scrollTop": scrollTop,
+            "keep_scroll_pos": keep_scroll_pos,
+            "found_results": found_results,
+            "items": len(possible_recipes),
+            "isSearch": True
+        }
+        
+        return render(request, 'fridge_recipes.html', {"data": data})
+
+    
+    context = {"ingredients" : all_ingredients, 'fing' : fridge_ingredients, "user": m_user._getUser_(),'fing_amount' : fing_len, }
+    return render(request, 'fridge.html', context )

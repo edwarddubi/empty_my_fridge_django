@@ -8,6 +8,7 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css"
     />
   </head>
+  
   <style>
     .ui.inverted.menu {
       background: #642b73; /* fallback for old browsers */
@@ -27,7 +28,7 @@
     <!--Navigation Bar-->
     <div class="ui top inverted secondary fixed menu">
       <div class="item">
-        <h3>Empty My Fridge</h3>
+        <h3 id = "title">Empty My Fridge</h3>
       </div>
 
       <a onclick="location.href={% url 'home'%}" class="item">
@@ -66,19 +67,18 @@
       <!--End of search and filter ui-->
       <div class="right menu">
         <a
-        id="fridge_btn"
-        style="display: flex;"
-        onclick="location.href={% url 'fridge'%}"
-        class="item active">
-        My Fridge
-      </a>
+          onclick="location.href={% url 'fridge'%}"
+          class="item active"
+        >
+          My Fridge
+        </a>
         <div onclick="location.href={% url 'profile'%}" class="item">
           <img
             id="image_profile"
             class="ui avatar image mini"
             src="https://react.semantic-ui.com/images/wireframe/square-image.png"
           />
-          <p>{{data.user.name}}</p>
+          <p>{{user.name}}</p>
         </div>
         <a
           id="login_btn"
@@ -100,7 +100,7 @@
     </div>
     <!--End of Navigation Bar-->
 
-    <section style="margin-top: 120px;" id="main" role="main">
+    <section style="margin-top: 80px;" id="main" role="main">
       <h1>My Fridge</h1>
       <p class="description">
         Simply add the ingredients you have at home and we'll show you recipes
@@ -109,6 +109,9 @@
         back to it at any time.
       </p>
       <style>
+        #main {
+          margin: 30px;
+        }
         .body {
           color: #333;
           font-family: proxima-nova, "Segoe UI", "Droid Sans", "Helvetica Neue",
@@ -128,6 +131,9 @@
           padding: 0;
           width: 100%;
           display: flex;
+        }
+        #title{
+          color: white
         }
         .myfridge_instructions ol li {
           list-style: none;
@@ -161,7 +167,7 @@
         .main_fridge_holder > div {
           position: relative;
           border: 1px solid #888;
-          width: 30%;
+          width: 45%;
           margin-right: 30px;
           /* max-height: 72vh; */
           height: 72vh;
@@ -179,6 +185,15 @@
           margin-top: 0;
           border-top-right-radius: 4px;
           border-top-left-radius: 4px;
+        }
+        ul{
+          display: block;
+          list-style-type: disc;
+          margin-block-start: 1em;
+          margin-block-end: 1em;
+          margin-inline-start: 0px;
+          margin-inline-end: 0px;
+          padding-inline-start: 10px;
         }
         a.fw_button.small_fw_button {
           font-size: 1.4rem;
@@ -199,6 +214,30 @@
         }
         a.fw_button span+.icon path {
           stroke: #642b73;
+        }
+        h1, h2, h3, h4, h5, h6 {
+          font-weight: inherit;
+          color: #344c72;
+          margin: 5px 0;
+          display: block;
+          line-height: 1.2em;
+        }
+        h1 {
+          font-size: 3rem;
+          font-family: rockwell-nova,Rockwell,"Hoefler Text",Garamond,Georgia;
+          font-weight: 200;
+        }
+        h3 {
+          font-size: 1.8rem;
+        }
+        h4 {
+          display: block;
+          margin-block-start: 1.33em;
+          margin-block-end: 1.33em;
+          margin-inline-start: 0px;
+          margin-inline-end: 0px;
+          font-weight: bold;
+          font-size: 1.6rem;
       }
       </style>
       <div class="myfridge_instructions">
@@ -247,22 +286,30 @@
                   placeholder="Search.."
                   name="search_ingredients"
                   id="search"
+                  
                 />
-                <button type="submit" id = "search_but" >Search</button>
+                <button  class="ui button" type="submit" id = "search_but" >Search</button>
               </form>
             </div>
             <style>
               #search{
                 display: inline-block;
-                width: 85%;
+                width: 80%;
+                border: 2px solid #bdc3c7;
+                color: #344c72;
+                padding: 8px 12px;
+                border-radius: 4px;
+                height: 55px;
               }
               #search_but{
                 display: inline-block;
+                border: 2px solid #bdc3c7;
+
               }
             </style>
           </span>
 
-          <ul class="" data-tolist="b" data-fromlist="a">
+          <ul>
             <form method="post">
               <input type="submit" value="Add to Fridge" /><br />
               {% for food in ingredients %}
@@ -291,43 +338,20 @@
             </ul>
           </form>
           <a
-            href="javascript:;"
             class="fw_button small_fw_button"
-            id="makemeacocktail"
           >
-            <span>Find Recipes</span
-            ><i class="icon icon-smallarrow"
-              ><svg
-                version="1.1"
-                id="Layer_1"
-                xmlns="http://www.w3.org/2000/svg"
-                xmlns:xlink="http://www.w3.org/1999/xlink"
-                x="0px"
-                y="0px"
-                viewBox="0 0 7.6 12.6"
-                style="enable-background: new 0 0 7.6 12.6;"
-                xml:space="preserve"
-              >
-                <style type="text/css">
-                  .sarrow {
-                    fill: none;
-                    stroke: #ffffff;
-                    stroke-width: 2;
-                    stroke-linecap: round;
-                  }
-                </style>
-                <g transform="translate(33.089 1940.257) rotate(-90)">
-                  <path class="sarrow" d="M1933.8-26.9l-4.8-4.8"></path>
-                  <path class="sarrow" d="M1933.8-26.9l5-4.8"></path>
-                </g>
-              </svg>
-            </i>
+          <form method = "post">
+            <button class="ui fluid animated button" value = True  name= "serepbt" >
+              <div class="visible content">Find Recipes</div>
+              <div class="hidden content"><i aria-hidden="true" class="arrow right icon"></i></div>
+            </button>
+          </form>
           </a>
         </div>
       </div>
     </section>
    
-    {% if data.user %}
+    {% if user %}
     <script>
       document.getElementById("image_profile").src =
         "https://react.semantic-ui.com/images/avatar/large/matthew.png";

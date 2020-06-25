@@ -10,6 +10,21 @@
   </head>
 
   <style>
+    .recipe_name {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: large;
+        color:black;
+        font-weight: bolder;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+      }
+
+      .recipe_name:hover{
+        color: #3460e2;
+        text-decoration: underline;
+      }
     .ui.inverted.menu {
       background: #642b73; /* fallback for old browsers */
       background: -webkit-linear-gradient(
@@ -176,7 +191,7 @@
                   <img src="{{recipe.recipe_image}}" />
                 </a>
                 <div class="content" style="text-align: center;">
-                  <a class="header" href="{{recipe.recipe_link}}"
+                  <a class="recipe_name" href="{{recipe.recipe_link}}"
                     >{{recipe.recipe_name}}</a
                   >
                 </div>

@@ -4,13 +4,13 @@ What is empty my Fridge app?:
 
 ## Python FrameWork
 
-- Django
+- [Django](https://pypi.org/project/Django/)
 
 ## Libraries/Tools
 
-Pyrebase
+[Pyrebase](https://pypi.org/project/Pyrebase/)
 
-BeautifulSoup
+[BeautifulSoup](https://pypi.org/project/beautifulsoup4/)
 
 Semantic Ui or fomantic Ui css (currently, Semantic Ui)
 
