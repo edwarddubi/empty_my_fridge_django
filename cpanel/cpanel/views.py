@@ -481,6 +481,10 @@ def personal_recipes(request):
     msg_type = None
     userRecipe = None
     my_recipes = db.child("users").child(uid).child("recipes").get().val()
+    if not my_recipes:
+        print("NO RECIPES")
+        no_rec = "There are no recipes to show... use the form on the left to add some!"
+
     if m_user._isNone_():
         return render(request, "login.html") 
     else:
@@ -509,10 +513,8 @@ def personal_recipes(request):
                 db.child("users").child(uid).child("recipes").set(userRecipe)
                 pass
     #context = {"ingredients": all_ingredients}
-    return render(request, 'personal_recipes.html', {"data": recipe_details, "message": msg, "msg_type" : msg_type, "my_recipes": my_recipes})
-
-# @csrf_exempt
-# def add_to_recipe(request):
+    my_recipes = db.child("users").child(uid).child("recipes").get().val()
+    return render(request, 'personal_recipes.html', {"data": recipe_details, "data": user_details, "message": msg, "msg_type" : msg_type, "my_recipes": my_recipes, "no_rec": no_rec})
 
 
 @csrf_exempt

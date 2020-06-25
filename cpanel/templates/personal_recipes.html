@@ -3,11 +3,39 @@
   <head>
     <meta charset="UTF-8">
     <title>Personal Recipes Page</title>
-    <link
+  <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css"
     />
   </head>
+  <style>
+    .ui.inverted.menu {
+      background: #642b73; /* fallback for old browsers */
+      background: -webkit-linear-gradient(
+        to right,
+        #c6426e,
+        #642b73
+      ); /* Chrome 10-25, Safari 5.1-6 */
+      background: linear-gradient(
+        to right,
+        #c6426e,
+        #642b73
+      ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    }
+    .ui.inverted.segment {
+      background: #642b73; /* fallback for old browsers */
+      background: -webkit-linear-gradient(
+        to right,
+        #c6426e,
+        #642b73
+      ); /* Chrome 10-25, Safari 5.1-6 */
+      background: linear-gradient(
+        to right,
+        #c6426e,
+        #642b73
+      ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    }
+  </style>
   <body>
     {% csrf_token %}
     <!--Navigation Bar-->
@@ -19,7 +47,7 @@
       <a onclick="location.href={% url 'home'%}" class="item">
         Home
       </a>
-      <a class="item">
+    <a onclick="location.href={% url 'recipe_page'%}" class="item">
         Recipes
       </a>
       <div class="ui link dropdown simple item">
@@ -33,12 +61,21 @@
         </div>
       </div>
 
+      <!--search and filter-->
       <div class="item">
-        <div class="ui icon input">
-          <input type="text" placeholder="Search for recipes..." />
-          <i class="search icon"></i>
-        </div>
+        <form action="/search_and_filter/" method="get" class="ui form">
+          <div class="ui icon input">
+            <input
+              type="text"
+              name="recipe_to_filter"
+              placeholder="Search for recipes..."
+            />
+            <i class="search icon"></i>
+          </div>
+          <button class="ui button white">Go</button>
+        </form>
       </div>
+      <!--End of search and filter ui-->
       <div class="right menu">
         <div onclick="location.href={% url 'profile'%}" class="item active">
           <img
@@ -79,7 +116,7 @@
         <a class="item">
           Friends
         </a>
-        <a class="item">
+        <a onclick="location.href={% url 'favorite_recipes'%}" class="item">
           My Favorite Recipes
         </a>
         <a class="active item">
@@ -87,7 +124,7 @@
         </a>
         
         <div class="right menu">
-          <a class="item">
+          <a onclick="location.href={% url 'edit_profile'%}" class="item">
             Edit Profile
           </a>
           <a onclick="location.href={% url 'account_settings'%}" class="item">
@@ -95,29 +132,28 @@
           </a>
         </div>
       </div>
-
       <div class="ui grid">
         <div class="eight wide column">
                <div style="margin-bottom: 50px;" class="ui raised segment">
                 <h3>ADD A NEW RECIPE</h3>
         <form action="/personal_recipes/" method="post" class="ui form">
-          <div style="width: 30%;" class="field">
+          <div style="width: 80%;" class="field">
             <label>Title of Recipe</label>
             <input placeholder="Title of Recipe" required name="title" type="text">
           </div>
 
-          <div style="width: 30%;" class="field">
+          <div style="width: 80%;" class="field">
             <label>Description</label>
             <input rows="3" placeholder="Description of Recipe" type="text" name="description">
           </div>
           
-          <div style="width: 30%;" class="field">
+          <div style="width: 80%;" class="field">
             <label>Steps </label>
             <textarea placeholder="How to make the recipe" name="steps"></textarea>
           </div>
 
           <span class="myfridge_list_holder">
-          <div style="width: 30%;" class="field">
+          <div style="width: 80%;" class="field">
           <label>Ingredients You Want</label>
           <input
                 type="text"
@@ -180,13 +216,15 @@
 
           <!--dropdown w/out javascript-->
           <div class="ui form">
-            <div class="four wide field">
+            <div class="seven wide field">
+                <label>Level of Privacy</label>
               <select name="privacy">
                 <option value="">Privacy</option>
                 <option value="2">Public</option>
                 <option value="1">Friends Only</option>
                 <option value="0">Private</option>
               </select>
+              
               <!--in python, assign data-value to another db attribute-->
             </div>
           </div>
@@ -208,6 +246,9 @@
           <div style="margin-bottom: 50px;" class="ui raised segment">
             <h3>YOUR CURRENT RECIPES</h3>
             <div class="ui list">
+              {%if not my_recipes%}
+                <label>{{no_rec}}</label>
+              {%endif%}
               {% for each in my_recipes %}
               <div class="item">
                 <i class="right triangle icon"></i>
