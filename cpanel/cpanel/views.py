@@ -480,6 +480,7 @@ def personal_recipes(request):
     msg = None
     msg_type = None
     userRecipe = None
+    no_rec = None
     my_recipes = db.child("users").child(uid).child("recipes").get().val()
     if not my_recipes:
         print("NO RECIPES")
