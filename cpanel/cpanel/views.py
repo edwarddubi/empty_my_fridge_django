@@ -19,7 +19,8 @@ firebase = pyrebase.initialize_app(config.myConfig())
 auth_fb = firebase.auth()
 db = firebase.database()
 m_user = User()
-recipes = Recipes(db)
+recipes = Recipes(db, m_user, food_network)
+recipes._get_all_recipes_()
 
 # Home Page
 
@@ -29,8 +30,7 @@ def home(request):
     """
     if recipes.get_all_recipes() == None:
         get_all_recipes()
-    """
-        
+    """  
     if m_user._isNone_():
         return render(request, 'home.html')
     else:
@@ -40,71 +40,23 @@ def home(request):
         }
         return render(request, 'home.html', {"data": data})
 
-# get all recipes
-
-
-def get_all_recipes():
-    admin = db.child("admin").child("UPLwshBH98OmbVivV").get().val()
-    if admin != None:
-        if admin["scrape"]:
-            db.child('all_ingredients').remove()
-            food_network.food_network(db)
-            scrape_and_populate_db = False
-            db.child("admin").child("UPLwshBH98OmbVivV").child(
-                "scrape").set(scrape_and_populate_db)
-    else:
-        scrape = {
-            "scrape": False,
-        }
-        db.child("admin").child("UPLwshBH98OmbVivV").set(scrape)
-
-    all_recipes = db.child("recipe").get()
-
-    recipe_list = []
-    if all_recipes.each() != None:
-        for recipe in all_recipes.each():
-            key = str(recipe.key())
-            _recipe_ = get_recipe(dict(recipe.val()), key)
-            recipe_list.append(_recipe_)
-
-    recipes.set_all_recipes(recipe_list)
-
 # get all filtered recipes
 
 
 def get_all_filtered_recipes():
     recipe_list = []
+    uid = m_user._getUser_Id_()
     word = recipes.get_recipe_name_to_find()
     all_recipes = db.child("recipe").get()
     if all_recipes.each() != None:
         for recipe in all_recipes.each():
             if recipe.val()["recipe_name"].lower().find(word.lower()) != -1:
                 key = str(recipe.key())
-                _recipe_ = get_recipe(dict(recipe.val()), key)
+                _recipe_ = recipes.get_recipe(dict(recipe.val()), key, uid)
                 recipe_list.append(_recipe_)
     return recipe_list
 
-# get individual recipe as Json
 
-
-def get_recipe(recipe, key):
-    num_of_stars = 0
-    favorite = False
-    no_user_signed_in = True
-    stars = db.child("recipe").child(key).child("stars").get().val()
-    if stars != None:
-        num_of_stars = len(stars.items())
-    if not m_user._isNone_():
-        no_user_signed_in = False
-        uid = m_user._getUser_Id_()
-        favorite = db.child("recipe").child(key).child(
-            "stars").child(uid).get().val() != None
-    recipe["recipe_id"] = key
-    recipe["user_saved"] = favorite
-    recipe["likes"] = num_of_stars
-    recipe["no_user_signed_in"] = no_user_signed_in
-
-    return recipe
 
 # Recipe Page
 
@@ -130,11 +82,7 @@ def recipe_list(request):
         if len(all_recipes) != 0:
             found_results = True
     else:
-        if recipes.get_all_recipes() != None:
-            all_recipes = recipes.get_all_recipes()
-        else:
-            get_all_recipes()
-            all_recipes = recipes.get_all_recipes()
+        all_recipes = recipes.get_all_recipes()
     scrollTop = 0
     keep_scroll_pos = False
     if recipes.get_is_recipe_liked():
@@ -164,6 +112,10 @@ def recipe_list(request):
         }
         return render(request, 'recipes.html', {"data": data})
     else:
+        if recipes.get_visited_pages(page) == -1:
+            recipes.get_all_likes(m_user._getUser_Id_(), page)
+            recipes.set_visited_pages(page)
+            
         _user_ = m_user._getUser_()
         data = {
             "user": _user_,
@@ -206,6 +158,7 @@ def category(request):
 
 def get_recipes_by_category(category):
     all_recipes = db.child('recipe').get()
+    uid = m_user._getUser_Id_()
     recipe_lst = []
     for recipe in all_recipes.each():
         recipe_details = recipe.val()
@@ -214,7 +167,7 @@ def get_recipes_by_category(category):
             if categories:
                 if any(category in c for c in categories):
                     key = str(recipe.key())
-                    _recipe_ = get_recipe(dict(recipe_details), key)
+                    _recipe_ = recipes.get_recipe(dict(recipe_details), key, uid)
                     recipe_lst.append(_recipe_)
         except KeyError:
             pass
@@ -224,6 +177,7 @@ def get_recipes_by_category(category):
 def get_recipes_by_ingredients(ingredient):
     all_recipes = db.child('recipe').get()
     recipe_lst = []
+    uid = m_user._getUser_Id_()
     for recipe in all_recipes.each():
         #categories = recipe.val()["recipe_categories"]
         recipe_details = recipe.val()
@@ -232,7 +186,7 @@ def get_recipes_by_ingredients(ingredient):
             if ingredients:
                 if any(ingredient in i for i in ingredients):
                     key = str(recipe.key())
-                    _recipe_ = get_recipe(dict(recipe_details), key)
+                    _recipe_ = recipes.get_recipe(dict(recipe_details), key, uid)
                     recipe_lst.append(_recipe_)
         except KeyError:
             pass
@@ -456,7 +410,7 @@ def edit_profile(request):
 
 
 @csrf_exempt
-def personal_recipes(request):
+def personal_recipes_opt(request):
     if m_user._isNone_():
         return render(request, "login.html")
     else:
@@ -508,6 +462,57 @@ def personal_recipes(request):
 
         }
         return render(request, 'personal_recipes.html', {"data": data})
+
+@csrf_exempt
+def personal_recipes(request):
+    recipe_details = None
+    msg = None
+    msg_type = None
+    userRecipe = None
+    no_rec = None
+
+    if m_user._isNone_():
+        return HttpResponseRedirect("/login/") 
+    else:
+        user = m_user._getUser_()
+        uid = m_user._getUser_Id_()
+        my_recipes = db.child("users").child(uid).child("recipes").get().val()
+        if not my_recipes:
+            print("NO RECIPES")
+            no_rec = "There are no recipes to show... use the form on the left to add some!"
+
+        if request.method == "POST":
+            title = request.POST.get("title")
+            ingredients = request.POST.get("search_ingredients").split(",")
+            description = request.POST.get("description")
+            steps = request.POST.get("steps")
+            privacy = request.POST.get("privacy")
+            userRecipe = {
+            'title': title,
+            'description': description,
+            'steps': steps,
+            'ingredients': ingredients,
+            'privacy': privacy
+            }
+            
+            if my_recipes:
+                my_recipes.append(userRecipe)
+                db.child("users").child(uid).child("recipes").set(my_recipes)
+                msg = "Changes saved successfully."
+                msg_type = "success"
+            else:
+                userRecipe = [userRecipe]
+                db.child("users").child(uid).child("recipes").set(userRecipe)
+                pass
+    #context = {"ingredients": all_ingredients}
+    my_recipes = db.child("users").child(uid).child("recipes").get().val()
+    data = {
+        "user": user,
+        "message": msg,
+        "msg_type": msg_type,
+    }
+    return render(request, 'personal_recipes.html', {"data": data, "my_recipes": my_recipes, "no_rec": no_rec})
+
 
 
 @csrf_exempt
@@ -711,7 +716,7 @@ def fridge(request):
                 recipe_ingredients = recipe_details["recipe_ingredients"]
                 if set(recipe_ingredients).issubset(set(fridge_ingredients)):
                     key = str(recipe.key())
-                    possible_recipes.append(get_recipe(dict(recipe_details), key))
+                    possible_recipes.append(recipes.get_recipe(dict(recipe_details), key, uid))
 
             except KeyError:
                 pass        
