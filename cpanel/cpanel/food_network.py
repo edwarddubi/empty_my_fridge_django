@@ -83,7 +83,7 @@ def parser(item, food_array):
 	item = item.replace('\'', '')
 	item = item.replace('\"', '')
 	item = item.replace('%', '')
-
+	item = item.replace('.', '')
 	# Breaks each word into a string array
 	split_item = item.split(" ")
 
@@ -257,7 +257,7 @@ def food_network(db):
 						break
 			
 			if not found:
-				db.child('recipe').push(recipe)
+				db.child('recipe').push(recipe)	
 			
 			for ingredient in ingredients:
 				_ingredient_ = {

@@ -2,59 +2,76 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Home Page</title>
+    <title>My Fridge Recipes</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css"
     />
+
+    <style>
+      /* pagination position styling */
+      .pagination {
+        position: relative;
+        margin-bottom: 50px;
+        margin-top: -25px;
+        text-align: center;
+      }
+      /* pagination styling */
+      .pagination a {
+        color: #031f3b;
+        padding: 10px 18px;
+        border: 2px solid #031f3b;
+        font-size: medium;
+        text-decoration: none;
+      }
+      /* pagination hover effect on non-active */
+      .pagination a:hover:not(.active) {
+        background-color: #031f3b;
+        color: white;
+      }
+      /* pagination hover effect on active*/
+      .pagination a:hover {
+        background-color: #031f3b;
+        color: white;
+        text-decoration: underline;
+      }
+
+      .recipe_name {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: large;
+        color:black;
+        font-weight: bolder;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+      }
+
+      .recipe_name:hover{
+        color: #3460e2;
+        text-decoration: underline;
+      }
+      
+
+      .ui.inverted.menu {
+        background: #642b73; /* fallback for old browsers */
+        background: -webkit-linear-gradient(
+          to right,
+          #c6426e,
+          #642b73
+        ); /* Chrome 10-25, Safari 5.1-6 */
+        background: linear-gradient(
+          to right,
+          #c6426e,
+          #642b73
+        ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+      }
+      .center {
+        margin: auto;
+        width: 50%;
+      }
+    </style>
   </head>
-
-  <style>
-    /* pagination position styling */
-    .pagination {
-      position: relative;
-      margin-bottom: 50px;
-      margin-top: -25px;
-      text-align: center;
-    }
-    /* pagination styling */
-    .pagination a {
-      color: #031f3b;
-      padding: 10px 18px;
-      border: 2px solid #031f3b;
-      font-size: medium;
-      text-decoration: none;
-    }
-    /* pagination hover effect on non-active */
-    .pagination a:hover:not(.active) {
-      background-color: #031f3b;
-      color: white;
-    }
-    /* pagination hover effect on active*/
-    .pagination a:hover {
-      background-color: #031f3b;
-      color: white;
-      text-decoration: underline;
-    }
-
-    .ui.inverted.menu {
-      background: #642b73; /* fallback for old browsers */
-      background: -webkit-linear-gradient(
-        to right,
-        #c6426e,
-        #642b73
-      ); /* Chrome 10-25, Safari 5.1-6 */
-      background: linear-gradient(
-        to right,
-        #c6426e,
-        #642b73
-      ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-    }
-    .center {
-    margin: auto;
-    width: 50%;
-  }
-  </style>
 
   <body>
     {% csrf_token %}
@@ -64,7 +81,7 @@
         <h3>Empty My Fridge</h3>
       </div>
 
-      <a onclick="location.href={% url 'home'%}" class="item active">
+      <a onclick="location.href={% url 'home'%}" class="item">
         Home
       </a>
       <a onclick="location.href={% url 'recipe_page'%}" class="item">
@@ -102,7 +119,7 @@
         id="fridge_btn"
         style="display: flex;"
         onclick="location.href={% url 'fridge'%}"
-        class="item">
+        class="item active">
         My Fridge
       </a>
         <div onclick="location.href={% url 'profile'%}" class="item">
@@ -133,26 +150,35 @@
     </div>
     <!--End of Navigation Bar-->
 
+    {% if data.isSearch %} {% if data.found_results %}
+    <div style="margin-top: 75px; padding-left: 90px;">
+      <h2><i>Found Results ({{data.items}} Item(s))</i></h2>
+    </div>
+    {% else %}
+    <div style="margin-top: 75px; padding-left: 90px;">
+      <h2><i>No Results Found! (0 Items)</i></h2>
+    </div>
+    {% endif %} {% endif %}
+
     <!--Container-->
     <div class="ui container center aligned">
       <!--Recipe Cards-->
-      {% if data.recipe_lst %}
-      <div
-        class="ui grid"
-        style="margin-top: 75px; margin-bottom: 75px;"
-      >
-      <!--column-->
-        {% for recipe in data.recipe_lst %}
+      {% if data.recipes %}
+      <div class="ui grid" style="margin-top: 75px; margin-bottom: 75px;">
+        <!--column-->
+        {% for recipe in data.recipes %}
         <div class="four wide column">
           <div
             class="ui link card"
-            style="margin: 10px; width: 300px; height: 360px;"
+            style="margin: 10px; width: 300px; height: 335px;"
           >
             <a class="ui medium image">
               <img src="{{recipe.recipe_image}}" />
             </a>
             <div class="content" style="text-align: center;">
-              <a class="header" href="{{recipe.recipe_link}}"
+              <a
+                class="recipe_name"
+                href="{{recipe.recipe_link}}"
                 >{{recipe.recipe_name}}</a
               >
             </div>
@@ -187,7 +213,7 @@
                   />
                   <input
                     style="display: none;"
-                    value="{{isSearch}}"
+                    value="{{data.isSearch}}"
                     name="isSearch"
                   />
                   {% if recipe.user_saved %}
@@ -218,37 +244,70 @@
       {% endif %}
       <!--End of Recipe Cards-->
     </div>
+
     <!--Pagination-->
-      <div class="pagination">
-        <span class="step-links">
-            {% if data.recipes_lst.has_previous %}
-                <a href="?page=1" title="First" style="border: none; background-color: white; color:#031f3b"><<</a>
-                <a href="?page={{ recipes.previous_page_number }}" style="border: none; background-color: white; color: #031f3b;">Previous</a>
-            {% endif %}
-    
-            <span class="current">
-                {% for num in data.recipe_lst.paginator.page_range %}
-                  {% if data.recipe_lst.number == num %}
-                    <a href="?page={{ num }}" style="background-color: #031f3b; color: white;">{{ num }}</a>
-                  {% else %}
-                    <a href="?page={{ num }}">{{ num }}</a>
-                  {% endif %}
-                {% endfor %}
-            </span>
-            {% if data.recipe_lst.has_next %}
-                <a href="?page={{ recipes.next_page_number }}" style="border: none; background-color: white; color:#031f3b">Next</a>
-                <a href="?page={{ recipes.paginator.num_pages }}" title="Last" style="border: none; background-color: white; color:#031f3b">>></a>
-            {% endif %}
+    <div class="pagination">
+      <span class="step-links">
+        {% if data.recipes.has_previous %}
+        <a
+          href="?page=1"
+          title="First"
+          style="border: none; background-color: white; color: #031f3b;"
+          ><<</a
+        >
+        <a
+          href="?page={{ data.recipes.previous_page_number }}"
+          style="border: none; background-color: white; color: #031f3b;"
+          >Previous</a
+        >
+        {% endif %}
+
+        <span class="current">
+          {% for num in data.recipes.paginator.page_range %} {% if data.recipes.number == num %}
+          <a
+            href="?page={{ num }}"
+            style="background-color: #031f3b; color: white;"
+            >{{ num }}</a
+          >
+          {% else %}
+          <a href="?page={{ num }}">{{ num }}</a>
+          {% endif %} {% endfor %}
         </span>
+        {% if data.recipes.has_next %}
+        <a
+          href="?page={{ data.recipes.next_page_number }}"
+          style="border: none; background-color: white; color: #031f3b;"
+          >Next</a
+        >
+        <a
+          href="?page={{ data.recipes.paginator.num_pages }}"
+          title="Last"
+          style="border: none; background-color: white; color: #031f3b;"
+          >>></a
+        >
+        {% endif %}
+      </span>
     </div>
     <!--End of Pagination-->
-    
-    {% if data.user %}
+
+    {% if data.keep_scroll_pos %}
+    <script>
+      var scrollTop = {{data.scrollTop}};
+      window.scrollTo(0, scrollTop);
+    </script>
+    {% endif %} {% if data.user %}
     <script>
       document.getElementById("image_profile").src =
         "https://react.semantic-ui.com/images/avatar/large/matthew.png";
       document.getElementById("logout_btn").style.display = "flex";
       document.getElementById("login_btn").style.display = "none";
+      window.addEventListener("scroll", function (event) {
+        var scrollY = this.scrollY;
+        if (scrollY) {
+          var elements = document.querySelectorAll("#scrollY");
+          for (var i = 0; i < elements.length; i++) elements[i].value = scrollY;
+        }
+      });
     </script>
     {% endif %}
   </body>
