@@ -1,22 +1,34 @@
 
 class Recipes:
-    def __init__(self, recipe_list, db):
-        self.recipe_list = recipe_list
-        self.pos = 0
-        self.liked = False
-        self.searched = False
-        self.recipe_name_to_find = None
-        self.recipes_current_page = "1"
-        self.word_to_filter = None
-
-    def __init__(self, db):
+    def __init__(self):
         self.recipe_list = None
         self.pos = 0
         self.liked = False
         self.searched = False
         self.recipe_name_to_find = None
         self.recipes_current_page = "1"
-        self.word_to_filter = None
+        self.db = None
+        self.m_user = None
+        self.food_network = None
+        self.visited_pages = ""
+
+    def __init__(self, db, m_user, food_network):
+        self.recipe_list = None
+        self.pos = 0
+        self.liked = False
+        self.searched = False
+        self.recipe_name_to_find = None
+        self.recipes_current_page = "1"
+        self.db = db
+        self.m_user = m_user
+        self.food_network = food_network
+        self.visited_pages = ""
+
+    def set_visited_pages(self, page):
+        self.visited_pages += "," + page
+
+    def get_visited_pages(self, page):
+        return self.visited_pages.find(page)
 
     def get_all_recipes(self):
         return self.recipe_list
@@ -67,3 +79,68 @@ class Recipes:
                 recipe["user_saved"] = False
                 recipe["likes"] = recipe["likes"] - 1
                 break                                     
+
+    def get_all_likes(self, uid, page):
+        page_num = int(page)
+        start = (page_num - 1) * 48
+        favorite = False
+        no_user_signed_in = True
+        while start < len(self.recipe_list):
+            recipe = self.recipe_list[start]
+            if start == len(self.recipe_list) or start == page_num * 48:
+                break
+            try:
+                key = recipe["recipe_id"]
+                if uid:
+                    no_user_signed_in = False
+                    favorite = recipe["stars"][uid] != None
+                    recipe["user_saved"] = favorite
+                    recipe["no_user_signed_in"] = no_user_signed_in
+            except KeyError:
+                pass
+            start+=1
+             
+    # get all recipes
+    def _get_all_recipes_(self):
+        admin = self.db.child("admin").child("UPLwshBH98OmbVivV").get().val()
+        if admin != None:
+            if admin["scrape"]:
+                self.db.child('all_ingredients').remove()
+                self.food_network.food_network(self.db)
+                scrape_and_populate_db = False
+                self.db.child("admin").child("UPLwshBH98OmbVivV").child(
+                    "scrape").set(scrape_and_populate_db)
+        else:
+            scrape = {
+                "scrape": False,
+            }
+            self.db.child("admin").child("UPLwshBH98OmbVivV").set(scrape)
+
+        all_recipes = self.db.child("recipe").get()
+
+        recipe_list = []
+        if all_recipes.each() != None:
+            for recipe in all_recipes.each():
+                key = str(recipe.key())
+                _recipe_ = self.get_recipe(dict(recipe.val()), key, self.m_user._getUser_Id_())
+                recipe_list.append(_recipe_)
+
+        self.recipe_list = recipe_list
+
+    # get individual recipe as Json
+    def get_recipe(self, recipe, key, uid):
+        num_of_stars = 0
+        favorite = False
+        no_user_signed_in = True
+        stars = self.db.child("recipe").child(key).child("stars").get().val()
+        if stars:
+            num_of_stars = len(stars.items())
+        if uid:
+            no_user_signed_in = False
+            favorite = self.db.child("recipe").child(key).child("stars").child(uid).get().val() != None
+        recipe["recipe_id"] = key
+        recipe["user_saved"] = favorite
+        recipe["likes"] = num_of_stars
+        recipe["no_user_signed_in"] = no_user_signed_in
+
+        return recipe

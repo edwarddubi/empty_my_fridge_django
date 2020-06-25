@@ -251,10 +251,13 @@ def food_network(db):
 			all_recipes = db.child('recipe').get()
 			if all_recipes.each() != None:
 				for m_recipe in all_recipes.each():
-					_recipe_ = 	m_recipe.val()
-					if _recipe_["recipe_ingredients"] == ingredients and _recipe_["recipe_name"] == recipe_name:
-						found = True
-						break
+					_recipe_ = m_recipe.val()
+					try:
+						if _recipe_["recipe_ingredients"] == ingredients and _recipe_["recipe_name"] == recipe_name:
+							found = True
+							break
+					except KeyError:
+						pass	
 			
 			if not found:
 				db.child('recipe').push(recipe)	
