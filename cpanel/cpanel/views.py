@@ -27,10 +27,6 @@ recipes._get_all_recipes_()
 
 @csrf_exempt
 def home(request):
-    """
-    if recipes.get_all_recipes() == None:
-        get_all_recipes()
-    """  
     if m_user._isNone_():
         return render(request, 'home.html')
     else:
@@ -78,7 +74,7 @@ def recipe_list(request):
     if recipes.get_is_searched_for_recipes():
         all_recipes = get_all_filtered_recipes()
         isSearch = True
-        recipes.set_is_searched_for_recipes(False)
+        #recipes.set_is_searched_for_recipes(False)
         if len(all_recipes) != 0:
             found_results = True
     else:
@@ -150,7 +146,8 @@ def category(request):
 
     data = {
         "user": user,
-        "recipe_lst": curr_recipes
+        "recipe_lst": curr_recipes,
+        "category": cat,
     }
 
     return render(request, 'category.html', {"data": data})
@@ -198,7 +195,7 @@ def get_recipes_by_category_ingredients(request):
     ingred_list = []
     result_list = []
     if request.method == "GET":
-        value = request.GET.get("value")
+        value = request.GET.get("category")
         category_list = get_recipes_by_category(value)
         ingred_list = get_recipes_by_ingredients(value)
         result_list = category_list + ingred_list
@@ -220,7 +217,8 @@ def get_recipes_by_category_ingredients(request):
 
     data = {
         "user": user,
-        "recipe_lst": curr_recipes
+        "recipe_lst": curr_recipes,
+        "category": value,
     }
 
     return render(request, 'category.html', {"data": data})
@@ -676,10 +674,7 @@ def fridge(request):
         all_ingredients = [i for i in all_ingredients if search_ing in i]
         if not all_ingredients:
             all_ingredients = ["No ingredient found"]
-
-    # chk_food=['sugar', 'cranberries', 'thyme', 'orange marmalade', 'orange liqueur', 'unsalted butter', 'parmesan', 'black pepper', 'egg yolks', 'purpose flour',
-    # 'chicken wings', 'salt', 'chicken base', 'garlic powder', 'ginger powder', 'white pepper', 'egg', 'purpose flour', 'rice flour', 'vegetable', 'dark sugar', 'vinegar', 'oyster sauce', 'soy sauce', 'rice wine', 'honey', 'sesame oil', 'white pepper', 'chili garlic paste', 'spiced water', 'orange slice', 'scallions', 'sesame seeds', 'vegetable', 'garlic', 'chile flakes', 'sichuan peppercorns',
-    # 'brussels sprouts', 'slab bacon', 'lemons', 'grain mustard', 'caraway', 'salt', 'pepper','No ingredients']
+   
     if chk_food and uid:
         new_ingredients= {}
         if fridge_ingredients:
