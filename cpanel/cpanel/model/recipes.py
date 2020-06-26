@@ -75,6 +75,7 @@ class Recipes:
 
     def set_recipe_unLiked(self, key):
         for recipe in self.recipe_list:
+            print(recipe)
             if recipe["recipe_id"] == key:
                 recipe["user_saved"] = False
                 recipe["likes"] = recipe["likes"] - 1
@@ -131,16 +132,21 @@ class Recipes:
     def get_recipe(self, recipe, key, uid):
         num_of_stars = 0
         favorite = False
-        no_user_signed_in = True
-        stars = self.db.child("recipe").child(key).child("stars").get().val()
-        if stars:
-            num_of_stars = len(stars.items())
-        if uid:
-            no_user_signed_in = False
-            favorite = self.db.child("recipe").child(key).child("stars").child(uid).get().val() != None
         recipe["recipe_id"] = key
-        recipe["user_saved"] = favorite
-        recipe["likes"] = num_of_stars
-        recipe["no_user_signed_in"] = no_user_signed_in
+        recipe["no_user_signed_in"] = True
+        try:
+            if uid:
+                recipe["no_user_signed_in"] = False
+                favorite = recipe["stars"][uid] != None
+            recipe["user_saved"] = favorite
+        except KeyError:
+            recipe["user_saved"] = False
+            pass
+        try:
+            num_of_stars = len(recipe["stars"].items())
+            recipe["likes"] = num_of_stars
+        except KeyError:
+            recipe["likes"] = 0
+            pass    
 
         return recipe
