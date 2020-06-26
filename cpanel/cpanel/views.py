@@ -150,7 +150,8 @@ def category(request):
 
     data = {
         "user": user,
-        "recipe_lst": curr_recipes
+        "recipe_lst": curr_recipes,
+        "category": cat
     }
 
     return render(request, 'category.html', {"data": data})
