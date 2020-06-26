@@ -179,7 +179,6 @@ def get_recipes_by_ingredients(ingredient):
     recipe_lst = []
     uid = m_user._getUser_Id_()
     for recipe in all_recipes.each():
-        #categories = recipe.val()["recipe_categories"]
         recipe_details = recipe.val()
         try:
             ingredients = recipe_details["recipe_ingredients"]

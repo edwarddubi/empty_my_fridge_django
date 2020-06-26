@@ -75,7 +75,6 @@ class Recipes:
 
     def set_recipe_unLiked(self, key):
         for recipe in self.recipe_list:
-            print(recipe)
             if recipe["recipe_id"] == key:
                 recipe["user_saved"] = False
                 recipe["likes"] = recipe["likes"] - 1
@@ -85,18 +84,18 @@ class Recipes:
         page_num = int(page)
         start = (page_num - 1) * 48
         favorite = False
-        no_user_signed_in = True
+        
         while start < len(self.recipe_list):
             recipe = self.recipe_list[start]
+            recipe["no_user_signed_in"] = True
             if start == len(self.recipe_list) or start == page_num * 48:
                 break
             try:
                 key = recipe["recipe_id"]
                 if uid:
-                    no_user_signed_in = False
+                    recipe["no_user_signed_in"] = False
                     favorite = recipe["stars"][uid] != None
                     recipe["user_saved"] = favorite
-                    recipe["no_user_signed_in"] = no_user_signed_in
             except KeyError:
                 pass
             start+=1
