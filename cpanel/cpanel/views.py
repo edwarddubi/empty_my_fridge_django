@@ -165,7 +165,7 @@ def get_recipes_by_category(category):
         try:
             categories = recipe_details["recipe_categories"]
             if categories:
-                if any(category in c for c in categories):
+                if any(category in c for c in categories) :
                     key = str(recipe.key())
                     _recipe_ = recipes.get_recipe(dict(recipe_details), key, uid)
                     recipe_lst.append(_recipe_)
@@ -236,7 +236,10 @@ def search(request):
             recipes.set_recipe_name_to_find(recipe_name_to_find)
             recipes.set_is_searched_for_recipes(True)
         navigate_to_recipe_page = "/recipe_list/"
-        navigate_to_recipe_page += "?page=" + recipes.get_recipes_current_page()
+        if recipes.get_recipes_current_page():
+            navigate_to_recipe_page += "?page=" + recipes.get_recipes_current_page()
+        else:
+            navigate_to_recipe_page += "?page=1"   
     return HttpResponseRedirect(navigate_to_recipe_page)
 
 
@@ -656,10 +659,10 @@ def fridge(request):
             all_ingredients.append(ingredient)
     
     if len(all_ingredients) > 0:
-        sorted(all_ingredients)
+        all_ingredients = sorted(all_ingredients)
     fridge_ingredients = db.child("users").child(uid).child("Fridge").get().val() # database is cleared of null values
     if fridge_ingredients:
-        sorted(fridge_ingredients)
+        fridge_ingredients = sorted(fridge_ingredients)
 
     search_ing = request.GET.get('search_ingredients')
    
