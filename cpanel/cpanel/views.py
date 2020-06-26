@@ -102,7 +102,7 @@ def recipe_list(request):
             "recipes": curr_recipes,
             "scrollTop": scrollTop,
             "found_results": found_results,
-            "items": len(curr_recipes),
+            "items": len(all_recipes),
             "isSearch": isSearch,
 
         }
@@ -339,7 +339,34 @@ def _register_(request):
         #is_email_valid = validate_email(email, verify=True)
         is_email_valid = True  # validate_email(email, verify=True)
         if is_email_valid:
-            register_user(request, email, password, name)
+            try:
+                user = auth_fb.create_user_with_email_and_password(email, password)
+                user['displayName'] = name
+                uid = user['localId']
+                email = user['email']
+                index_of_at = email.find("@")
+                username = email[:index_of_at]
+                today = date.today()
+                joined = today.strftime("%B %d, %Y")
+
+                userData = {
+                    'name': name,
+                    'email': email,
+                    'joined': joined,
+                    'userID': uid,
+                    'username': username,
+                    'image': 'https://react.semantic-ui.com/images/wireframe/square-image.png'
+                }
+                db.child('users').child(uid).set(userData)
+            except Exception as e:
+                # logging.exception('')
+                response = e.args[0].response
+                error = response.json()['error']
+                msg = error_message(error['message'])
+                data = {
+                    "message": msg
+                }
+                return render(request, "register.html", {"data": data})
         else:
             msg = error_message("WRONG_EMAIL")
             data = {
@@ -348,37 +375,6 @@ def _register_(request):
             return render(request, "register.html", {"data": data})
 
     return HttpResponseRedirect("/login/")
-
-
-def register_user(request, email, password, name):
-    try:
-        user = auth_fb.create_user_with_email_and_password(email, password)
-        user['displayName'] = name
-        uid = user['localId']
-        email = user['email']
-        index_of_at = email.find("@")
-        username = email[:index_of_at]
-        today = date.today()
-        joined = today.strftime("%B %d, %Y")
-
-        userData = {
-            'name': name,
-            'email': email,
-            'joined': joined,
-            'userID': uid,
-            'username': username,
-            'image': 'https://react.semantic-ui.com/images/wireframe/square-image.png'
-        }
-        db.child('users').child(uid).set(userData)
-    except Exception as e:
-        # logging.exception('')
-        response = e.args[0].response
-        error = response.json()['error']
-        msg = error_message(error['message'])
-        data = {
-            "message": msg
-        }
-        return render(request, "register.html", {"data": data})
 
 # Profile Page (Profile--about me, Edit Profile and Save new profile information, Account Settings, Recover Password, User Favorite Recipes)
 
@@ -612,6 +608,10 @@ def user_fav_recipes(request):
 
 # User Error Messages Display
 def error_message(type):
+   
+    if type.find("WEAK_PASSWORD") != -1:
+        type = "WEAK_PASSWORD"
+    print(type)    
     return {
         "EMAIL_EXISTS": "This email is already in use. Try a different email!",
         "WEAK_PASSWORD": "Password should be at least 6 characters.",
