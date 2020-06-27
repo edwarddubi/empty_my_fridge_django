@@ -9,5 +9,6 @@
 
 # misc
 #/cpanel/cpanel/config.py
+/cpanel/staticfiles
 /.history
 
