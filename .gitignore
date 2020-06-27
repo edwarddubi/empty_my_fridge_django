@@ -5,9 +5,9 @@
 # testing
 
 # production
-/build
+#/build
 
 # misc
-/cpanel/cpanel/config.py
+#/cpanel/cpanel/config.py
 /.history
 

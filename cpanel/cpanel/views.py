@@ -610,8 +610,7 @@ def user_fav_recipes(request):
 def error_message(type):
    
     if type.find("WEAK_PASSWORD") != -1:
-        type = "WEAK_PASSWORD"
-    print(type)    
+        type = "WEAK_PASSWORD"   
     return {
         "EMAIL_EXISTS": "This email is already in use. Try a different email!",
         "WEAK_PASSWORD": "Password should be at least 6 characters.",
