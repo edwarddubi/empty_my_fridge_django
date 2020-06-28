@@ -9,3 +9,5 @@ import setuptools
 
 if __name__ == "__main__":
     setuptools.setup()
+    os.chdir("cpanel")
+    os.system("python manage.py runserver")
