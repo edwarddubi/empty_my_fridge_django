@@ -6,7 +6,7 @@ import os
 import django
 from django.conf import settings
 
-BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "cpanel"))
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "empty_my_fridge"))
 
 def boot_django():
     settings.configure(
@@ -19,7 +19,7 @@ def boot_django():
             }
         },
         INSTALLED_APPS=(
-            "cpanel",
+            "empty_my_fridge",
         ),
         TIME_ZONE="UTC",
         USE_TZ=True,
