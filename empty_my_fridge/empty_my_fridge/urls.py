@@ -19,6 +19,7 @@ from . import views
 #app_name = 'empty_my_fridge'
 #python manage.py runserver
 urlpatterns = [
+    path('', views.home, name='homepage'),
     path('fridge/',views.fridge, name='fridge'),
     path('home/', views.home, name='home'),
     path('recipe_list/', views.recipe_list, name='recipes'),

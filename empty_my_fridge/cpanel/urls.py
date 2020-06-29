@@ -25,6 +25,7 @@ except ModuleNotFoundError:
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', _path_),
     path('empty_my_fridge/', _path_),
     
 ]

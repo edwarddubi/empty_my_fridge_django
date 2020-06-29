@@ -33,7 +33,6 @@ recipes._get_all_recipes_()
 
 # Home Page
 
-
 @csrf_exempt
 def home(request):
     if m_user._isNone_():
