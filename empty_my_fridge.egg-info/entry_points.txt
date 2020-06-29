@@ -1,3 +1,0 @@
-[console_scripts]
-empty_my_fridge = empty_my_fridge.manage:main
-
