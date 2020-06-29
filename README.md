@@ -2,6 +2,26 @@
 
 What is empty my Fridge app?:
 
+## Github link
+
+[Empty My Fridge](https://github.com/edwarddubi/empty_my_fridge_django)
+
+## PYPI
+
+[empty-my-fridge 1.0.3](https://pypi.org/project/empty-my-fridge/)
+
+### Install using command
+  - pip install empty-my-fridge
+
+### Run app using
+  - empty_my_fridge runserver
+
+###  Development starts at the HomePage
+  
+  Original starts at http://127.0.0.1:8000. Please click on HomePage to be redirected
+
+  - [HomePage](http://127.0.0.1:8000/empty_my_fridge/home/)
+
 ## Python FrameWork
 
 - [Django](https://pypi.org/project/Django/)
@@ -16,7 +36,7 @@ Semantic Ui or fomantic Ui css (currently, Semantic Ui)
 
 ## Templates
 
-- HTML, CSS, and JS
+- HTML, CSS, and JS (Snippets)
 
 ## Using Semantic Ui
 

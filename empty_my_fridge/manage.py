@@ -19,7 +19,9 @@ def main():
             "forget to activate a virtual environment?"
         ) from exc
     execute_from_command_line(sys.argv)
+    
 
 
 if __name__ == '__main__':
     main()
+    print("Starting development server at http://127.0.0.1:8000/empty_my_fridge/home/")

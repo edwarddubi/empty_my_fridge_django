@@ -11,18 +11,20 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name='empty_my_fridge',
-    version="1.0.2",
-    author="Edward Mensah, Becca Boes",
-    description="An App to help Get your Daily Recipes",
+    version="1.0.4",
+    author="Charles Charlestin, Rebecca Boes, Cyan Perez, Randolph Maynes, Edward Mensah",
+    description="Get your Daily Recipes",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/edwarddubi/empty_my_fridge_django",
     packages=setuptools.find_packages(),
     classifiers=[
+        "Environment :: Web Environment",
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
+    include_package_data = True,
     python_requires='>=3.6',
     entry_points = {
         'console_scripts': [
