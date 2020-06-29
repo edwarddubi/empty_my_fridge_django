@@ -29,6 +29,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+try:
+    import empty_my_fridge.manage
+    app = 'empty_my_fridge.empty_my_fridge'
+except ModuleNotFoundError:
+    app = 'empty_my_fridge'
 
 # Application definition
 
@@ -39,7 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'empty_my_fridge',
+    app,
 ]
 
 MIDDLEWARE = [
@@ -52,7 +57,14 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'cpanel.urls'
+ 
+try:
+    import empty_my_fridge.manage
+    urls = 'empty_my_fridge.cpanel.urls'
+except ModuleNotFoundError:
+    urls = 'cpanel.urls' 
+
+ROOT_URLCONF = urls   
 
 TEMPLATES = [
     {
@@ -70,7 +82,14 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'cpanel.wsgi.application'
+ 
+try:
+    import empty_my_fridge.manage
+    wsgi_app = 'empty_my_fridge.cpanel.wsgi.application'
+except ModuleNotFoundError:
+    wsgi_app = 'cpanel.wsgi.application'
+
+WSGI_APPLICATION = wsgi_app
 
 
 # Database

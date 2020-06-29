@@ -11,6 +11,12 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'cpanel.settings')
+try:
+    import empty_my_fridge.manage
+    settings = 'empty_my_fridge.cpanel.settings'
+except ModuleNotFoundError:
+    settings = 'cpanel.settings'
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', settings)
 
 application = get_wsgi_application()

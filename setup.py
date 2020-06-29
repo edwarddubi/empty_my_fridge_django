@@ -10,7 +10,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name='empty-my-fridge',
+    name='empty_my_fridge',
     version="1.0.2",
     author="Edward Mensah, Becca Boes",
     description="An App to help Get your Daily Recipes",
@@ -26,7 +26,7 @@ setuptools.setup(
     python_requires='>=3.6',
     entry_points = {
         'console_scripts': [
-            'empty-my-fridge=django_empty_my_fridge.manage:main',
+            'empty_my_fridge=empty_my_fridge.manage:main',
         ],
     },
 )

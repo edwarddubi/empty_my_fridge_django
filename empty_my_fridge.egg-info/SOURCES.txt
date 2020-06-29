@@ -5,6 +5,7 @@ README.rst
 pyproject.toml
 setup.cfg
 setup.py
+empty_my_fridge/__init__.py
 empty_my_fridge/db.sqlite3
 empty_my_fridge/manage.py
 empty_my_fridge.egg-info/PKG-INFO
@@ -23,13 +24,10 @@ empty_my_fridge/cpanel/__pycache__/settings.cpython-38.pyc
 empty_my_fridge/cpanel/__pycache__/urls.cpython-38.pyc
 empty_my_fridge/cpanel/__pycache__/wsgi.cpython-38.pyc
 empty_my_fridge/empty_my_fridge/__init__.py
-empty_my_fridge/empty_my_fridge/asgi.py
 empty_my_fridge/empty_my_fridge/config.py
 empty_my_fridge/empty_my_fridge/food_network.py
-empty_my_fridge/empty_my_fridge/settings.py
 empty_my_fridge/empty_my_fridge/urls.py
 empty_my_fridge/empty_my_fridge/views.py
-empty_my_fridge/empty_my_fridge/wsgi.py
 empty_my_fridge/empty_my_fridge/__pycache__/__init__.cpython-38.pyc
 empty_my_fridge/empty_my_fridge/__pycache__/config.cpython-38.pyc
 empty_my_fridge/empty_my_fridge/__pycache__/food_network.cpython-38.pyc
