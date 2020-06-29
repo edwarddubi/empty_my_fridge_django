@@ -128,7 +128,7 @@ def recipe_list(request):
             "scrollTop": scrollTop,
             "keep_scroll_pos": keep_scroll_pos,
             "found_results": found_results,
-            "items": len(curr_recipes),
+            "items": len(all_recipes),
             "isSearch": isSearch
 
         }
