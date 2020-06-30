@@ -2,6 +2,20 @@
 
 What is empty my Fridge app?:
 
+## Github link
+
+[Empty My Fridge](https://github.com/edwarddubi/empty_my_fridge_django)
+
+## PYPI
+
+[empty-my-fridge 1.0.3](https://pypi.org/project/empty-my-fridge/)
+
+### Install using command
+  - pip install empty-my-fridge
+
+### Run app using
+  - empty_my_fridge
+
 ## Python FrameWork
 
 - [Django](https://pypi.org/project/Django/)
@@ -16,7 +30,7 @@ Semantic Ui or fomantic Ui css (currently, Semantic Ui)
 
 ## Templates
 
-- HTML, CSS, and JS
+- HTML, CSS, and JS (Snippets)
 
 ## Using Semantic Ui
 
@@ -90,7 +104,7 @@ def myConfig():
 
 ## Get the App running for the first time
 
-- python manage.py runserver
+- python manage.py
 
 ## Using Github
 
@@ -116,3 +130,9 @@ Refrain from pushing to master. push to your branch and allow the scrum master t
 - [We might need cloud functions to run our server on the hosting site](https://medium.com/firebase-developers/hosting-flask-servers-on-firebase-from-scratch-c97cfb204579)
 
 - If those don't work now, we might consider using heroku
+
+## SetUp file
+ - python -m pip install -U wheel twine setuptools
+ - python setup.py sdist
+ - python setup.py bdist_wheel
+ - twine upload dist/*
