@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Scraping</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css"
+    />
+  </head>
+  <body>
+    {% csrf_token %}
+    <div class="ui container">
+      <h1>{{data.report}}</h1>
+      <a href="{% url 'scrape_page'%}">
+        <button class="ui button red">
+          Cancel
+        </button>
+      </a>
+    </div>
+  </body>
+</html>

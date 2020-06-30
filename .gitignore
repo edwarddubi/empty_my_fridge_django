@@ -5,10 +5,11 @@
 # testing
 
 # production
-#/build
+build
+/dist
+/empty_my_fridge.egg-info
 
 # misc
 #/cpanel/cpanel/config.py
-/cpanel/staticfiles
 /.history
 
