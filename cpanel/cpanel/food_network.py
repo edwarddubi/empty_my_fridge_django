@@ -2,6 +2,7 @@
 from urllib.request import urlopen as uReq
 from bs4 import BeautifulSoup as soup
 from builtins import any as b_any
+from ctypes import *
 import time
 
 
@@ -11,58 +12,7 @@ import time
 #Food Network recipe list from A-Z (Warning: This will take a really long time to scrape)
 network_recipes = ['https://www.foodnetwork.com/recipes/recipes-a-z/', 'https://www.foodnetwork.com/recipes/recipes-a-z/a', 'https://www.foodnetwork.com/recipes/recipes-a-z/b', 'https://www.foodnetwork.com/recipes/recipes-a-z/c','https://www.foodnetwork.com/recipes/recipes-a-z/d','https://www.foodnetwork.com/recipes/recipes-a-z/e','https://www.foodnetwork.com/recipes/recipes-a-z/f','https://www.foodnetwork.com/recipes/recipes-a-z/g','https://www.foodnetwork.com/recipes/recipes-a-z/h','https://www.foodnetwork.com/recipes/recipes-a-z/i','https://www.foodnetwork.com/recipes/recipes-a-z/j','https://www.foodnetwork.com/recipes/recipes-a-z/k','https://www.foodnetwork.com/recipes/recipes-a-z/l','https://www.foodnetwork.com/recipes/recipes-a-z/m','https://www.foodnetwork.com/recipes/recipes-a-z/n','https://www.foodnetwork.com/recipes/recipes-a-z/o','https://www.foodnetwork.com/recipes/recipes-a-z/p','https://www.foodnetwork.com/recipes/recipes-a-z/q','https://www.foodnetwork.com/recipes/recipes-a-z/r','https://www.foodnetwork.com/recipes/recipes-a-z/s','https://www.foodnetwork.com/recipes/recipes-a-z/t','https://www.foodnetwork.com/recipes/recipes-a-z/u','https://www.foodnetwork.com/recipes/recipes-a-z/v','https://www.foodnetwork.com/recipes/recipes-a-z/w','https://www.foodnetwork.com/recipes/recipes-a-z/xyz',]
 
-#network_recipes = ['https://www.foodnetwork.com/recipes/recipes-a-z/a']
-# list of measurement units for parsing ingredient
-measurementUnits = ['teaspoons','tablespoons','cups','containers','packets','bags','quarts','pounds','cans','bottles',
-		'pints','packages','ounces','jars','heads','gallons','drops','envelopes','bars','boxes','pinches',
-		'dashes','bunches','recipes','layers','slices','links','bulbs','stalks','squares','sprigs',
-		'fillets','pieces','legs','thighs','cubes','granules','strips','trays','leaves','loaves','halves', 'cloves', 'large', 'extra-large', 'small', 'grams','milliliters', 'sticks', 'whole', 'handful']
-
-measurementUnitsAbbreviations = ['c', 'c.', 'C','gal', 'oz', 'oz.', 'pt', 'pts', 'pt.', 'lb', 'lb.', 'lbs', 'lbs.', 'Lb', 'Lbs', 'qt', 'qt.', 'qts', 'qts.', 'tbs','tbs.', 'tbsp', 'tbsp.', 'tbspn','tbspn.', 'T', 'T.','tsp','tsp.', 'tspn','tspn.', 't', 't.','g', 'g.', 'kg', 'kg.', 'Kg', 'Kg.', 'l', 'l.', 'L', 'L.', 'mg', 'mg.', 'ml', 'ml.', 'mL', 'mL.', 'pkg', 'pkgs', 'pcs', 'pcs.', ]
-
-# list of adjectives and participles used to describe ingredients
-descriptions = ['baked', 'beaten', 'blanched', 'boiled', 'boiling', 'boned', 'breaded', 'brewed', 'broken', 'chilled',
-		'chopped', 'cleaned', 'coarse', 'cold', 'cooked', 'cool', 'cooled', 'cored', 'creamed', 'crisp', 'crumbled',
-		'crushed', 'cubed', 'cut', 'deboned', 'deseeded', 'diced', 'dissolved', 'divided', 'drained', 'dried', 'dry',
-		'fine', 'firm', 'fluid', 'fresh', 'frozen', 'grated', 'grilled', 'ground', 'halved', 'hard', 'hardened',
-		'heated', 'heavy', 'juiced', 'julienned', 'jumbo', 'large', 'lean', 'light', 'lukewarm', 'marinated',
-		'mashed', 'medium', 'melted', 'minced', 'near', 'opened', 'optional', 'packed', 'peeled', 'pitted', 'popped',
-		'pounded', 'prepared', 'pressed', 'pureed', 'quartered', 'refrigerated', 'rinsed', 'ripe', 'roasted',
-		'roasted', 'rolled', 'rough', 'scalded', 'scrubbed', 'seasoned', 'seeded', 'segmented', 'separated',
-		'shredded', 'sifted', 'skinless', 'sliced', 'slight', 'slivered', 'small', 'soaked', 'soft', 'softened',
-		'split', 'squeezed', 'stemmed', 'stewed', 'stiff', 'strained', 'strong', 'thawed', 'thick', 'thin', 'tied', 
-		'toasted', 'torn', 'trimmed', 'wrapped', 'vained', 'warm', 'washed', 'weak', 'zested', 'wedged',
-		'skinned', 'gutted', 'browned', 'patted', 'raw', 'flaked', 'deveined', 'shelled', 'shucked', 'crumbs',
-		'halves', 'squares', 'zest', 'peel', 'uncooked', 'butterflied', 'unwrapped', 'unbaked', 'warmed', 'cracked','good','store', 'bought', 'fajita-sized', 'finely', 'freshly','slow', 'quality', 'sodium', 'mixed', 'wild', 'Asian', 'Italian', 'Chinese', 'American', 'garnished', 'seedless','coarsely', 'natural', 'organic', 'solid']
-
-# list of common ingredients that accidentally get filtered out due to similarities in description list
-description_exceptions = ['butter', 'oil', 'cream', 'bread']
-
-# list of numbers as words
-numbers = ['one', 'two','three','four','five','six','seven','eight','nine','ten', 'elevin','twelve','dozen']
-
-brands = ['bertolli®', 'cook\'s', 'hothouse', 'NESTLÉ®', 'TOLL HOUSE®']
-
-# misc modifiers (Will sort later)
-modifier = ['plus', 'silvered', 'virgin', 'seasoning']
-
-# list of adverbs used before or after description
-precedingAdverbs = ['well', 'very', 'super']
-succeedingAdverbs = ['diagonally', 'lengthwise', 'overnight']
-
-# list of prepositions used after ingredient name
-prepositions = ['as', 'such', 'for', 'with', 'without', 'if', 'about', 'e.g.', 'in', 'into', 'at', 'until', 'won\'t']
-
-# only used as <something> removed, <something> reserved, <x> inches, <x> old, <some> temperature
-descriptionsWithPredecessor = ['removed', 'discarded', 'reserved', 'included', 'inch', 'inches', 'old', 'temperature', 'up']
-
-# descriptions that can be removed from ingredient, i.e. candied pineapple chunks
-unnecessaryDescriptions = ['chunks', 'pieces', 'rings', 'spears']
-
-# list of prefixes and suffixes that should be hyphenated
-hypenatedPrefixes = ['non', 'reduced', 'semi', 'low']
-hypenatedSuffixes = ['coated', 'free', 'flavored']	
-
+#network_recipes = ['https://www.foodnetwork.com/recipes/recipes-a-z/b']
 
 # recipes = ['https://www.foodnetwork.com/recipes/food-network-kitchen/senate-bean-soup-recipe-1973240', 'https://www.foodnetwork.com/recipes/farfalle-with-herb-marinated-grilled-shrimp-2118008', 'https://www.foodnetwork.com/recipes/farfalle-al-rocco-recipe-1909940', 'https://www.foodnetwork.com/recipes/giada-de-laurentiis/farfalle-with-broccoli-recipe-1945696', 'https://www.foodnetwork.com/recipes/jamie-oliver/farfalle-with-savoy-cabbage-pancetta-thyme-and-mozzarella-recipe2-1909322', 'https://www.foodnetwork.com/recipes/guy-fieri/far-out-farro-salad-recipe-2108223']
 
@@ -71,76 +21,17 @@ grand_recipe_list = []
 
 
 #Parses through the ingredient list 
-def parser(item, food_array):
-	if type(item) != str:
-		return	
-	parsed_word = ''
+lib = CDLL("cpanel/recipe_parsing.dll")
+lib.parser.restype = c_char_p
+lib.parser.argtype = c_char_p
 
-	# Removes unnecessary special characters
-	item = item.replace('-', ' ')
-	item = item.replace(':', ' ')
-	item = item.replace(';', ' ')
-	item = item.replace('\'', '')
-	item = item.replace('\"', '')
-	item = item.replace('%', '')
-	item = item.replace('.', '')
-	# Breaks each word into a string array
-	split_item = item.split(" ")
-
-	for word in split_item:
-		word = word.lower()
-		#Takes care of wholenumbers, decimals, and fractions
-		if word.isnumeric() or word.isdecimal() or '/' in word:
-			continue
-		elif b_any(word in x for x in description_exceptions):
-			parsed_word = parsed_word + ' '
-			continue
-		elif ',' in word:
-			last_word = word.replace(',','')
-			parsed_word = parsed_word + last_word
-			break
-		elif word == 'or':
-			break
-		elif word == 'and':
-			parsed_word = parsed_word.rstrip()
-			food_array.append(parsed_word)
-			parsed_word = ''
-			continue
-		elif '(' in word or ')' in word:
-			continue
-		elif b_any(word in x for x in measurementUnits):
-			continue
-		elif b_any(word in x for x in measurementUnitsAbbreviations):
-			continue
-		elif b_any(word in x for x in numbers):
-			continue
-		elif b_any(word in x for x in brands):
-			continue
-		elif b_any(word in x for x in descriptions):
-			continue
-		elif b_any(word in x for x in modifier):
-			continue
-		elif b_any(word in x for x in precedingAdverbs):
-			continue
-		elif b_any(word in x for x in succeedingAdverbs):
-			continue
-		elif b_any(word in x for x in prepositions):
-			continue
-		elif b_any(word in x for x in descriptionsWithPredecessor):
-			continue
-		elif b_any(word in x for x in unnecessaryDescriptions):
-			continue		
-		else: 
-			parsed_word = parsed_word + word + ' '
-		
-	parsed_word = parsed_word.strip()
-
-	#Prevent's blank spots in ingredients array
-	if parsed_word == '':
-		return food_array
-	else:
-		food_array.append(parsed_word)
-		return food_array
+def minor_parsing(food):
+	food = str(food)
+	food = food[1:]
+	food = food.replace('\xc2\xa0','')
+	food = food.replace('\'', '')
+	food = food.strip()
+	return food
 
 
 def food_network(db):
@@ -168,7 +59,7 @@ def food_network(db):
 			the_recipe = str(recipe.find('a')['href'])
 			the_recipe = the_recipe.replace('//', '')
 			the_recipe = 'https://' + the_recipe
-			#print(the_recipe)
+			print(the_recipe)
 			
 			#Array that will hold the info for each individual recipe
 			add_to_grand_list = []
@@ -207,7 +98,12 @@ def food_network(db):
 			ingredient_list = []
 			if recipe_ingredients != None:
 				for item in recipe_ingredients:			
-					ingredient_list = parser(item.text, ingredient_list)	
+					bite = bytes(item.text, 'utf-8')
+					food = lib.parser(bite)
+					food = minor_parsing(food)
+					#print(item.text)
+					#print(food)
+					ingredient_list.append(food)
 			add_to_grand_list.append(ingredient_list)
 
 
@@ -227,7 +123,6 @@ def food_network(db):
 			time.sleep(1)
 			cap+=1
 		
-
 
 	#[Title, Image, Link to Recipe, Ingredients array]
 		c = 0
