@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>My Fridge</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css"
+    />
+  </head>
+  
+  <style>
+    .ui.inverted.menu {
+      background: #642b73; /* fallback for old browsers */
+      background: -webkit-linear-gradient(
+        to right,
+        #c6426e,
+        #642b73
+      ); /* Chrome 10-25, Safari 5.1-6 */
+      background: linear-gradient(
+        to right,
+        #c6426e,
+        #642b73
+      ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    }
+  </style>
+  <body data-gr-c-s-loaded="true">
+    <!--Navigation Bar-->
+    <div class="ui top inverted secondary fixed menu">
+      <div class="item">
+        <p style="color: white; font-weight: bold; font-size: large;">Empty My Fridge</p>
+      </div>
+
+      <a href="{% url 'home'%}" class="item">
+        Home
+      </a>
+      <a href="{% url 'recipe_page'%}" class="item">
+        Recipes
+      </a>
+
+      <div class="ui link dropdown simple item">
+        <span class="text">Browse</span>
+        <i class="dropdown icon"></i>
+        <div class="menu inverted">
+          <a class="item" href="{% url 'category' %}?category=pastry">Pastries</a>
+          <a class="item" href="{% url 'category' %}?category=main dish">Meals</a>
+          <a class="item" href="{% url 'category' %}?category=appetizer">Appetizers</a>
+          <a class="item" href="{% url 'category' %}?category=dessert">Dessert</a>
+        </div>
+      </div>
+
+      <!--search and filter-->
+      <div class="item">
+        <form action="/empty_my_fridge/search_and_filter/" method="get" class="ui form">
+          <div class="ui icon input">
+            <input
+              id="filter"
+              type="text"
+              name="recipe_to_filter"
+              placeholder="Search for recipes..."
+            />
+            <i class="search icon"></i>
+          </div>
+          <button id="go" class="ui button white">Go</button>
+        </form>
+      </div>
+      <!--End of search and filter ui-->
+      <div class="right menu">
+        <a
+          href="{% url 'fridge'%}"
+          class="item active"
+        >
+          My Fridge
+        </a>
+        <a href="{% url 'profile'%}" class="item">
+          <img
+            id="image_profile"
+            class="ui avatar image mini"
+            src="https://react.semantic-ui.com/images/wireframe/square-image.png"
+          />
+          <p>{{user.name}}</p>
+        </a>
+        <a
+          id="login_btn"
+          style="display: flex;"
+          href="{% url 'login'%}"
+          class="item"
+        >
+          Login
+        </a>
+        <a
+          id="logout_btn"
+          style="display: none;"
+          href="{% url 'logout'%}"
+          class="item"
+        >
+          Logout
+        </a>
+      </div>
+    </div>
+    <!--End of Navigation Bar-->
+
+    <section style="margin-top: 80px;" id="main" role="main">
+      <h1>My Fridge</h1>
+      <p class="description">
+        Simply add the ingredients you have at home and we'll show you recipes
+        you can make at home.<br />
+        Make an account and we’ll save your ingredients list so you can come
+        back to it at any time.
+      </p>
+      <style>
+        #main {
+          margin: 30px;
+        }
+        .body {
+          color: #333;
+          font-family: proxima-nova, "Segoe UI", "Droid Sans", "Helvetica Neue",
+            Arial, sans-serif;
+          font-size: 16px;
+          font-weight: 400;
+          line-height: 1.42857em;
+        }
+        .description {
+          margin-bottom: 40px;
+        }
+        .myfridge_instructions {
+          margin-bottom: 30px;
+        }
+        .myfridge_instructions ol {
+          margin: 0 0 20px;
+          padding: 0;
+          width: 100%;
+          display: flex;
+        }
+        #title{
+          color: white
+        }
+        .myfridge_instructions ol li {
+          list-style: none;
+          display: flex;
+          width: 33.3%;
+          padding-right: 20px;
+        }
+        .greenorb,
+        .myfridge_instructions ol li .number {
+          box-sizing: border-box;
+          border: 2px solid #642b73;
+          border-radius: 50%;
+          width: 45px;
+          height: 45px;
+          min-width: 45px;
+          min-height: 45px;
+          text-align: center;
+          color: #642b73;
+          font-size: 1.7em;
+          line-height: 43px;
+        }
+        .flex {
+          /* width: 100%; */
+          /* display: -webkit-box; */
+          display: -ms-flexbox;
+          display: flex;
+          /* -webkit-box-pack: start; */
+          -ms-flex-pack: start;
+          /* justify-content: flex-start; */
+        }
+        .main_fridge_holder > div {
+          position: relative;
+          border: 1px solid #888;
+          width: 45%;
+          margin-right: 30px;
+          /* max-height: 72vh; */
+          height: 72vh;
+          min-height: 535px;
+          border-radius: 4px;
+          overflow-y: auto;
+          overflow-x: hidden;
+          /* background: #fff; */
+        }
+        .myfridge h3,
+        .myfridge_listing h3 {
+          background-color: #c6426e;
+          color: #fff;
+          padding: 15px 0 15px 20px;
+          margin-top: 0;
+          border-top-right-radius: 4px;
+          border-top-left-radius: 4px;
+        }
+        ul{
+          display: block;
+          list-style-type: disc;
+          margin-block-start: 1em;
+          margin-block-end: 1em;
+          margin-inline-start: 0px;
+          margin-inline-end: 0px;
+          padding-inline-start: 10px;
+        }
+        a.fw_button.small_fw_button {
+          font-size: 1.4rem;
+          padding: 15px 20px;
+        }
+        a.fw_button {
+          cursor: pointer;
+          background: #c6426e;
+          border-radius: 4px;
+          min-width: 100%;
+          display: block;
+          color: whitesmoke!important;
+          line-height: 1em;
+          padding: 20px;
+          font-size: 2rem;
+          font-weight: 400;
+          position: relative;
+        }
+        a.fw_button span+.icon path {
+          stroke: #642b73;
+        }
+        h1, h2, h3, h4, h5, h6 {
+          font-weight: inherit;
+          color: #344c72;
+          margin: 5px 0;
+          display: block;
+          line-height: 1.2em;
+        }
+        h1 {
+          font-size: 3rem;
+          font-family: rockwell-nova,Rockwell,"Hoefler Text",Garamond,Georgia;
+          font-weight: 200;
+        }
+        h3 {
+          font-size: 1.8rem;
+        }
+        h4 {
+          display: block;
+          margin-block-start: 1.33em;
+          margin-block-end: 1.33em;
+          margin-inline-start: 0px;
+          margin-inline-end: 0px;
+          font-weight: bold;
+          font-size: 1.6rem;
+      }
+      </style>
+      <div class="myfridge_instructions">
+        <ol class="numbered horizontal">
+          <li>
+            <div class="number">1</div>
+            <div class="text">
+              <h4>Search ingredients</h4>
+              <p>
+                Browse the categories or use the search bar to find your
+                favorite ingredients
+              </p>
+            </div>
+          </li>
+          <li>
+            <div class="number">2</div>
+            <div class="text">
+              <h4>Select ingredients</h4>
+              <p>
+                Click on the ingredients you have and see them appear in My
+                Fridge
+              </p>
+            </div>
+          </li>
+          <li>
+            <div class="number">3</div>
+            <div class="text">
+              <h4>See what you can make</h4>
+              <p>
+                Click 'Find Recipes' to find out what you can make with the
+                ingredients in your fridge
+              </p>
+            </div>
+          </li>
+        </ol>
+      </div>
+      <div class="flex myfridge main_fridge_holder">
+        <div class="myfridge_inner myfridge_a">
+          <span class="myfridge_list_holder">
+            <h3>Getting started</h3>
+
+            <div class="search-container">
+              <form>
+                <input
+                  type="text"
+                  placeholder="Search.."
+                  name="search_ingredients"
+                  id="search"
+                  
+                />
+                <button  class="ui button" type="submit" id = "search_but" >Search</button>
+              </form>
+            </div>
+            <style>
+              #search{
+                display: inline-block;
+                width: 80%;
+                border: 2px solid #bdc3c7;
+                color: #344c72;
+                padding: 8px 12px;
+                border-radius: 4px;
+                height: 55px;
+              }
+              #search_but{
+                display: inline-block;
+                border: 2px solid #bdc3c7;
+
+              }
+            </style>
+          </span>
+
+          <ul>
+            <form method="post">
+              <input type="submit" value="Add to Fridge" /><br />
+              {% for food in ingredients %}
+              <input type="checkbox" name="sav_ing" value="{{food}}" />
+              <label> {{food}}</label><br />
+              {% endfor %}
+            </form>
+          </ul>
+        </div>
+        <div class="myfridge_inner myfridge_d">
+          <h3>
+            My Fridge
+            <span class="smaller"
+              >(<span class="num_myfridge">{{fing_amount}}</span>
+              ingredients)</span
+            >
+          </h3>
+          <form method="post">
+            <input type="submit" value="Remove from Fridge" />
+            <ul>
+              {% for food in fing %}
+              <input type="checkbox" name="del_ing" value="{{food}}" />
+              <label> {{food}}</label
+              ><br />
+              {% endfor %}
+            </ul>
+          </form>
+          <a
+            class="fw_button small_fw_button"
+          >
+          <form method = "post">
+            <button class="ui fluid animated button" value = True  name= "serepbt" >
+              <div class="visible content">Find Recipes</div>
+              <div class="hidden content"><i aria-hidden="true" class="arrow right icon"></i></div>
+            </button>
+          </form>
+          </a>
+        </div>
+      </div>
+    </section>
+   
+    {% if user %}
+    <script>
+      document.getElementById("image_profile").src =
+        "https://react.semantic-ui.com/images/avatar/large/matthew.png";
+      document.getElementById("logout_btn").style.display = "flex";
+      document.getElementById("login_btn").style.display = "none";
+    </script>
+    {% endif %}
+  </body>
+</html>

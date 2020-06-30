@@ -1,0 +1,6 @@
+include LICENSE
+include README.rst
+include README.md
+recursive-include empty_my_fridge *
+
+
