@@ -70,7 +70,7 @@ __declspec(dllexport) void removal(char* to_delete){
     delete [] to_delete;
 }
  */
-__declspec(dllexport) char* parser(char* ingredient_str_char)
+char* parser(char* ingredient_str_char)
 {
     string ingredient_str = string(ingredient_str_char);
     string ingredient = "";

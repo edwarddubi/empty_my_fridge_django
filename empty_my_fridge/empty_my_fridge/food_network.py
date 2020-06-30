@@ -22,9 +22,9 @@ grand_recipe_list = []
 
 #Parses through the ingredient list
 try:
-	lib = CDLL("empty_my_fridge/recipe_parsing.dll")
+	lib = CDLL("empty_my_fridge/recipe_parsing.so")
 except OSError:
-	lib = CDLL("empty_my_fridge/empty_my_fridge/recipe_parsing.dll")
+	lib = CDLL("empty_my_fridge/empty_my_fridge/recipe_parsing.so")
 lib.parser.restype = c_char_p
 lib.parser.argtype = c_char_p
 
@@ -88,7 +88,7 @@ def food_network(db):
 				add_to_grand_list.append(recipe_title.text)
 			else:
 				add_to_grand_list.append('No Title')
-
+			
 			# ---------- ---------- Getting Image Source ---------- ----------
 			if recipe_img.get("src") != None:
 				add_to_grand_list.append(str(recipe_img.get("src")))
@@ -96,7 +96,7 @@ def food_network(db):
 				add_to_grand_list.append('https://cdn.dribbble.com/users/1012566/screenshots/4187820/topic-2.jpg')
 			# ---------- ---------- Getting Recipe Source ---------- ----------
 			add_to_grand_list.append(the_recipe)
-
+			
 			# ---------- ---------- Getting Ingredients ---------- ----------
 			ingredient_list = []
 			if recipe_ingredients != None:
@@ -109,7 +109,7 @@ def food_network(db):
 					ingredient_list.append(food)
 			add_to_grand_list.append(ingredient_list)
 
-
+			
 			# ---------- ---------- Getting Recipe Categories ---------- ----------
 			category_list = []
 			if recipe_cat != None:

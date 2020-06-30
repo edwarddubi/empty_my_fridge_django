@@ -1,6 +1,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <cstring>
 #include <vector>
 #include <algorithm>
 #include <iterator>
@@ -12,7 +13,7 @@ using namespace std;
 
 extern "C"
 {
-__declspec(dllexport) char* parser(char* ingredient_str_char);
+char* parser(char* ingredient_str_char);
 //__declspec(dllexport) void removal(char* to_delete);
 }
 
