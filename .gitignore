@@ -10,6 +10,6 @@ build
 /empty_my_fridge.egg-info
 
 # misc
-#/cpanel/cpanel/config.py
+/empty_my_fridge/empty_my_fridge/config.py
 /.history
 
