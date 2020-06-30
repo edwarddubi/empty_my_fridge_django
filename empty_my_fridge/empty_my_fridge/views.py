@@ -60,10 +60,7 @@ def get_all_filtered_recipes():
                 recipe_list.append(_recipe_)
     return recipe_list
 
-
-
 # Recipe Page
-
 
 @csrf_exempt
 def recipe_page(request):
