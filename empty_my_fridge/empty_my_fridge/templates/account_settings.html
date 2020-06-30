@@ -157,6 +157,12 @@
             Forgot Password?
           </button>
         </form>
+        <a href="{% url 'scrape_page'%}">
+          <button onclick="startScrape()" style="margin-top: 10px; width: 150px;" class="ui button purple">
+            Scrape
+          </button>
+          <p id="scrape"></p>
+        </a>
         <div
           style="display: none;"
           id="message"
@@ -174,8 +180,12 @@
     <script>
       document.getElementById("message").style.display = "block";
     </script>
-    {% endif %} {% if data %}
+    {% endif %} 
+    {% if data %}
     <script>
+      function startScrape(){
+        document.getElementById("scrape").innerHTML = "Scraping...Please wait"
+      }
       document.getElementById("user_image").src =
         "https://react.semantic-ui.com/images/avatar/large/matthew.png";
       document.getElementById("image_profile").src =

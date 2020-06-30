@@ -102,20 +102,6 @@ class Recipes:
              
     # get all recipes
     def _get_all_recipes_(self):
-        admin = self.db.child("admin").child("UPLwshBH98OmbVivV").get().val()
-        if admin != None:
-            if admin["scrape"]:
-                self.db.child('all_ingredients').remove()
-                self.food_network.food_network(self.db)
-                scrape_and_populate_db = False
-                self.db.child("admin").child("UPLwshBH98OmbVivV").child(
-                    "scrape").set(scrape_and_populate_db)
-        else:
-            scrape = {
-                "scrape": False,
-            }
-            self.db.child("admin").child("UPLwshBH98OmbVivV").set(scrape)
-
         all_recipes = self.db.child("recipe").get()
 
         recipe_list = []
@@ -125,7 +111,7 @@ class Recipes:
                 _recipe_ = self.get_recipe(dict(recipe.val()), key, self.m_user._getUser_Id_())
                 recipe_list.append(_recipe_)
 
-        self.recipe_list = recipe_list
+        self.recipe_list = recipe_list  
 
     # get individual recipe as Json
     def get_recipe(self, recipe, key, uid):

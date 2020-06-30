@@ -44,9 +44,34 @@ def home(request):
         }
         return render(request, 'home.html', {"data": data})
 
+
+
+@csrf_exempt
+def scrape_page(request):
+    if m_user._isNone_():
+        return HttpResponseRedirect("/empty_my_fridge/login/")
+    else:
+        uid = m_user._getUser_Id_()
+        isAdmin = False
+        report = "Your Administrative privileges have been verified\n\nScraping...Please wait"
+        admins = db.child("admin").child("UPLwshBH98OmbVivV").child("scrapers").get().val()
+        for admin in admins:
+            if str(admin) == str(uid):
+                isAdmin = True
+                break
+        if isAdmin:
+            print(report)    
+            db.child('all_ingredients').remove()
+            food_network.food_network(db)
+        else:
+            report = "Your Administrative privileges cannot been verified. Failed to Scrape"
+
+        data = {
+            "report" : report
+        }
+        return render(request, 'scrape_page.html', {"data" : data})
+
 # get all filtered recipes
-
-
 def get_all_filtered_recipes():
     recipe_list = []
     uid = m_user._getUser_Id_()

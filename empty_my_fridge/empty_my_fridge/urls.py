@@ -37,6 +37,7 @@ urlpatterns = [
     path('favorite_recipes/', views.user_fav_recipes, name='favorite_recipes'),
     path('fav_recipe_onclick/', views.fav_recipe_onClick, name='fav_recipe_onclick'),
     path('search_and_filter/', views.search, name='search_and_filter'),
+    path('scrape_page/', views.scrape_page, name="scrape_page"),
     path('logout/', views._logout_, name='logout'),
     path('categories/', views.category, name='category'),
     path('search/', views.get_recipes_by_category_ingredients, name='search'),

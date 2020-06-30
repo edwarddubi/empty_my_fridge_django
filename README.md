@@ -14,13 +14,7 @@ What is empty my Fridge app?:
   - pip install empty-my-fridge
 
 ### Run app using
-  - empty_my_fridge runserver
-
-###  Development starts at the HomePage
-  
-  Original starts at http://127.0.0.1:8000. Please click on HomePage to be redirected
-
-  - [HomePage](http://127.0.0.1:8000/empty_my_fridge/home/)
+  - empty_my_fridge
 
 ## Python FrameWork
 
@@ -110,7 +104,7 @@ def myConfig():
 
 ## Get the App running for the first time
 
-- python manage.py runserver
+- python manage.py
 
 ## Using Github
 
