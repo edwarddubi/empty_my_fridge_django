@@ -27,10 +27,6 @@ recipes._get_all_recipes_()
 
 @csrf_exempt
 def home(request):
-    """
-    if recipes.get_all_recipes() == None:
-        get_all_recipes()
-    """  
     if m_user._isNone_():
         return render(request, 'home.html')
     else:
@@ -78,7 +74,7 @@ def recipe_list(request):
     if recipes.get_is_searched_for_recipes():
         all_recipes = get_all_filtered_recipes()
         isSearch = True
-        recipes.set_is_searched_for_recipes(False)
+        #recipes.set_is_searched_for_recipes(False)
         if len(all_recipes) != 0:
             found_results = True
     else:
@@ -106,7 +102,7 @@ def recipe_list(request):
             "recipes": curr_recipes,
             "scrollTop": scrollTop,
             "found_results": found_results,
-            "items": len(curr_recipes),
+            "items": len(all_recipes),
             "isSearch": isSearch,
 
         }
@@ -150,7 +146,8 @@ def category(request):
 
     data = {
         "user": user,
-        "recipe_lst": curr_recipes
+        "recipe_lst": curr_recipes,
+        "category": cat,
     }
 
     return render(request, 'category.html', {"data": data})
@@ -165,7 +162,7 @@ def get_recipes_by_category(category):
         try:
             categories = recipe_details["recipe_categories"]
             if categories:
-                if any(category in c for c in categories):
+                if any(category in c for c in categories) :
                     key = str(recipe.key())
                     _recipe_ = recipes.get_recipe(dict(recipe_details), key, uid)
                     recipe_lst.append(_recipe_)
@@ -179,7 +176,6 @@ def get_recipes_by_ingredients(ingredient):
     recipe_lst = []
     uid = m_user._getUser_Id_()
     for recipe in all_recipes.each():
-        #categories = recipe.val()["recipe_categories"]
         recipe_details = recipe.val()
         try:
             ingredients = recipe_details["recipe_ingredients"]
@@ -199,7 +195,7 @@ def get_recipes_by_category_ingredients(request):
     ingred_list = []
     result_list = []
     if request.method == "GET":
-        value = request.GET.get("value")
+        value = request.GET.get("category")
         category_list = get_recipes_by_category(value)
         ingred_list = get_recipes_by_ingredients(value)
         result_list = category_list + ingred_list
@@ -221,7 +217,8 @@ def get_recipes_by_category_ingredients(request):
 
     data = {
         "user": user,
-        "recipe_lst": curr_recipes
+        "recipe_lst": curr_recipes,
+        "category": value,
     }
 
     return render(request, 'category.html', {"data": data})
@@ -236,7 +233,10 @@ def search(request):
             recipes.set_recipe_name_to_find(recipe_name_to_find)
             recipes.set_is_searched_for_recipes(True)
         navigate_to_recipe_page = "/recipe_list/"
-        navigate_to_recipe_page += "?page=" + recipes.get_recipes_current_page()
+        if recipes.get_recipes_current_page():
+            navigate_to_recipe_page += "?page=" + recipes.get_recipes_current_page()
+        else:
+            navigate_to_recipe_page += "?page=1"   
     return HttpResponseRedirect(navigate_to_recipe_page)
 
 
@@ -339,7 +339,34 @@ def _register_(request):
         #is_email_valid = validate_email(email, verify=True)
         is_email_valid = True  # validate_email(email, verify=True)
         if is_email_valid:
-            register_user(request, email, password, name)
+            try:
+                user = auth_fb.create_user_with_email_and_password(email, password)
+                user['displayName'] = name
+                uid = user['localId']
+                email = user['email']
+                index_of_at = email.find("@")
+                username = email[:index_of_at]
+                today = date.today()
+                joined = today.strftime("%B %d, %Y")
+
+                userData = {
+                    'name': name,
+                    'email': email,
+                    'joined': joined,
+                    'userID': uid,
+                    'username': username,
+                    'image': 'https://react.semantic-ui.com/images/wireframe/square-image.png'
+                }
+                db.child('users').child(uid).set(userData)
+            except Exception as e:
+                # logging.exception('')
+                response = e.args[0].response
+                error = response.json()['error']
+                msg = error_message(error['message'])
+                data = {
+                    "message": msg
+                }
+                return render(request, "register.html", {"data": data})
         else:
             msg = error_message("WRONG_EMAIL")
             data = {
@@ -348,37 +375,6 @@ def _register_(request):
             return render(request, "register.html", {"data": data})
 
     return HttpResponseRedirect("/login/")
-
-
-def register_user(request, email, password, name):
-    try:
-        user = auth_fb.create_user_with_email_and_password(email, password)
-        user['displayName'] = name
-        uid = user['localId']
-        email = user['email']
-        index_of_at = email.find("@")
-        username = email[:index_of_at]
-        today = date.today()
-        joined = today.strftime("%B %d, %Y")
-
-        userData = {
-            'name': name,
-            'email': email,
-            'joined': joined,
-            'userID': uid,
-            'username': username,
-            'image': 'https://react.semantic-ui.com/images/wireframe/square-image.png'
-        }
-        db.child('users').child(uid).set(userData)
-    except Exception as e:
-        # logging.exception('')
-        response = e.args[0].response
-        error = response.json()['error']
-        msg = error_message(error['message'])
-        data = {
-            "message": msg
-        }
-        return render(request, "register.html", {"data": data})
 
 # Profile Page (Profile--about me, Edit Profile and Save new profile information, Account Settings, Recover Password, User Favorite Recipes)
 
@@ -612,6 +608,9 @@ def user_fav_recipes(request):
 
 # User Error Messages Display
 def error_message(type):
+   
+    if type.find("WEAK_PASSWORD") != -1:
+        type = "WEAK_PASSWORD"   
     return {
         "EMAIL_EXISTS": "This email is already in use. Try a different email!",
         "WEAK_PASSWORD": "Password should be at least 6 characters.",
@@ -656,10 +655,10 @@ def fridge(request):
             all_ingredients.append(ingredient)
     
     if len(all_ingredients) > 0:
-        sorted(all_ingredients)
+        all_ingredients = sorted(all_ingredients)
     fridge_ingredients = db.child("users").child(uid).child("Fridge").get().val() # database is cleared of null values
     if fridge_ingredients:
-        sorted(fridge_ingredients)
+        fridge_ingredients = sorted(fridge_ingredients)
 
     search_ing = request.GET.get('search_ingredients')
    
@@ -674,10 +673,7 @@ def fridge(request):
         all_ingredients = [i for i in all_ingredients if search_ing in i]
         if not all_ingredients:
             all_ingredients = ["No ingredient found"]
-
-    # chk_food=['sugar', 'cranberries', 'thyme', 'orange marmalade', 'orange liqueur', 'unsalted butter', 'parmesan', 'black pepper', 'egg yolks', 'purpose flour',
-    # 'chicken wings', 'salt', 'chicken base', 'garlic powder', 'ginger powder', 'white pepper', 'egg', 'purpose flour', 'rice flour', 'vegetable', 'dark sugar', 'vinegar', 'oyster sauce', 'soy sauce', 'rice wine', 'honey', 'sesame oil', 'white pepper', 'chili garlic paste', 'spiced water', 'orange slice', 'scallions', 'sesame seeds', 'vegetable', 'garlic', 'chile flakes', 'sichuan peppercorns',
-    # 'brussels sprouts', 'slab bacon', 'lemons', 'grain mustard', 'caraway', 'salt', 'pepper','No ingredients']
+   
     if chk_food and uid:
         new_ingredients= {}
         if fridge_ingredients:

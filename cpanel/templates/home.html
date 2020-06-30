@@ -40,10 +40,10 @@
         Recipes
       </a>
 
-      <div class="ui link dropdown simple item">
+      <div class="ui dropdown item simple">
         <span class="text">Browse</span>
         <i class="dropdown icon"></i>
-        <div class="menu inverted">
+        <div class="menu">
           <a class="item" href="{% url 'category' %}?category=pastry">Pastries</a>
           <a class="item" href="{% url 'category' %}?category=main dish">Meals</a>
           <a class="item" href="{% url 'category' %}?category=appetizer">Appetizers</a>
@@ -108,7 +108,7 @@
         <div class="ui fluid icon input focus">
           <input
             type="text"
-            name="value"
+            name="category"
             placeholder="Search recipe types..."
             style="font-size: x-large;"
           />
