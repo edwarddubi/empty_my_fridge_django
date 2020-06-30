@@ -1,0 +1,8 @@
+pyproject.toml
+setup.cfg
+setup.py
+empty_my_fridge.egg-info/PKG-INFO
+empty_my_fridge.egg-info/SOURCES.txt
+empty_my_fridge.egg-info/dependency_links.txt
+empty_my_fridge.egg-info/requires.txt
+empty_my_fridge.egg-info/top_level.txt
