@@ -1,6 +1,7 @@
 
 def myConfig():
     config = {
+        #edward's firebase config
         "apiKey": "AIzaSyBUbHTvIh5bIb804EzPpHThsItT6i51TjY",
         "authDomain": "empty-my-fridge.firebaseapp.com",
         "databaseURL": "https://empty-my-fridge.firebaseio.com",
@@ -10,6 +11,7 @@ def myConfig():
         "appId": "1:394055887941:web:d0fa955898ec86e077872c",
         "measurementId": "G-38YRH5Z55V"
         
+        #randolph's firebase config
         """
         "apiKey": "AIzaSyBkIAGYXQ-yVBkoRqXKuBKGuXPUpNzAP7g",
         "authDomain": "empty-my-fridge-ff73c.firebaseapp.com",
@@ -21,6 +23,7 @@ def myConfig():
         "measurementId": "G-9SLJ34LP0M
         """
         
+        #becca's firebase config
         """
         'apiKey': "AIzaSyDMlZ3DzGdgJ7aQc3iUl-S5lG6GpWMhCOw",
         'authDomain': "empty-my-fridge-6197d.firebaseapp.com",
