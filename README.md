@@ -8,10 +8,10 @@ What is empty my Fridge app?:
 
 ## PYPI
 
-[empty-my-fridge 1.0.3](https://pypi.org/project/empty-my-fridge/)
+[empty-my-fridge 1.0.6](https://pypi.org/project/empty-my-fridge/)
 
 ### Install using command
-  - pip install empty-my-fridge
+  - pip3 install empty-my-fridge
 
 ### Run app using
   - empty_my_fridge
