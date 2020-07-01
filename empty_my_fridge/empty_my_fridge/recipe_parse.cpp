@@ -46,7 +46,7 @@ vector<string> specialCharacters = {"(", ")", "[", "]"};
 vector<string> word_2_vector(string ingredient_str){
     istringstream iss(ingredient_str);
     vector<string> tokens{istream_iterator<string>{iss},
-                          istream_iterator<string>{}};
+                          istream_iterator<string>{}}; 
     return tokens;
 }
 
@@ -72,23 +72,21 @@ __declspec(dllexport) void removal(char* to_delete){
  */
 char* parser(char* ingredient_str_char)
 {
-    string ingredient_str = string(ingredient_str_char);
+    string ingredient_str = string(ingredient_str_char); 
     string ingredient = "";
-
     replace(ingredient_str.begin(), ingredient_str.end(),'-', ' ');
     replace(ingredient_str.begin(), ingredient_str.end(),':', ' ');
     replace(ingredient_str.begin(), ingredient_str.end(),';', ' ');
     replace(ingredient_str.begin(), ingredient_str.end(),'/', ' ');
-    ingredient_str.erase(remove(ingredient_str.begin(), ingredient_str.end(),'\''));
-    ingredient_str.erase(remove(ingredient_str.begin(), ingredient_str.end(),'\"'));
-    ingredient_str.erase(remove(ingredient_str.begin(), ingredient_str.end(),'.'));
-    ingredient_str.erase(remove(ingredient_str.begin(), ingredient_str.end(),'&'));
-    ingredient_str.erase(remove(ingredient_str.begin(), ingredient_str.end(),'('));
-    ingredient_str.erase(remove(ingredient_str.begin(), ingredient_str.end(),')'));
-    ingredient_str.erase(remove(ingredient_str.begin(), ingredient_str.end(),'['));
-    ingredient_str.erase(remove(ingredient_str.begin(), ingredient_str.end(),']'));
+    ingredient_str.erase(remove(ingredient_str.begin(), ingredient_str.end(),'\''), ingredient_str.end()); 
+    ingredient_str.erase(remove(ingredient_str.begin(), ingredient_str.end(),'\"'), ingredient_str.end());
+    ingredient_str.erase(remove(ingredient_str.begin(), ingredient_str.end(),'.'), ingredient_str.end());
+    ingredient_str.erase(remove(ingredient_str.begin(), ingredient_str.end(),'&'), ingredient_str.end());
+    ingredient_str.erase(remove(ingredient_str.begin(), ingredient_str.end(),'('), ingredient_str.end());
+    ingredient_str.erase(remove(ingredient_str.begin(), ingredient_str.end(),')'), ingredient_str.end());
+    ingredient_str.erase(remove(ingredient_str.begin(), ingredient_str.end(),'['), ingredient_str.end());
+    ingredient_str.erase(remove(ingredient_str.begin(), ingredient_str.end(),']'), ingredient_str.end());
     vector<string> split_words = word_2_vector(ingredient_str);
-
 
     for(int i = 0; i < split_words.size(); i++){
         transform(split_words[i].begin(), split_words[i].end(), split_words[i].begin(), ::tolower);
@@ -139,12 +137,10 @@ char* parser(char* ingredient_str_char)
         else
             ingredient = ingredient + split_words[i] + ' ';
     }
-
     //if(ingredient[ingredient.length() -1] == ' ')
         //ingredient.pop_back();
 
     char * cstr = new char [ingredient.length()+1];
     strcpy(cstr, ingredient.c_str());
-
     return cstr;
 }

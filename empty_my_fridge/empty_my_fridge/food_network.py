@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup as soup
 from builtins import any as b_any
 from ctypes import *
 import time
+import os
 
 
 #17 Sample recipes for testing (Provided by foodnetwork.com)
@@ -21,10 +22,19 @@ grand_recipe_list = []
 
 
 #Parses through the ingredient list
-try:
-	lib = CDLL("empty_my_fridge/recipe_parsing.so")
-except OSError:
-	lib = CDLL("empty_my_fridge/empty_my_fridge/recipe_parsing.so")
+if os.name == "nt":
+    try:
+        lib = CDLL("empty_my_fridge/recipe_parsing.dll")
+    except OSError:
+        lib = CDLL("empty_my_fridge/empty_my_fridge/recipe_parsing.dll")
+
+else:
+    try:
+        lib = CDLL("empty_my_fridge/librecipe_parsing.so")
+    except OSError:
+        lib = CDLL("empty_my_fridge/empty_my_fridge/librecipe_parsing.so")
+
+
 lib.parser.restype = c_char_p
 lib.parser.argtype = c_char_p
 

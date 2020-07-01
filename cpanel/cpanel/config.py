@@ -1,0 +1,44 @@
+"""
+#My config (Empty-My-Fridge)
+def myConfig():
+    config = {
+  'apiKey': "AIzaSyDCQK942n7H3_GblCgm85rkkqYNTD7RWyg",
+  'authDomain': "empty-my-fridge-16cf2.firebaseapp.com",
+  'databaseURL': "https://empty-my-fridge-16cf2.firebaseio.com",
+  'projectId': "empty-my-fridge-16cf2",
+  'storageBucket': "empty-my-fridge-16cf2.appspot.com",
+  'messagingSenderId': "829862826966",
+  'appId': "1:829862826966:web:9b742674a35f6e7e914a77",
+  'measurementId': "G-WFYYW91PSR"
+    }
+    return config
+"""
+
+#Team (Rebecca's) config (empty-my-fridge)  
+"""
+def myConfig():
+    config = {
+  'apiKey': "AIzaSyDMlZ3DzGdgJ7aQc3iUl-S5lG6GpWMhCOw",
+  'authDomain': "empty-my-fridge-6197d.firebaseapp.com",
+  'databaseURL': "https://empty-my-fridge-6197d.firebaseio.com",
+  'projectId': "empty-my-fridge-6197d",
+  'storageBucket': "empty-my-fridge-6197d.appspot.com",
+  'messagingSenderId': "210802633597",
+  'appId': "1:210802633597:web:239240de47cbf5e2b6ba14",
+  'measurementId': "G-26T7SBKJCX"
+    }
+    return config
+"""
+#Team (Randolph's) config (Empty-my-fridge)  
+def myConfig():
+    config = {
+        "apiKey": "AIzaSyBkIAGYXQ-yVBkoRqXKuBKGuXPUpNzAP7g",
+        "authDomain": "empty-my-fridge-ff73c.firebaseapp.com",
+        "databaseURL": "https://empty-my-fridge-ff73c.firebaseio.com/",
+        "projectId": "empty-my-fridge-ff73c",
+        "storageBucket": "empty-my-fridge-ff73c.appspot.com",
+        "messagingSenderId": "904741248232",
+        "appId": "1:904741248232:web:33ba3b5e81be538db2fd5d",
+        "measurementId": "G-9SLJ34LP0M"
+    }
+    return config
