@@ -22,17 +22,16 @@ grand_recipe_list = []
 
 
 #Parses through the ingredient list
-if os.name == "nt":
-    try:
-        lib = CDLL("empty_my_fridge/recipe_parsing.dll")
-    except OSError:
-        lib = CDLL("empty_my_fridge/empty_my_fridge/recipe_parsing.dll")
+app_path = os.path.abspath(__file__)
+app_path = os.path.realpath(app_path)
+app_path = os.path.dirname(app_path)
 
+if os.name == "nt":
+    app_path = os.path.join(app_path, "recipe_parsing.dll")
+    lib = CDLL(app_path)
 else:
-    try:
-        lib = CDLL("empty_my_fridge/librecipe_parsing.so")
-    except OSError:
-        lib = CDLL("empty_my_fridge/empty_my_fridge/librecipe_parsing.so")
+    app_path = os.path.join(app_path, "librecipe_parsing.so")
+    lib = CDLL(app_path)
 
 
 lib.parser.restype = c_char_p
