@@ -133,5 +133,11 @@ Refrain from pushing to master. push to your branch and allow the scrum master t
 
 ## SetUp file
  - python -m pip install -U wheel twine setuptools
+<<<<<<< HEAD
  - python setup.py sdist bdist_wheel 
  - twine upload dist/*
+=======
+ - python setup.py sdist
+ - python setup.py bdist_wheel
+ - twine upload dist/*
+>>>>>>> e51e90b313676947dc645a7fd5c52b21cb1172aa

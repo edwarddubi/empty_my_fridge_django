@@ -53,7 +53,7 @@ def scrape_page(request):
     else:
         uid = m_user._getUser_Id_()
         isAdmin = False
-        report = "Your Administrative privileges have been verified\n\nScraping...Please wait"
+        report = "Your administrative privileges have been verified\n\nScraping...Please wait"
         admins = db.child("admin").child("UPLwshBH98OmbVivV").child("scrapers").get().val()
         for admin in admins:
             if str(admin) == str(uid):
@@ -64,7 +64,7 @@ def scrape_page(request):
             db.child('all_ingredients').remove()
             food_network.food_network(db)
         else:
-            report = "Your Administrative privileges cannot been verified. Failed to Scrape"
+            report = "Your administrative privileges cannot been verified. Failed to scrape"
 
         data = {
             "report" : report
