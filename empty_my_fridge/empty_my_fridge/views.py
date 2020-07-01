@@ -585,14 +585,19 @@ def user_fav_recipes(request):
 def error_message(type):
    
     if type.find("WEAK_PASSWORD") != -1:
-        type = "WEAK_PASSWORD"   
+        type = "WEAK_PASSWORD"  
+
+    if type.find("TOO_MANY_ATTEMPTS_TRY_LATER") != -1:
+        type = "TOO_MANY_ATTEMPTS_TRY_LATER"
+        
     return {
         "EMAIL_EXISTS": "This email is already in use. Try a different email!",
         "WEAK_PASSWORD": "Password should be at least 6 characters.",
-        "INVALID_EMAIL": "The email you provided is invalid.",
-        "INVALID_PASSWORD": "The password you provided for this email is wrong. Click on Forgot Password to recover your account.",
+        "INVALID_EMAIL": "Either your email or password is incorrect. Try again.",
+        "INVALID_PASSWORD": "Either your email or password is incorrect. Try again.",
         "EMAIL_NOT_FOUND": "This email does not exist anywhere on our services.",
-        "WRONG_EMAIL": "Please make sure you are using a valid email address."
+        "WRONG_EMAIL": "Please make sure you are using a valid email address.",
+        "TOO_MANY_ATTEMPTS_TRY_LATER": "There have been too many unsuccessful login attempts. Please try again later."
 
     }.get(type, "An unknown error has occurred")
 
