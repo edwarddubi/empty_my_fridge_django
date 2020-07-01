@@ -102,6 +102,8 @@ class Recipes:
              
     # get all recipes
     def _get_all_recipes_(self):
+        #self.db.child('all_ingredients').remove()
+        #self.food_network.food_network(self.db)
         all_recipes = self.db.child("recipe").get()
 
         recipe_list = []
