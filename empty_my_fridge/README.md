@@ -1,6 +1,6 @@
-## Empty My Fridage (Django)
+## Empty My Fridge (Django)
 
-What is empty my Fridge app?:
+A web application that tells users recipes they can make based on ingredients in their fridge
 
 ## Github link
 
@@ -124,14 +124,9 @@ use command -> git checkout -b < branchName >
 
 Refrain from pushing to master. push to your branch and allow the scrum master to review your work before pushing to master
 
-## Deploy App to Google Cloud or Heroku
-
-- We would have to look into this
-- [We might need cloud functions to run our server on the hosting site](https://medium.com/firebase-developers/hosting-flask-servers-on-firebase-from-scratch-c97cfb204579)
-
-- If those don't work now, we might consider using heroku
 
 ## SetUp file
+
  - python -m pip install -U wheel twine setuptools
  - python setup.py sdist bdist_wheel 
  - twine upload dist/*

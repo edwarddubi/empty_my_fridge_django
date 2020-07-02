@@ -64,7 +64,7 @@ def scrape_page(request):
             db.child('all_ingredients').remove()
             food_network.food_network(db)
         else:
-            report = "Your administrative privileges cannot been verified. Failed to scrape"
+            report = "Your administrative privileges cannot be verified. Failed to scrape."
 
         data = {
             "report" : report
@@ -615,7 +615,7 @@ def _logout_(request):
         auth.logout(request)
     except KeyError:
         pass
-    return HttpResponseRedirect("/empty_my_fridge/login/")
+    return HttpResponseRedirect("/empty_my_fridge/home/")
 
 
 @csrf_exempt
