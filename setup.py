@@ -11,7 +11,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name='empty_my_fridge',
-    version="1.0.5",
+    version="1.0.7",
     author="Charles Charlestin, Rebecca Boes, Cyan Perez, Randolph Maynes, Edward Mensah",
     description="Get your Daily Recipes",
     long_description=long_description,

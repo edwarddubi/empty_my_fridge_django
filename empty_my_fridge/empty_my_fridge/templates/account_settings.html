@@ -53,7 +53,7 @@
       <div class="ui link dropdown simple item">
         <span class="text">Browse</span>
         <i class="dropdown icon"></i>
-        <div class="menu inverted">
+        <div class="menu inverted" style="margin-top: -1px;">
           <a class="item" href="{% url 'category' %}?category=pastry">Pastries</a>
           <a class="item" href="{% url 'category' %}?category=main dish">Meals</a>
           <a class="item" href="{% url 'category' %}?category=appetizer">Appetizers</a>
@@ -154,7 +154,7 @@
             />
           </div>
           <button class="ui button orange" type="submit">
-            Forgot Password?
+            Change Password
           </button>
         </form>
         <a href="{% url 'scrape_page'%}">

@@ -5,10 +5,11 @@
 # testing
 
 # production
-build
-/dist
-/empty_my_fridge.egg-info
+\build
+\dist
+\empty_my_fridge.egg-info
 
 # misc
+empty_my_fridge\empty_my_fridge\config.py
 \.history
-\empty_my_fridge\empty_my_fridge\config.py
+
