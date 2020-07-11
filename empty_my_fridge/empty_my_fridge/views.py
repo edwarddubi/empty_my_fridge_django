@@ -61,7 +61,6 @@ def scrape_page(request):
                 break
         if isAdmin:
             print(report)    
-            db.child('all_ingredients').remove()
             food_network.food_network(db)
         else:
             report = "Your administrative privileges cannot be verified. Failed to scrape."
@@ -228,7 +227,7 @@ def get_recipes_by_category_ingredients(request):
         value = request.GET.get("category")
         category_list = get_recipes_by_category(value)
         ingred_list = get_recipes_by_ingredients(value)
-        result_list = category_list + ingred_list
+        result_list = list(dict.fromkeys(category_list + ingred_list))
 
     paginator = Paginator(result_list, 48)
     page = request.GET.get('page')
