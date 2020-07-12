@@ -89,7 +89,7 @@
             class="ui avatar image mini"
             src="https://react.semantic-ui.com/images/wireframe/square-image.png"
           />
-          <p id="hi_name">{{data.name}}</p>
+          <p id="hi_name">{{data.user.name}}</p>
         </a>
         <a href="{% url 'logout'%}" class="item">
           Logout
@@ -105,10 +105,10 @@
         <img
            id="user_image" style="height: 180px; width: 180px;"
           class="ui avatar image small"
-          src="{{data.image}} "
+          src="{{data.user.image}} "
         />
         <div style="margin-left: 5px; margin-top: 15%;">
-          <h2 style="color: bisque;">{{data.name}}</h2>
+          <h2 style="color: bisque;">{{data.user.name}}</h2>
         </div>
       </div>
     </div>
@@ -147,12 +147,13 @@
           <div style="width: 30%;" class="field">
             <label>Email</label>
             <input
-              value="{{data.email}}"
+              value="{{data.user.email}}"
               readonly=""
               name="email"
               type="email"
             />
           </div>
+          <input style="display: none;" value="account_settings" name="activity" />
           <button class="ui button orange" type="submit">
             Change Password
           </button>
@@ -166,22 +167,22 @@
         <div
           style="display: none;"
           id="message"
-          class="ui {{msg_type}} message"
+          class="ui {{data.msg_type}} message"
         >
           <div class="header">
-            {{msg_type}}
+            {{data.msg_type}}
           </div>
-          <p>{{message}}</p>
+          <p>{{data.message}}</p>
         </div>
       </div>
     </div>
 
-    {% if message %}
+    {% if data.message %}
     <script>
       document.getElementById("message").style.display = "block";
     </script>
     {% endif %} 
-    {% if data %}
+    {% if data.user %}
     <script>
       function startScrape(){
         document.getElementById("scrape").innerHTML = "Scraping...Please wait"

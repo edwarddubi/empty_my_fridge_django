@@ -40,5 +40,6 @@ urlpatterns = [
     path('scrape_page/', views.scrape_page, name="scrape_page"),
     path('logout/', views._logout_, name='logout'),
     path('categories/', views.category, name='category'),
+    path('reset_password/', views.reset_password, name='reset_password'),
     path('search/', views.get_recipes_by_category_ingredients, name='search'),
 ]

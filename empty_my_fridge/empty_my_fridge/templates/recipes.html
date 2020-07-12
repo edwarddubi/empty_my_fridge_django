@@ -133,7 +133,7 @@
         <a
           id="login_btn"
           style="display: flex;"
-          href="{% url 'login'%}"
+          href="{% url 'login'%}?activity=recipe_list"
           class="item"
         >
           Login
@@ -213,10 +213,15 @@
                   />
                   <input
                     style="display: none;"
+                    value="recipe_list"
+                    name="activity"
+                  />
+                  <input
+                    style="display: none;"
                     value="{{data.isSearch}}"
                     name="isSearch"
                   />
-                  {% if recipe.user_saved %}
+                  {% if data.user and recipe.user_saved %}
                   <button
                     id="like"
                     class="ui icon button"
@@ -295,7 +300,8 @@
       var scrollTop = {{data.scrollTop}};
       window.scrollTo(0, scrollTop);
     </script>
-    {% endif %} {% if data.user %}
+    {% endif %} 
+    {% if data.user %}
     <script>
       document.getElementById("image_profile").src =
         "https://react.semantic-ui.com/images/avatar/large/matthew.png";

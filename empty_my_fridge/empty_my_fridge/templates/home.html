@@ -70,11 +70,11 @@
         <a
         id="fridge_btn"
         style="display: flex;"
-        href="{% url 'fridge'%}"
+        href="{% url 'fridge'%}?activity=fridge"
         class="item">
         My Fridge
       </a>
-        <a href="{% url 'profile'%}" class="item">
+        <a href="{% url 'profile'%}?activity=profile" class="item">
           <img
             id="image_profile"
             class="ui avatar image mini"
@@ -85,7 +85,7 @@
         <a
           id="login_btn"
           style="display: flex;"
-          href="{% url 'login'%}"
+          href="{% url 'login'%}?activity=home"
           class="item"
         >
           Login

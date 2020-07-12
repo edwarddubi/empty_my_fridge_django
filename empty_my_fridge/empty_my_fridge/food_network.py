@@ -148,9 +148,9 @@ def food_network(db):
 			cap += 1
 			
 		if page_num % 5 == 0:
-			prompt = 'Idle: Scraping paused...{0} recipes have been scraped. Would you like to populate in database or resume scraping? r/s (r=Resume/s=Stop): '.format((page_num - 1) * 10)
+			prompt = 'Idle: Scraping paused...\n{0} recipes have been scraped.\n*Note: If you continue with no, scraped recipes would be populated in database\nResume scraping? y/N: '.format((page_num - 1) * 10)
 			c = input(prompt)
-			if c.lower() == 's' or c.lower() == 'stop':
+			if c.lower() == 'n':
 				print("Stopping...Please wait...")
 				break;
 		
