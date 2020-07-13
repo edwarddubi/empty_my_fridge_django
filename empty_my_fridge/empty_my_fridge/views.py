@@ -653,8 +653,16 @@ def account_settings(request):
         return HttpResponseRedirect("/empty_my_fridge/login/")
     else:
         user_details = m_user._getUser_()
+        uid = m_user._getUser_Id_()
+        isAdmin = False
+        admins = db.child("admin").child("UPLwshBH98OmbVivV").child("scrapers").get().val()
+        for admin in admins:
+            if str(admin) == str(uid):
+                isAdmin = True
+                break
         data = {
             'user': user_details,
+            'admin' : isAdmin,
             "msg_type": m_message.get_msg_type(),
             "message" : m_message.get_message()
         }

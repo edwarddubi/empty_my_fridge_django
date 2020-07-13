@@ -158,12 +158,15 @@
             Change Password
           </button>
         </form>
+        {% if data.admin %}
         <a href="{% url 'scrape_page'%}">
           <button onclick="startScrape()" style="margin-top: 10px; width: 150px;" class="ui button purple">
             Scrape
           </button>
           <p id="scrape"></p>
         </a>
+        {% endif %}
+        
         <div
           style="display: none;"
           id="message"
