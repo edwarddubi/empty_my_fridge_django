@@ -41,6 +41,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 firebase = pyrebase.initialize_app(config.myConfig())
 
 auth_fb = firebase.auth()
+fb_storage = firebase.storage()
 db = firebase.database()
 m_user = User()
 m_message = Message()
@@ -118,9 +119,11 @@ def recipe_list(request):
     found_results = False
     isSearch = False
     all_recipes = []
+    _recipe_name_ = None
     if recipes.get_is_searched_for_recipes():
         all_recipes = get_all_filtered_recipes()
         isSearch = True
+        _recipe_name_ = recipes.get_recipe_name_to_find()
         #recipes.set_is_searched_for_recipes(False)
         if len(all_recipes) != 0:
             found_results = True
@@ -151,6 +154,7 @@ def recipe_list(request):
             "found_results": found_results,
             "items": len(all_recipes),
             "isSearch": isSearch,
+            "recipe_name" : _recipe_name_,
 
         }
         return render(request, 'recipes.html', {"data": data})
@@ -167,7 +171,8 @@ def recipe_list(request):
             "keep_scroll_pos": keep_scroll_pos,
             "found_results": found_results,
             "items": len(all_recipes),
-            "isSearch": isSearch
+            "isSearch": isSearch,
+            "recipe_name" : _recipe_name_,
 
         }
         return render(request, 'recipes.html', {"data": data})
@@ -201,10 +206,8 @@ def category(request):
         curr_recipes = paginator.page(1)
     except EmptyPage:
         curr_recipes = paginator.page(paginator.num_pages)
-    user = None
-
-    if not m_user._isNone_():
-        user = m_user._getUser_()
+    
+    user = m_user._getUser_()    
 
     data = {
         "user": user,
@@ -254,20 +257,43 @@ def get_recipes_by_ingredients(ingredient):
             pass
     return recipe_lst
 
+def get_unique_recipes(categories, ingredients):
+    uniques_recipes = []
+    for recipe in categories:
+        for _recipe_ in ingredients:
+            if recipe == _recipe_:
+                categories.remove(recipe)
+
+    return categories + ingredients
+
 
 @csrf_exempt
 def get_recipes_by_category_ingredients(request):
     category_list = []
     ingred_list = []
     result_list = []
+    found_results = False
     if request.method == "GET":
         value = request.GET.get("category")
+        m_category.set_category(value)
         category_list = get_recipes_by_category(value)
         ingred_list = get_recipes_by_ingredients(value)
-        result_list = list(dict.fromkeys(category_list + ingred_list))
+        result_list = get_unique_recipes(category_list, ingred_list)
+        if len(result_list) != 0:
+            found_results = True
+
+    scrollTop = 0
+    keep_scroll_pos = False
+    if recipes.get_is_recipe_liked():
+        scrollTop = recipes.get_recipe_list_position()
+        recipes.set_is_recipe_liked(False)
+        keep_scroll_pos = True
 
     paginator = Paginator(result_list, 48)
     page = request.GET.get('page')
+    if not page:
+        page = "1"
+    m_category.set_category_page(page)
 
     try:
         curr_recipes = paginator.page(page)
@@ -276,15 +302,15 @@ def get_recipes_by_category_ingredients(request):
     except EmptyPage:
         curr_recipes = paginator.page(paginator.num_pages)
 
-    user = None
-
-    if not m_user._isNone_():
-        user = m_user._getUser_()
-
+    user = m_user._getUser_()
     data = {
         "user": user,
         "recipe_lst": curr_recipes,
         "category": value,
+        "scrollTop": scrollTop,
+        "keep_scroll_pos": keep_scroll_pos,
+        "found_results": found_results,
+        "items": len(result_list),
     }
 
     return render(request, 'category.html', {"data": data})
@@ -354,6 +380,24 @@ def fav_recipe_onClick(request):
             if navigate == "/empty_my_fridge/categories/":
                 navigate +="?category=" + m_category.get_category() + "&page=" + m_category.get_category_page()
             return HttpResponseRedirect(navigate)
+
+@csrf_exempt
+def upload_image(request):
+    file = request.FILES['img']
+    uid = m_user._getUser_Id_()
+    if uid:
+        _dir_ = "images/{0}/{1}".format(uid, file.name)
+        img = fb_storage.child(_dir_).put(file, request.session['token_id'])
+        link = fb_storage.child(_dir_).get_url(img["downloadTokens"])
+
+        userData = {
+            'image': link,
+        }
+        db.child("users").child(uid).update(userData)
+        _user_ = dict(db.child("users").child(uid).get().val())
+        m_user._setUser_(_user_)
+        
+    return HttpResponseRedirect('/empty_my_fridge/edit_profile/')
 
 
 ##Authentication (Login and Register)
@@ -505,8 +549,11 @@ def edit_profile(request):
         m_activity.set_activity_page("edit_profile")
         return HttpResponseRedirect("/empty_my_fridge/login/")
     else:
-        user_details = m_user._getUser_()
-        return render(request, 'edit_profile.html', {"data": user_details})
+        user = m_user._getUser_()
+        data = {
+            'user' : user,
+        }
+        return render(request, 'edit_profile.html', {"data": data})
 
 @csrf_exempt
 def personal_recipes(request):
@@ -591,8 +638,13 @@ def save_profile(request):
                 msg_type = "success"
             except Exception as e:
                 pass
+    data = {
+        'user': user_details,
+        "message": msg,
+        "msg_type": msg_type
+    }
 
-    return render(request, 'edit_profile.html', {"data": user_details, "message": msg, "msg_type": msg_type})
+    return render(request, 'edit_profile.html', {"data": data})
 
 
 @csrf_exempt

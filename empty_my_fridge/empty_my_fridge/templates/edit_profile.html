@@ -86,9 +86,10 @@
           <img
             id="image_profile"
             class="ui avatar image mini"
-            src="https://react.semantic-ui.com/images/wireframe/square-image.png"
+            style="height: 35px; width: 35px;"
+            src="{{data.user.image}}"
           />
-          <p id="hi_name">{{data.name}}</p>
+          <p id="hi_name">{{data.user.name}}</p>
         </a>
         <a href="{% url 'logout'%}" class="item">
           Logout
@@ -101,9 +102,9 @@
 
     <div class="ui segment inverted">
       <div style="margin-top: 70px; display: inline-flex;">
-        <img  id="user_image" style="height: 180px; width: 180px;" class="ui avatar image small" src="{{data.image}}">
-        <div style="margin-left: 5px;  margin-top: 15%;">
-          <h2 style="color: bisque; ">{{data.name}} </h2>
+        <img  id="user_image" style="height: 180px; width: 180px;" class="ui avatar image small" src="{{data.user.image}}">
+        <div style="margin-left: 5px;  margin-top: 75px;">
+          <h2 style="color: bisque; ">{{data.user.name}} </h2>
         </div>
         
       </div>
@@ -138,63 +139,61 @@
         </div>
       </div>
       <div style="margin-bottom: 50px;" class="ui raised segment">
+        <form action="/empty_my_fridge/upload_image/" method="post" class="ui form" enctype="multipart/form-data">
+          <label for="img">Change Profile Picture: </label>
+          <input style="width: 30%;" type="file" id="img" name="img" accept="image/*">
+          <button style="height: 42px;" class="ui button green" type="submit">Upload</button>
+        </form>
+
         <form action="/empty_my_fridge/save_profile/" method="post" class="ui form">
           <div style="width: 30%;" class="field">
             <label>Full Name</label>
-            <input value="{{data.name}}" placeholder="Full Name" required name="name" type="text">
+            <input value="{{data.user.name}}" placeholder="Full Name" required name="name" type="text">
           </div>
 
           <div style="width: 30%;" class="field">
             <label>Username</label>
-            <input value="@{{data.username}}" placeholder="Username" readonly="" type="text">
+            <input value="@{{data.user.username}}" placeholder="Username" readonly="" type="text">
           </div>
 
           <div style="width: 30%;" class="field">
             <label>Bio</label>
-            <textarea rows="3" placeholder="Bio" type="text" name="bio">{{data.bio}}</textarea>
+            <textarea rows="3" placeholder="Bio" type="text" name="bio">{{data.user.bio}}</textarea>
           </div>
           
           <div style="width: 60%;" class="two fields">
             <div class="field">
               <label>Country</label>
-              <input name="country" placeholder="Country" value="{{data.country}}" type="text">
+              <input name="country" placeholder="Country" value="{{data.user.country}}" type="text">
             </div>
             <div class="field">
               <label>State</label>
-              <input name="state" placeholder="State" value="{{data.state}}" type="text">
+              <input name="state" placeholder="State" value="{{data.user.state}}" type="text">
             </div>
           </div>
           <div style="width: 30%;" class="field">
             <label>Personal Blog</label>
-            <input value="{{data.blog}}" placeholder="Personal Blog" name="blog" type="url">
+            <input value="{{data.user.blog}}" placeholder="Personal Blog" name="blog" type="url">
           </div>
 
           <button class="ui button yellow" type="submit">Save Changes</button>
 
         </form>
-        <div style="display: none;" id="message" class="ui {{msg_type}} message">
+        <div style="display: none;" id="message" class="ui {{data.msg_type}} message">
           <div class="header">
-            {{msg_type}}
+            {{data.msg_type}}
           </div>
-          <p>{{message}}</p>
+          <p>{{data.message}}</p>
         </div>
       </div>
       
     </div>
 
-    {% if message %}
+    {% if data.message %}
     <script>
       document.getElementById("message").style.display = "block";
     </script>
     {% endif %}
-
-    {% if data %}
-    <script>
-      document.getElementById("user_image").src =
-        "https://react.semantic-ui.com/images/avatar/large/matthew.png";
-      document.getElementById("image_profile").src =
-        "https://react.semantic-ui.com/images/avatar/large/matthew.png";
-    </script>
-    {% endif %}
+    
   </body>
 </html>

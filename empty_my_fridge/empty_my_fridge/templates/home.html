@@ -70,16 +70,26 @@
         <a
         id="fridge_btn"
         style="display: flex;"
-        href="{% url 'fridge'%}?activity=fridge"
+        href="{% url 'fridge'%}"
         class="item">
         My Fridge
       </a>
-        <a href="{% url 'profile'%}?activity=profile" class="item">
+        <a href="{% url 'profile'%}" class="item">
+          {% if data.user %}
           <img
             id="image_profile"
             class="ui avatar image mini"
+            style="height: 35px; width: 35px;"
+            src="{{data.user.image}}"
+          />
+          {% else %}
+          <img
+            id="image_profile"
+            class="ui avatar image mini"
+            style="height: 35px; width: 35px;"
             src="https://react.semantic-ui.com/images/wireframe/square-image.png"
           />
+          {% endif %}
           <p>{{data.user.name}}</p>
         </a>
         <a
@@ -133,7 +143,7 @@
               <a class="header" href="{% url 'category' %}?category=breakfast">Breakfast</a>
             </div>
           </div>
-      </form>
+        </form>
       <form class="ui form">
         <div
           class="ui centered link card"
@@ -215,13 +225,11 @@
         </form>
       </div>
 
-
+    </div>
 
     
     {% if data.user %}
     <script>
-      document.getElementById("image_profile").src =
-        "https://react.semantic-ui.com/images/avatar/large/matthew.png";
       document.getElementById("logout_btn").style.display = "flex";
       document.getElementById("login_btn").style.display = "none";
     </script>

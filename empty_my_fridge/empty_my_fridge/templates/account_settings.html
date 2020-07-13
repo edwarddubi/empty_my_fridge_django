@@ -87,7 +87,7 @@
           <img
             id="image_profile"
             class="ui avatar image mini"
-            src="https://react.semantic-ui.com/images/wireframe/square-image.png"
+            src="{{data.user.image}}"
           />
           <p id="hi_name">{{data.user.name}}</p>
         </a>
@@ -107,7 +107,7 @@
           class="ui avatar image small"
           src="{{data.user.image}} "
         />
-        <div style="margin-left: 5px; margin-top: 15%;">
+        <div style="margin-left: 5px; margin-top: 75px;">
           <h2 style="color: bisque;">{{data.user.name}}</h2>
         </div>
       </div>
@@ -187,10 +187,7 @@
       function startScrape(){
         document.getElementById("scrape").innerHTML = "Scraping...Please wait"
       }
-      document.getElementById("user_image").src =
-        "https://react.semantic-ui.com/images/avatar/large/matthew.png";
-      document.getElementById("image_profile").src =
-        "https://react.semantic-ui.com/images/avatar/large/matthew.png";
+     
     </script>
     {% endif %}
   </body>

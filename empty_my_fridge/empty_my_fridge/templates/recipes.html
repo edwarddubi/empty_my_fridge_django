@@ -123,11 +123,21 @@
         My Fridge
       </a>
         <a href="{% url 'profile'%}" class="item">
+          {% if data.user %}
           <img
             id="image_profile"
             class="ui avatar image mini"
+            style="height: 35px; width: 35px;"
+            src="{{data.user.image}}"
+          />
+          {% else %}
+          <img
+            id="image_profile"
+            class="ui avatar image mini"
+            style="height: 35px; width: 35px;"
             src="https://react.semantic-ui.com/images/wireframe/square-image.png"
           />
+          {% endif %}
           <p id="hi_name">{{data.user.name}}</p>
         </a>
         <a
@@ -152,11 +162,11 @@
 
     {% if data.isSearch %} {% if data.found_results %}
     <div style="margin-top: 75px; padding-left: 90px;">
-      <h2><i>Found Results ({{data.items}} Item(s))</i></h2>
+      <h2><i>Found Results ({{data.items}} Item(s)): {{data.recipe_name}} </i></h2>
     </div>
     {% else %}
     <div style="margin-top: 75px; padding-left: 90px;">
-      <h2><i>No Results Found! (0 Items)</i></h2>
+      <h2><i>No Results Found! (0 Items): {{data.recipe_name}}</i></h2>
     </div>
     {% endif %} {% endif %}
 
@@ -169,10 +179,10 @@
         {% for recipe in data.recipes %}
         <div class="four wide column">
           <div
-            class="ui link card"
+            class="ui link card purple raised"
             style="margin: 10px; width: 300px; height: 335px;"
           >
-            <a class="ui medium image">
+            <a class="ui medium image" href="{{recipe.recipe_link}}">
               <img src="{{recipe.recipe_image}}" />
             </a>
             <div class="content" style="text-align: center;">
@@ -303,8 +313,6 @@
     {% endif %} 
     {% if data.user %}
     <script>
-      document.getElementById("image_profile").src =
-        "https://react.semantic-ui.com/images/avatar/large/matthew.png";
       document.getElementById("logout_btn").style.display = "flex";
       document.getElementById("login_btn").style.display = "none";
       window.addEventListener("scroll", function (event) {

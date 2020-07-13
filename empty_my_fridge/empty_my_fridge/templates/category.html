@@ -37,6 +37,22 @@
       text-decoration: underline;
     }
 
+    .recipe_name {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: large;
+        color:black;
+        font-weight: bolder;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+      }
+
+      .recipe_name:hover{
+        color: #3460e2;
+        text-decoration: underline;
+      }
+
     .ui.inverted.menu {
       background: #642b73; /* fallback for old browsers */
       background: -webkit-linear-gradient(
@@ -106,11 +122,21 @@
         My Fridge
       </a>
         <a href="{% url 'profile'%}" class="item">
+          {% if data.user %}
           <img
             id="image_profile"
             class="ui avatar image mini"
+            style="height: 35px; width: 35px;"
+            src="{{data.user.image}}"
+          />
+          {% else %}
+          <img
+            id="image_profile"
+            class="ui avatar image mini"
+            style="height: 35px; width: 35px;"
             src="https://react.semantic-ui.com/images/wireframe/square-image.png"
           />
+          {% endif %}
           <p id="hi_name">{{data.user.name}}</p>
         </a>
         <a
@@ -155,14 +181,14 @@
         {% for recipe in data.recipe_lst %}
         <div class="four wide column">
           <div
-            class="ui link card"
+            class="ui link card purple raised"
             style="margin: 10px; width: 300px; height: 360px;"
           >
-            <a class="ui medium image">
+            <a class="ui medium image" href="{{recipe.recipe_link}}">
               <img src="{{recipe.recipe_image}}" />
             </a>
             <div class="content" style="text-align: center;">
-              <a class="header" href="{{recipe.recipe_link}}"
+              <a class="recipe_name" href="{{recipe.recipe_link}}"
                 >{{recipe.recipe_name}}</a
               >
             </div>
@@ -262,13 +288,9 @@
       var scrollTop = {{data.scrollTop}};
       window.scrollTo(0, scrollTop);
     </script>
-    {% endif %} 
-    {% if data.user %}
+    {% endif %}
+    {% if data.recipe_lst %}
     <script>
-      document.getElementById("image_profile").src =
-        "https://react.semantic-ui.com/images/avatar/large/matthew.png";
-      document.getElementById("logout_btn").style.display = "flex";
-      document.getElementById("login_btn").style.display = "none";
       window.addEventListener("scroll", function (event) {
         var scrollY = this.scrollY;
         if (scrollY) {
@@ -276,6 +298,13 @@
           for (var i = 0; i < elements.length; i++) elements[i].value = scrollY;
         }
       });
+    </script>
+    {% endif %}
+
+    {% if data.user %}
+    <script>
+      document.getElementById("logout_btn").style.display = "flex";
+      document.getElementById("login_btn").style.display = "none";
     </script>
     {% endif %}
   </body>
