@@ -37,6 +37,22 @@
       text-decoration: underline;
     }
 
+    .recipe_name {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: large;
+        color:black;
+        font-weight: bolder;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+      }
+
+      .recipe_name:hover{
+        color: #3460e2;
+        text-decoration: underline;
+      }
+
     .ui.inverted.menu {
       background: #642b73; /* fallback for old browsers */
       background: -webkit-linear-gradient(
@@ -64,7 +80,7 @@
         <h3>Empty My Fridge</h3>
       </div>
 
-      <a href="{% url 'home' %}" class="item active">
+      <a href="{% url 'home' %}" class="item">
         Home
       </a>
       <a href="{% url 'recipe_page'%}" class="item">
@@ -106,17 +122,27 @@
         My Fridge
       </a>
         <a href="{% url 'profile'%}" class="item">
+          {% if data.user %}
           <img
             id="image_profile"
             class="ui avatar image mini"
+            style="height: 35px; width: 35px;"
+            src="{{data.user.image}}"
+          />
+          {% else %}
+          <img
+            id="image_profile"
+            class="ui avatar image mini"
+            style="height: 35px; width: 35px;"
             src="https://react.semantic-ui.com/images/wireframe/square-image.png"
           />
+          {% endif %}
           <p id="hi_name">{{data.user.name}}</p>
         </a>
         <a
           id="login_btn"
           style="display: flex;"
-          href="{% url 'login'%}"
+          href="{% url 'login'%}?activity=categories&category={{data.category}}"
           class="item"
         >
           Login
@@ -133,6 +159,16 @@
     </div>
     <!--End of Navigation Bar-->
 
+    {% if data.found_results %}
+    <div style="margin-top: 75px; padding-left: 90px;">
+      <h2><i>Found Results ({{data.items}} Item(s)): {{data.category}}</i></h2>
+    </div>
+    {% else %}
+    <div style="margin-top: 75px; padding-left: 90px;">
+      <h2><i>No Results Found! (0 Items): {{data.category}}</i></h2>
+    </div>
+    {% endif %}
+
     <!--Container-->
     <div class="ui container center aligned">
       <!--Recipe Cards-->
@@ -145,14 +181,14 @@
         {% for recipe in data.recipe_lst %}
         <div class="four wide column">
           <div
-            class="ui link card"
+            class="ui link card purple raised"
             style="margin: 10px; width: 300px; height: 360px;"
           >
-            <a class="ui medium image">
+            <a class="ui medium image" href="{{recipe.recipe_link}}">
               <img src="{{recipe.recipe_image}}" />
             </a>
             <div class="content" style="text-align: center;">
-              <a class="header" href="{{recipe.recipe_link}}"
+              <a class="recipe_name" href="{{recipe.recipe_link}}"
                 >{{recipe.recipe_name}}</a
               >
             </div>
@@ -177,7 +213,7 @@
                   <input
                     style="display: none;"
                     name="navigate"
-                    value="/empty_my_fridge/recipe_list/"
+                    value="/empty_my_fridge/categories/"
                   />
                   <input
                     id="scrollY"
@@ -190,10 +226,15 @@
                     value="{{isSearch}}"
                     name="isSearch"
                   />
-                  {% if recipe.user_saved %}
+                  <input
+                    style="display: none;"
+                    value="categories"
+                    name="activity"
+                  />
+                  {% if data.user and recipe.user_saved %}
                   <button
                     id="like"
-                    class="ui icon button disabled"
+                    class="ui icon button"
                     data-tooltip="Remove this from your Favorite Recipes"
                   >
                     <i class="star icon yellow"></i>
@@ -202,7 +243,7 @@
                   {% else %}
                   <button
                     id="like"
-                    class="ui icon button disabled"
+                    class="ui icon button"
                     data-tooltip="Add this to your Favorite Recipes"
                   >
                     <i class="star icon"></i>
@@ -242,11 +283,26 @@
         </span>
     </div>
     <!--End of Pagination-->
-    
+    {% if data.keep_scroll_pos %}
+    <script>
+      var scrollTop = {{data.scrollTop}};
+      window.scrollTo(0, scrollTop);
+    </script>
+    {% endif %}
+    {% if data.recipe_lst %}
+    <script>
+      window.addEventListener("scroll", function (event) {
+        var scrollY = this.scrollY;
+        if (scrollY) {
+          var elements = document.querySelectorAll("#scrollY");
+          for (var i = 0; i < elements.length; i++) elements[i].value = scrollY;
+        }
+      });
+    </script>
+    {% endif %}
+
     {% if data.user %}
     <script>
-      document.getElementById("image_profile").src =
-        "https://react.semantic-ui.com/images/avatar/large/matthew.png";
       document.getElementById("logout_btn").style.display = "flex";
       document.getElementById("login_btn").style.display = "none";
     </script>
