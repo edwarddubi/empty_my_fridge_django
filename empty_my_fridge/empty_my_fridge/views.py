@@ -367,8 +367,7 @@ def fav_recipe_onClick(request):
                 recipes.set_recipe_unLiked(recipe_id)
                 db.child("user_fav_recipes").child(
                     uid).child(recipe_id).remove()
-                db.child("recipe").child(recipe_id).child(
-                    "stars").child(uid).remove()
+                db.child("recipe").child(recipe_id).child("stars").child(uid).remove()
             else:
                 recipes.set_recipe_liked(recipe_id)
                 db.child("user_fav_recipes").child(
@@ -491,7 +490,7 @@ def _register_(request):
                 uid = user['localId']
                 email = user['email']
                 index_of_at = email.find("@")
-                username = email[:index_of_at]
+                username = email[:index_of_at] + uid[:5]
                 today = date.today()
                 joined = today.strftime("%B %d, %Y")
 
@@ -691,7 +690,10 @@ def recover_password(request):
         msg = "A password recovery link has been sent to your email."
         msg_type = "success"
     except Exception as e:
-        print(e)
+        response = e.args[0].response
+        error = response.json()['error']
+        msg = error_message(error['message'])
+
     activity = '/empty_my_fridge/{0}/'.format(activity)    
     m_message.set_message(msg)
     m_message.set_msg_type(msg_type)    
