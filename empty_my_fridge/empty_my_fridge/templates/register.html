@@ -43,8 +43,8 @@
   </style>
 
   <body>
-     <!--Navigation Bar-->
-     <div style="height: 59px;" class="ui top inverted secondary fixed menu">
+    <!--Navigation Bar-->
+    <div style="height: 59px;" class="ui top inverted secondary fixed menu">
       <div class="item">
         <h3>Empty My Fridge</h3>
       </div>
@@ -60,20 +60,32 @@
         <span class="text">Browse</span>
         <i class="dropdown icon"></i>
         <div class="menu inverted" style="margin-top: -1px;">
-          <a class="item" href="{% url 'category' %}?category=pastry">Pastries</a>
-          <a class="item" href="{% url 'category' %}?category=main dish">Meals</a>
-          <a class="item" href="{% url 'category' %}?category=appetizer">Appetizers</a>
-          <a class="item" href="{% url 'category' %}?category=dessert">Dessert</a>
+          <a class="item" href="{% url 'category' %}?category=pastry"
+            >Pastries</a
+          >
+          <a class="item" href="{% url 'category' %}?category=main dish"
+            >Meals</a
+          >
+          <a class="item" href="{% url 'category' %}?category=appetizer"
+            >Appetizers</a
+          >
+          <a class="item" href="{% url 'category' %}?category=dessert"
+            >Dessert</a
+          >
         </div>
       </div>
-     
     </div>
     <!--End of Navigation Bar-->
     <div class="ui container">
       <div class="center">
         <h1>Create an account</h1>
         <hr />
-        <form id="myForm" action="/empty_my_fridge/to_signIn/" method="post" class="ui form">
+        <form
+          id="myForm"
+          action="/empty_my_fridge/to_signIn/"
+          method="post"
+          class="ui form"
+        >
           {% csrf_token %}
 
           <div class="field">
@@ -97,16 +109,30 @@
           </div>
 
           <button
-            style="margin: 10;"
+            style="margin-top: 10px;"
             type="submit"
             class="ui button fluid red inverted"
           >
             Create Account
           </button>
         </form>
-        <div style="display: none;" id="message" class="ui error message">
+        {% if data.msg_type == 'success' %}
+        <a href="{% url 'login'%}">
+          <button
+          style="margin-top: 10px;"
+          class="ui button fluid green inverted"
+        >
+          Login
+        </button>
+        </a>
+        {% endif %}
+        <div
+          style="display: none;"
+          id="message"
+          class="ui {{data.msg_type}} message"
+        >
           <div class="header">
-            Error
+            {{data.msg_type}}
           </div>
           <p>{{data.message}}</p>
         </div>
@@ -115,7 +141,7 @@
 
     {% if data.message %}
     <script>
-      document.getElementById('message').style.display = "block"
+      document.getElementById("message").style.display = "block";
     </script>
     {% endif %}
   </body>

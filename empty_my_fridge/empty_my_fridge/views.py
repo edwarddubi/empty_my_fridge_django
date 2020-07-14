@@ -440,15 +440,25 @@ def _login_(request):
         try:
             user = auth_fb.sign_in_with_email_and_password(email, password)
             if user != None:
-                uid = user["localId"]
-                _user_ = db.child("users").child(uid).get().val()
-                m_user._setUser_Id_(uid)
-                user_details = dict(_user_)
-                m_user._setUser_(user_details)
-                request.session['token_id'] = user['idToken']
-                request.session['uid'] = uid
-                #name = user_info['name']
-            #user = auth.refresh(user['refreshToken'])
+                user = auth_fb.refresh(user['refreshToken'])
+                uid = user["userId"]
+                user_info = auth_fb.get_account_info(user['idToken'])
+                is_verified = user_info["users"][0]["emailVerified"]
+                if is_verified:
+                    _user_ = db.child("users").child(uid).get().val()
+                    m_user._setUser_Id_(uid)
+                    user_details = dict(_user_)
+                    m_user._setUser_(user_details)
+                    request.session['token_id'] = user['idToken']
+                    request.session['uid'] = uid
+                else:
+                    auth_fb.send_email_verification(user['idToken'])
+                    msg = error_message('NOT_VERIFIED')
+                    data = {
+                        "message": msg
+                    }
+                    return render(request, "login.html", {"data": data})
+                
         except Exception as e:
             # logging.exception('')
             response = e.args[0].response
@@ -461,9 +471,6 @@ def _login_(request):
             return render(request, "login.html", {"data": data})
     try:
         if request.session['token_id'] is not None:
-            data = {
-                "user": user_details
-            }
             return HttpResponseRedirect(activity_page)
     except KeyError:
         return HttpResponseRedirect("/empty_my_fridge/login/")
@@ -480,46 +487,40 @@ def _register_(request):
         email = request.POST.get('email')
         password = request.POST.get('pass')
         name = request.POST.get('name')
-        #is_email_valid = validate_email(email_address=email, check_regex=True, check_mx=True, from_address='my@from.addr.ess',helo_host='my.host.name', smtp_timeout=10, dns_timeout=10, use_blacklist=True, debug=True)
-        #is_email_valid = validate_email(email, verify=True)
-        is_email_valid = True  # validate_email(email, verify=True)
-        if is_email_valid:
-            try:
-                user = auth_fb.create_user_with_email_and_password(email, password)
-                user['displayName'] = name
-                uid = user['localId']
-                email = user['email']
-                index_of_at = email.find("@")
-                username = email[:index_of_at] + uid[:5]
-                today = date.today()
-                joined = today.strftime("%B %d, %Y")
+        data = {
+            "message": "A verification link was sent to your email. Please, follow the link to verify your email.",
+            "msg_type" : "success"
+        }
+        try:
+            user = auth_fb.create_user_with_email_and_password(email, password)
+            user['displayName'] = name
+            uid = user['localId']
+            email = user['email']
+            index_of_at = email.find("@")
+            username = email[:index_of_at] + uid[:5].lower()
+            today = date.today()
+            joined = today.strftime("%B %d, %Y")
 
-                userData = {
-                    'name': name,
-                    'email': email,
-                    'joined': joined,
-                    'userID': uid,
-                    'username': username,
-                    'image': 'https://react.semantic-ui.com/images/wireframe/square-image.png'
-                }
-                db.child('users').child(uid).set(userData)
-            except Exception as e:
-                # logging.exception('')
-                response = e.args[0].response
-                error = response.json()['error']
-                msg = error_message(error['message'])
-                data = {
-                    "message": msg
-                }
-                return render(request, "register.html", {"data": data})
-        else:
-            msg = error_message("WRONG_EMAIL")
-            data = {
-                "message": msg
+            userData = {
+                'name': name,
+                'email': email,
+                'joined': joined,
+                'userID': uid,
+                'username': username,
+                'image': 'https://react.semantic-ui.com/images/wireframe/square-image.png'
             }
-            return render(request, "register.html", {"data": data})
+            db.child('users').child(uid).set(userData)
+            auth_fb.send_email_verification(user["idToken"])
 
-    return HttpResponseRedirect("/empty_my_fridge/login/")
+        except Exception as e:
+            # logging.exception('')
+            response = e.args[0].response
+            error = response.json()['error']
+            msg = error_message(error['message'])
+            data["message"] = msg
+            data["msg_type"] = "error" 
+
+        return render(request, "register.html", {"data": data})
 
 # Profile Page (Profile--about me, Edit Profile and Save new profile information, Account Settings, Recover Password, User Favorite Recipes)
 
@@ -747,6 +748,7 @@ def error_message(type):
         "INVALID_PASSWORD": "Either your email or password is incorrect. Try again.",
         "EMAIL_NOT_FOUND": "This email does not exist anywhere on our services.",
         "WRONG_EMAIL": "Please make sure you are using a valid email address.",
+        "NOT_VERIFIED" : "Your email is not verified! Please, follow the link in your email to verify your account.",
         "TOO_MANY_ATTEMPTS_TRY_LATER": "There have been too many unsuccessful login attempts. Please try again later."
 
     }.get(type, "An unknown error has occurred")
