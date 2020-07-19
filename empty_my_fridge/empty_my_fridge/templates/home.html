@@ -75,17 +75,27 @@
         My Fridge
       </a>
         <a href="{% url 'profile'%}" class="item">
+          {% if data.user %}
           <img
             id="image_profile"
             class="ui avatar image mini"
+            style="height: 35px; width: 35px;"
+            src="{{data.user.image}}"
+          />
+          {% else %}
+          <img
+            id="image_profile"
+            class="ui avatar image mini"
+            style="height: 35px; width: 35px;"
             src="https://react.semantic-ui.com/images/wireframe/square-image.png"
           />
+          {% endif %}
           <p>{{data.user.name}}</p>
         </a>
         <a
           id="login_btn"
           style="display: flex;"
-          href="{% url 'login'%}"
+          href="{% url 'login'%}?activity=home"
           class="item"
         >
           Login
@@ -126,20 +136,20 @@
             class="ui centered link card"
             style="width: 200px; height: 200px; margin: 20px; background-color:rgba(176, 224, 230, 0.76);"
           >
-            <a class="ui centered medium image" style="width: 200px; height: 150px;">
+            <a class="ui centered medium image" style="width: 200px; height: 150px;" href="{% url 'category' %}?category=breakfast">
               <img src="https://firebasestorage.googleapis.com/v0/b/empty-my-fridge-6197d.appspot.com/o/waffle.png?alt=media&token=e9c3f241-7542-4ca0-af72-401648f79b21" />
             </a>
             <div class="content" style="text-align: center; font-size: large;">
               <a class="header" href="{% url 'category' %}?category=breakfast">Breakfast</a>
             </div>
           </div>
-      </form>
+        </form>
       <form class="ui form">
         <div
           class="ui centered link card"
           style="width: 200px; height: 200px; margin: 20px; background-color:rgba(255, 153, 106, 0.48);"
         >
-          <a class="ui centered medium image" style="width: 200px; height: 150px;">
+          <a class="ui centered medium image" style="width: 200px; height: 150px;" href="{% url 'category' %}?category=lunch">
             <img src="https://firebasestorage.googleapis.com/v0/b/empty-my-fridge-6197d.appspot.com/o/taco.png?alt=media&token=8cbea5fc-fb8a-43c0-a4c0-2f88e42c7d6b" />
           </a>
           <div class="content" style="text-align: center; font-size: large;">
@@ -152,7 +162,7 @@
           class="ui centered link card"
           style="width: 200px; height: 200px; margin: 20px; background-color: rgba(102, 231, 158, 0.48);"
         >
-          <a class="ui centered medium image" style="width: 200px; height: 150px;">
+          <a class="ui centered medium image" style="width: 200px; height: 150px;" href="{% url 'category' %}?category=main dish">
             <img src="https://firebasestorage.googleapis.com/v0/b/empty-my-fridge-6197d.appspot.com/o/pasta.png?alt=media&token=7a26bc16-dc99-40d7-8a23-862a58973127" />
           </a>
           <div class="content" style="text-align: center; font-size: large;">
@@ -165,7 +175,7 @@
           class="ui centered link card"
           style="width: 200px; height: 200px; margin: 20px; background-color: rgba(255, 239, 169, 0.76);"
         >
-          <a class="ui centered medium image" style="width: 200px; height: 150px">
+          <a class="ui centered medium image" style="width: 200px; height: 150px" href="{% url 'category' %}?category=dessert">
             <img src="https://firebasestorage.googleapis.com/v0/b/empty-my-fridge-6197d.appspot.com/o/dessert.png?alt=media&token=4196fd3a-688f-4a4b-adc7-bbdea88e1828" />
           </a>
           <div class="content" style="text-align: center; font-size: large;">
@@ -179,7 +189,7 @@
             class="ui centered link card"
             style="width: 200px; height: 200px; margin: 20px; background-color:rgba(226, 255, 145, 0.76);"
           >
-            <a class="ui centered medium image" style="width: 200px; height: 150px;">
+            <a class="ui centered medium image" style="width: 200px; height: 150px;" href="{% url 'category' %}?category=side dish">
               <img src="https://firebasestorage.googleapis.com/v0/b/empty-my-fridge-6197d.appspot.com/o/tofu.png?alt=media&token=8564bb0f-b176-48c8-b040-e0db2a135d4b" />
             </a>
             <div class="content" style="text-align: center; font-size: large;">
@@ -192,7 +202,7 @@
             class="ui centered link card"
             style="width: 200px; height: 200px; margin: 20px; background-color:rgba(164, 108, 255, 0.50);"
           >
-            <a class="ui centered medium image" style="width: 200px; height: 150px;">
+            <a class="ui centered medium image" style="width: 200px; height: 150px;" href="{% url 'category' %}?category=vegan">
               <img src="https://firebasestorage.googleapis.com/v0/b/empty-my-fridge-6197d.appspot.com/o/salad.png?alt=media&token=316448ed-d64d-41f3-9bdf-a35f795b0f8a" />
             </a>
             <div class="content" style="text-align: center; font-size: large;">
@@ -205,7 +215,7 @@
             class="ui centered link card"
             style="width: 200px; height: 200px; margin: 20px; background-color: rgba(255, 155, 185, 0.64);"
           >
-            <a class="ui centered medium image" style="width: 200px; height: 150px;">
+            <a class="ui centered medium image" style="width: 200px; height: 150px;" href="{% url 'category' %}?category=gluten free">
               <img src="https://firebasestorage.googleapis.com/v0/b/empty-my-fridge-6197d.appspot.com/o/sushi.png?alt=media&token=f881a6f2-38d9-42af-9482-a64271f1cc8e" />
             </a>
             <div class="content" style="text-align: center; font-size: large;">
@@ -215,13 +225,11 @@
         </form>
       </div>
 
-
+    </div>
 
     
     {% if data.user %}
     <script>
-      document.getElementById("image_profile").src =
-        "https://react.semantic-ui.com/images/avatar/large/matthew.png";
       document.getElementById("logout_btn").style.display = "flex";
       document.getElementById("login_btn").style.display = "none";
     </script>

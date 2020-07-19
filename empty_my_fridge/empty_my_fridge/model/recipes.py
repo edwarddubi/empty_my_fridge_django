@@ -11,6 +11,7 @@ class Recipes:
         self.m_user = None
         self.food_network = None
         self.visited_pages = ""
+        
 
     def __init__(self, db, m_user, food_network):
         self.recipe_list = None
@@ -23,6 +24,7 @@ class Recipes:
         self.m_user = m_user
         self.food_network = food_network
         self.visited_pages = ""
+    
 
     def set_visited_pages(self, page):
         self.visited_pages += "," + page
