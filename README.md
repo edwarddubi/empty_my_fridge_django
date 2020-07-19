@@ -8,7 +8,7 @@ A web application that tells users recipes they can make based on ingredients in
 
 ## PYPI
 
-[empty-my-fridge 1.0.6](https://pypi.org/project/empty-my-fridge/)
+[empty-my-fridge 1.0.7](https://pypi.org/project/empty-my-fridge/)
 
 ### Install using command
   - pip3 install empty-my-fridge
@@ -50,16 +50,16 @@ Semantic Ui or fomantic Ui css (currently, Semantic Ui)
 ## User Experience Feedback
   
 ### Registration Confirmation
-  - Once a user registers, there should be a way for them to receive visual confirmation that it has been created
+  - Once a user registers, there should be a way for them to receive visual confirmation that it has been created **Fixed**
 
 ### Adding Ingredients to Fridge
   - User feedback suggested that having the "Add to Fridge" and "Remove from Fridge" buttons in between the left-pane available ingredients and right-pane current fridge would be more intuitive than its current layout
 
 ### Pesky Browse Dropdown Button
-  - Several users have noted trouble getting the button's dropdown options to stay expanded when they attempt to move their mouse from the button to the options. We suspect this is due to oversized margins on the button itself, but will be investigating this in Sprint #2
+  - Several users have noted trouble getting the button's dropdown options to stay expanded when they attempt to move their mouse from the button to the options. We suspect this is due to oversized margins on the button itself, but will be investigating this in Sprint #2 **Fixed**
 
 ### Whole-Tile onClick
-  - On the homepage, there are tiles for broad categories. When you look through recipes, each recipe is on its own tile. However, you cannot currently click anywhere on the tile, rather you must click on the title or name itself for the onClick to activate. The next sprint will also focus on fixing this to be more convenient for users
+  - On the homepage, there are tiles for broad categories. When you look through recipes, each recipe is on its own tile. However, you cannot currently click anywhere on the tile, rather you must click on the title or name itself for the onClick to activate. The next sprint will also focus on fixing this to be more convenient for users **Fixed**
 
 ### Keep User's Desired Action if Redirected
-  - For example, if a user tries to favorite a recipe, but is not logged in, the action should be stored for execution after they have registered/logged in
+  - For example, if a user tries to favorite a recipe, but is not logged in, the action should be stored for execution after they have registered/logged in **Fixed**

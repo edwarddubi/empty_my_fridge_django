@@ -20,14 +20,33 @@ try:
 except ModuleNotFoundError:
     from empty_my_fridge.model.recipes import Recipes
 
+try:
+    from empty_my_fridge.empty_my_fridge.model.message import Message
+except ModuleNotFoundError:
+    from empty_my_fridge.model.message import Message
+
+try:
+    from empty_my_fridge.empty_my_fridge.model.route import ActivityPage
+except ModuleNotFoundError:
+    from empty_my_fridge.model.route import ActivityPage
+
+try:
+    from empty_my_fridge.empty_my_fridge.model.category import Category
+except ModuleNotFoundError:
+    from empty_my_fridge.model.category import Category
+
 import time
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 firebase = pyrebase.initialize_app(config.myConfig())
 
 auth_fb = firebase.auth()
+fb_storage = firebase.storage()
 db = firebase.database()
 m_user = User()
+m_message = Message()
+m_activity = ActivityPage()
+m_category = Category()
 recipes = Recipes(db, m_user, food_network)
 recipes._get_all_recipes_()
 
@@ -61,7 +80,6 @@ def scrape_page(request):
                 break
         if isAdmin:
             print(report)    
-            db.child('all_ingredients').remove()
             food_network.food_network(db)
         else:
             report = "Your administrative privileges cannot be verified. Failed to scrape."
@@ -101,9 +119,11 @@ def recipe_list(request):
     found_results = False
     isSearch = False
     all_recipes = []
+    _recipe_name_ = None
     if recipes.get_is_searched_for_recipes():
         all_recipes = get_all_filtered_recipes()
         isSearch = True
+        _recipe_name_ = recipes.get_recipe_name_to_find()
         #recipes.set_is_searched_for_recipes(False)
         if len(all_recipes) != 0:
             found_results = True
@@ -134,6 +154,7 @@ def recipe_list(request):
             "found_results": found_results,
             "items": len(all_recipes),
             "isSearch": isSearch,
+            "recipe_name" : _recipe_name_,
 
         }
         return render(request, 'recipes.html', {"data": data})
@@ -150,7 +171,8 @@ def recipe_list(request):
             "keep_scroll_pos": keep_scroll_pos,
             "found_results": found_results,
             "items": len(all_recipes),
-            "isSearch": isSearch
+            "isSearch": isSearch,
+            "recipe_name" : _recipe_name_,
 
         }
         return render(request, 'recipes.html', {"data": data})
@@ -159,9 +181,24 @@ def recipe_list(request):
 @csrf_exempt
 def category(request):
     cat = request.GET.get('category')
+    m_category.set_category(cat)
+    found_results = False
     recipe_lst = get_recipes_by_category(cat)
+    if len(recipe_lst) != 0:
+        found_results = True
+
+    scrollTop = 0
+    keep_scroll_pos = False
+    if recipes.get_is_recipe_liked():
+        scrollTop = recipes.get_recipe_list_position()
+        recipes.set_is_recipe_liked(False)
+        keep_scroll_pos = True
+
     paginator = Paginator(recipe_lst, 48)
     page = request.GET.get('page')
+    if not page:
+        page = "1"
+    m_category.set_category_page(page)
 
     try:
         curr_recipes = paginator.page(page)
@@ -169,15 +206,17 @@ def category(request):
         curr_recipes = paginator.page(1)
     except EmptyPage:
         curr_recipes = paginator.page(paginator.num_pages)
-    user = None
-
-    if not m_user._isNone_():
-        user = m_user._getUser_()
+    
+    user = m_user._getUser_()    
 
     data = {
         "user": user,
         "recipe_lst": curr_recipes,
         "category": cat,
+        "scrollTop": scrollTop,
+        "keep_scroll_pos": keep_scroll_pos,
+        "found_results": found_results,
+        "items": len(recipe_lst),
     }
 
     return render(request, 'category.html', {"data": data})
@@ -218,20 +257,43 @@ def get_recipes_by_ingredients(ingredient):
             pass
     return recipe_lst
 
+def get_unique_recipes(categories, ingredients):
+    uniques_recipes = []
+    for recipe in categories:
+        for _recipe_ in ingredients:
+            if recipe == _recipe_:
+                categories.remove(recipe)
+
+    return categories + ingredients
+
 
 @csrf_exempt
 def get_recipes_by_category_ingredients(request):
     category_list = []
     ingred_list = []
     result_list = []
+    found_results = False
     if request.method == "GET":
         value = request.GET.get("category")
+        m_category.set_category(value)
         category_list = get_recipes_by_category(value)
         ingred_list = get_recipes_by_ingredients(value)
-        result_list = category_list + ingred_list
+        result_list = get_unique_recipes(category_list, ingred_list)
+        if len(result_list) != 0:
+            found_results = True
+
+    scrollTop = 0
+    keep_scroll_pos = False
+    if recipes.get_is_recipe_liked():
+        scrollTop = recipes.get_recipe_list_position()
+        recipes.set_is_recipe_liked(False)
+        keep_scroll_pos = True
 
     paginator = Paginator(result_list, 48)
     page = request.GET.get('page')
+    if not page:
+        page = "1"
+    m_category.set_category_page(page)
 
     try:
         curr_recipes = paginator.page(page)
@@ -240,15 +302,15 @@ def get_recipes_by_category_ingredients(request):
     except EmptyPage:
         curr_recipes = paginator.page(paginator.num_pages)
 
-    user = None
-
-    if not m_user._isNone_():
-        user = m_user._getUser_()
-
+    user = m_user._getUser_()
     data = {
         "user": user,
         "recipe_lst": curr_recipes,
         "category": value,
+        "scrollTop": scrollTop,
+        "keep_scroll_pos": keep_scroll_pos,
+        "found_results": found_results,
+        "items": len(result_list),
     }
 
     return render(request, 'category.html', {"data": data})
@@ -274,7 +336,14 @@ def search(request):
 @csrf_exempt
 def fav_recipe_onClick(request):
     if m_user._isNone_():
-        return HttpResponseRedirect("/empty_my_fridge/login/")
+        activity_page = None
+        activity_page = request.POST.get("activity")
+        if activity_page:
+            activity_page = "/empty_my_fridge/login/?activity={0}".format(activity_page)
+        else:
+            activity_page = "/empty_my_fridge/login/"
+            
+        return HttpResponseRedirect(activity_page)
     else:
         if request.method == "POST":
             uid = m_user._getUser_Id_()
@@ -298,8 +367,7 @@ def fav_recipe_onClick(request):
                 recipes.set_recipe_unLiked(recipe_id)
                 db.child("user_fav_recipes").child(
                     uid).child(recipe_id).remove()
-                db.child("recipe").child(recipe_id).child(
-                    "stars").child(uid).remove()
+                db.child("recipe").child(recipe_id).child("stars").child(uid).remove()
             else:
                 recipes.set_recipe_liked(recipe_id)
                 db.child("user_fav_recipes").child(
@@ -308,13 +376,50 @@ def fav_recipe_onClick(request):
                     "stars").child(uid).set(time_liked)
             if navigate == "/empty_my_fridge/recipe_list/":
                 navigate += "?page=" + recipes.get_recipes_current_page()
+            if navigate == "/empty_my_fridge/categories/":
+                navigate +="?category=" + m_category.get_category() + "&page=" + m_category.get_category_page()
             return HttpResponseRedirect(navigate)
+
+@csrf_exempt
+def upload_image(request):
+    file = request.FILES['img']
+    uid = m_user._getUser_Id_()
+    if uid:
+        _dir_ = "images/{0}/{1}".format(uid, file.name)
+        img = fb_storage.child(_dir_).put(file, request.session['token_id'])
+        link = fb_storage.child(_dir_).get_url(img["downloadTokens"])
+
+        userData = {
+            'image': link,
+        }
+        db.child("users").child(uid).update(userData)
+        _user_ = dict(db.child("users").child(uid).get().val())
+        m_user._setUser_(_user_)
+        
+    return HttpResponseRedirect('/empty_my_fridge/edit_profile/')
 
 
 ##Authentication (Login and Register)
 @csrf_exempt
 def login(request):
-    return render(request, 'login.html')
+    activity_page = None
+    cat = None
+    if request.method == 'GET':
+        activity_page = request.GET.get("activity")
+        cat = request.GET.get("category")
+        if not cat:
+            cat = m_category.get_category()
+    if not activity_page:
+        activity_page = m_activity.get_activity_page()
+        if not activity_page:
+            activity_page = "home"
+            
+    data = {
+        "activity": activity_page,
+        "category": cat,
+    }
+    m_activity.set_activity_page(None)  
+    return render(request, 'login.html', {"data":data})
 
 
 @csrf_exempt
@@ -322,18 +427,38 @@ def _login_(request):
     if request.method == 'GET':
         email = request.GET.get('email')
         password = request.GET.get('pass')
+        activity_page = request.GET.get("activity")
+        cat = request.GET.get("category")
+        if activity_page == "recipe_list":
+            page = recipes.get_recipes_current_page()
+            activity_page = "/empty_my_fridge/{0}/?page={1}".format(activity_page, page)
+        elif activity_page == "categories" and cat != "None":
+            activity_page = "/empty_my_fridge/{0}/?category={1}".format(activity_page, cat)
+        else:
+            activity_page = "/empty_my_fridge/{0}/".format(activity_page)
+        
         try:
             user = auth_fb.sign_in_with_email_and_password(email, password)
             if user != None:
-                uid = user["localId"]
-                _user_ = db.child("users").child(uid).get().val()
-                m_user._setUser_Id_(uid)
-                user_details = dict(_user_)
-                m_user._setUser_(user_details)
-                request.session['token_id'] = user['idToken']
-                request.session['uid'] = uid
-                #name = user_info['name']
-            #user = auth.refresh(user['refreshToken'])
+                user = auth_fb.refresh(user['refreshToken'])
+                uid = user["userId"]
+                user_info = auth_fb.get_account_info(user['idToken'])
+                is_verified = user_info["users"][0]["emailVerified"]
+                if is_verified:
+                    _user_ = db.child("users").child(uid).get().val()
+                    m_user._setUser_Id_(uid)
+                    user_details = dict(_user_)
+                    m_user._setUser_(user_details)
+                    request.session['token_id'] = user['idToken']
+                    request.session['uid'] = uid
+                else:
+                    auth_fb.send_email_verification(user['idToken'])
+                    msg = error_message('NOT_VERIFIED')
+                    data = {
+                        "message": msg
+                    }
+                    return render(request, "login.html", {"data": data})
+                
         except Exception as e:
             # logging.exception('')
             response = e.args[0].response
@@ -346,10 +471,7 @@ def _login_(request):
             return render(request, "login.html", {"data": data})
     try:
         if request.session['token_id'] is not None:
-            data = {
-                "user": user_details
-            }
-            return HttpResponseRedirect("/empty_my_fridge/home/")
+            return HttpResponseRedirect(activity_page)
     except KeyError:
         return HttpResponseRedirect("/empty_my_fridge/login/")
 
@@ -365,46 +487,40 @@ def _register_(request):
         email = request.POST.get('email')
         password = request.POST.get('pass')
         name = request.POST.get('name')
-        #is_email_valid = validate_email(email_address=email, check_regex=True, check_mx=True, from_address='my@from.addr.ess',helo_host='my.host.name', smtp_timeout=10, dns_timeout=10, use_blacklist=True, debug=True)
-        #is_email_valid = validate_email(email, verify=True)
-        is_email_valid = True  # validate_email(email, verify=True)
-        if is_email_valid:
-            try:
-                user = auth_fb.create_user_with_email_and_password(email, password)
-                user['displayName'] = name
-                uid = user['localId']
-                email = user['email']
-                index_of_at = email.find("@")
-                username = email[:index_of_at]
-                today = date.today()
-                joined = today.strftime("%B %d, %Y")
+        data = {
+            "message": "A verification link was sent to your email. Please, follow the link to verify your email.",
+            "msg_type" : "success"
+        }
+        try:
+            user = auth_fb.create_user_with_email_and_password(email, password)
+            user['displayName'] = name
+            uid = user['localId']
+            email = user['email']
+            index_of_at = email.find("@")
+            username = email[:index_of_at] + uid[:5].lower()
+            today = date.today()
+            joined = today.strftime("%B %d, %Y")
 
-                userData = {
-                    'name': name,
-                    'email': email,
-                    'joined': joined,
-                    'userID': uid,
-                    'username': username,
-                    'image': 'https://react.semantic-ui.com/images/wireframe/square-image.png'
-                }
-                db.child('users').child(uid).set(userData)
-            except Exception as e:
-                # logging.exception('')
-                response = e.args[0].response
-                error = response.json()['error']
-                msg = error_message(error['message'])
-                data = {
-                    "message": msg
-                }
-                return render(request, "register.html", {"data": data})
-        else:
-            msg = error_message("WRONG_EMAIL")
-            data = {
-                "message": msg
+            userData = {
+                'name': name,
+                'email': email,
+                'joined': joined,
+                'userID': uid,
+                'username': username,
+                'image': 'https://react.semantic-ui.com/images/wireframe/square-image.png'
             }
-            return render(request, "register.html", {"data": data})
+            db.child('users').child(uid).set(userData)
+            auth_fb.send_email_verification(user["idToken"])
 
-    return HttpResponseRedirect("/empty_my_fridge/login/")
+        except Exception as e:
+            # logging.exception('')
+            response = e.args[0].response
+            error = response.json()['error']
+            msg = error_message(error['message'])
+            data["message"] = msg
+            data["msg_type"] = "error" 
+
+        return render(request, "register.html", {"data": data})
 
 # Profile Page (Profile--about me, Edit Profile and Save new profile information, Account Settings, Recover Password, User Favorite Recipes)
 
@@ -414,6 +530,7 @@ def _register_(request):
 @csrf_exempt
 def profile(request):
     if m_user._isNone_():
+        m_activity.set_activity_page("profile")
         return HttpResponseRedirect("/empty_my_fridge/login/")
     else:
         uid = m_user._getUser_Id_()
@@ -429,10 +546,14 @@ def profile(request):
 @csrf_exempt
 def edit_profile(request):
     if m_user._isNone_():
+        m_activity.set_activity_page("edit_profile")
         return HttpResponseRedirect("/empty_my_fridge/login/")
     else:
-        user_details = m_user._getUser_()
-        return render(request, 'edit_profile.html', {"data": user_details})
+        user = m_user._getUser_()
+        data = {
+            'user' : user,
+        }
+        return render(request, 'edit_profile.html', {"data": data})
 
 @csrf_exempt
 def personal_recipes(request):
@@ -517,8 +638,13 @@ def save_profile(request):
                 msg_type = "success"
             except Exception as e:
                 pass
+    data = {
+        'user': user_details,
+        "message": msg,
+        "msg_type": msg_type
+    }
 
-    return render(request, 'edit_profile.html', {"data": user_details, "message": msg, "msg_type": msg_type})
+    return render(request, 'edit_profile.html', {"data": data})
 
 
 @csrf_exempt
@@ -527,28 +653,53 @@ def account_settings(request):
         return HttpResponseRedirect("/empty_my_fridge/login/")
     else:
         user_details = m_user._getUser_()
-        return render(request, 'account_settings.html', {"data": user_details})
+        uid = m_user._getUser_Id_()
+        isAdmin = False
+        admins = db.child("admin").child("UPLwshBH98OmbVivV").child("scrapers").get().val()
+        for admin in admins:
+            if str(admin) == str(uid):
+                isAdmin = True
+                break
+        data = {
+            'user': user_details,
+            'admin' : isAdmin,
+            "msg_type": m_message.get_msg_type(),
+            "message" : m_message.get_message()
+        }
+        m_message.set_message(None)
+        m_message.set_msg_type(None)
+        return render(request, 'account_settings.html', {"data": data})
 
+@csrf_exempt
+def reset_password(request):
+    data = {
+        "msg_type": m_message.get_msg_type(),
+        "message" : m_message.get_message()
+    }
+    m_message.set_message(None)
+    m_message.set_msg_type(None) 
+    return render(request, 'reset_password_page.html', {"data" : data})
 
 @csrf_exempt
 def recover_password(request):
-    user_details = m_user._getUser_()
-    uid = m_user._getUser_Id_()
     msg = error_message("err")
     msg_type = "error"
-    if m_user._isNone_():
-        return HttpResponseRedirect("/empty_my_fridge/login/")
-    else:
-        if request.method == "POST":
-            email = request.POST.get("email")
-            try:
-                auth_fb.send_password_reset_email(email)
-                msg = "A password recovery link has been sent to your email."
-                msg_type = "success"
-            except Exception as e:
-                print(e)
+    email = request.POST.get("email")
+    activity = request.POST.get("activity")
+    try:
+        auth_fb.send_password_reset_email(email)
+        msg = "A password recovery link has been sent to your email."
+        msg_type = "success"
+    except Exception as e:
+        response = e.args[0].response
+        error = response.json()['error']
+        msg = error_message(error['message'])
 
-    return render(request, 'account_settings.html', {"data": user_details, "message": msg, "msg_type": msg_type})
+    activity = '/empty_my_fridge/{0}/'.format(activity)    
+    m_message.set_message(msg)
+    m_message.set_msg_type(msg_type)    
+
+    return HttpResponseRedirect(activity)
 
 
 @csrf_exempt
@@ -597,6 +748,7 @@ def error_message(type):
         "INVALID_PASSWORD": "Either your email or password is incorrect. Try again.",
         "EMAIL_NOT_FOUND": "This email does not exist anywhere on our services.",
         "WRONG_EMAIL": "Please make sure you are using a valid email address.",
+        "NOT_VERIFIED" : "Your email is not verified! Please, follow the link in your email to verify your account.",
         "TOO_MANY_ATTEMPTS_TRY_LATER": "There have been too many unsuccessful login attempts. Please try again later."
 
     }.get(type, "An unknown error has occurred")
@@ -623,6 +775,7 @@ def fridge(request):
     uid = None
     if m_user._isNone_():
         fridge_ingredients = None
+        m_activity.set_activity_page("fridge")
         return HttpResponseRedirect("/empty_my_fridge/login/")
     else:
         uid = m_user._getUser_Id_()

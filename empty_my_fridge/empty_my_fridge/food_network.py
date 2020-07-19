@@ -5,6 +5,7 @@ from builtins import any as b_any
 from ctypes import *
 import time
 import os
+import sys, select
 
 
 #17 Sample recipes for testing (Provided by foodnetwork.com)
@@ -16,11 +17,6 @@ network_recipes = ['https://www.foodnetwork.com/recipes/recipes-a-z/', 'https://
 #network_recipes = ['https://www.foodnetwork.com/recipes/recipes-a-z/b']
 
 # recipes = ['https://www.foodnetwork.com/recipes/food-network-kitchen/senate-bean-soup-recipe-1973240', 'https://www.foodnetwork.com/recipes/farfalle-with-herb-marinated-grilled-shrimp-2118008', 'https://www.foodnetwork.com/recipes/farfalle-al-rocco-recipe-1909940', 'https://www.foodnetwork.com/recipes/giada-de-laurentiis/farfalle-with-broccoli-recipe-1945696', 'https://www.foodnetwork.com/recipes/jamie-oliver/farfalle-with-savoy-cabbage-pancetta-thyme-and-mozzarella-recipe2-1909322', 'https://www.foodnetwork.com/recipes/guy-fieri/far-out-farro-salad-recipe-2108223']
-
-#Holds an array of recipe info, the individual array in the grand array is arranged in this order --> [Title, Image, Link to Recipe, Ingredients array]
-grand_recipe_list = []
-
-
 
 app_path = os.path.abspath(__file__)
 app_path = os.path.realpath(app_path)
@@ -47,11 +43,27 @@ def minor_parsing(food):
 
 
 def food_network(db):
+	print('Getting all recipes in database. Please wait....')
+	
+	# should be a total of 24 pages
+	page_num = 0
+	all_recipes = db.child('recipe').get().each()
+	"""
+	_all_recipes_ = []
+	if _all_recipes_.each() != None:
+		for m_recipe in _all_recipes_.each():
+			_recipe_ = m_recipe.val()
+	"""
+			
+	
+	print('Done!')
+	print('\n')		
 	print('Now scraping for recipes!')
 	print('For the time being, get yourself a coffee while you wait.')
 	print('\n')
-	# should be a total of 24 pages
-	page_num = 0	
+	
+	#Holds an array of recipe info, the individual array in the grand array is arranged in this order --> [Title, Image, Link to Recipe, Ingredients array]
+	grand_recipe_list = []
 	for page_link in network_recipes:
 		print('Now scraping page ' + str(page_num) + ' out of 24' )
 		page_num = page_num + 1
@@ -73,14 +85,16 @@ def food_network(db):
 			the_recipe = 'https://' + the_recipe
 			print(the_recipe)
 			
-			#Array that will hold the info for each individual recipe
-			add_to_grand_list = []
+			
 			#Website im scraping info on (Default homepage) 
 			#recipe_page = the_recipe
 			#Essentially opening up the connection and downloads the whole html webpage
 			uClient = uReq(the_recipe)
 			page_html = uClient.read()
 			uClient.close()
+
+			#Array that will hold the info for each individual recipe
+			add_to_grand_list = []
 
 			#Parses the html data (This is where the fun begins)
 			page_soup = soup(page_html, "html.parser")
@@ -127,63 +141,60 @@ def food_network(db):
 					category_list.append(cat.text.lower())
 			add_to_grand_list.append(category_list)
 
-
-
 			grand_recipe_list.append(add_to_grand_list)
 
 			#Used to have a 1 second delay for each recipe scraped. Helps prevents forced connection drops from host
 			time.sleep(1)
-			cap+=1
+			cap += 1
+			
+		if page_num % 5 == 0:
+			prompt = 'Idle: Scraping paused...\n{0} recipes have been scraped.\n*Note: If you continue with no, scraped recipes would be populated in database\nResume scraping? y/N: '.format((page_num - 1) * 10)
+			c = input(prompt)
+			if c.lower() == 'n':
+				print("Stopping...Please wait...")
+				break;
 		
-
+	
 	#[Title, Image, Link to Recipe, Ingredients array]
-		c = 0
-		for recipe in grand_recipe_list:
-			#Checks to see if list is empty (Will not inclide recipe_ing)
-			if not recipe[3]:
-				ingredients = ['No ingredients']
-			else:
-				ingredients = recipe[3]
-			recipe_name = recipe[0]
-			recipe = {
-			'recipe_name': recipe_name,
-			'recipe_image': recipe[1],
-			'recipe_link': recipe[2],
-			'recipe_ingredients': ingredients,
-			'recipe_categories': recipe[4],
-			}
-			#db.child('recipe').push(recipe)		
-			
-			found = False
-			all_recipes = db.child('recipe').get()
-			if all_recipes.each() != None:
-				for m_recipe in all_recipes.each():
-					_recipe_ = m_recipe.val()
-					try:
-						if _recipe_["recipe_ingredients"] == ingredients and _recipe_["recipe_name"] == recipe_name:
-							found = True
-							break
-					except KeyError:
-						pass	
-			
-			if not found:
-				db.child('recipe').push(recipe)	
-			
-			for ingredient in ingredients:
-				_ingredient_ = {
-					c : ingredient,
-				}
-				if ingredient and ingredient != "No ingredients" and ingredient != "":
-					all_ingredients = db.child("all_ingredients").get().val()
-					if all_ingredients != None:
-						found = False
-						for food_ingredient in all_ingredients:
-							if food_ingredient == ingredient:
-								found = True
-								break	
-						if not found:
-							db.child('all_ingredients').update(_ingredient_)
-							c+=1			
-					else:
-						db.child('all_ingredients').set(_ingredient_)
-						c+=1	
+	print("Populating database. please wait...")
+	all_categories = []
+	_all_ingredients_ = []
+	
+	for recipe in grand_recipe_list:
+		#Checks to see if list is empty (Will not inclide recipe_ing)
+		if not recipe[3]:
+			ingredients = ['No ingredients']
+		else:
+			ingredients = recipe[3]
+		recipe_name = recipe[0]
+		categories = recipe[4]
+		recipe = {
+		'recipe_name': recipe_name,
+		'recipe_image': recipe[1],
+		'recipe_link': recipe[2],
+		'recipe_ingredients': ingredients,
+		'recipe_categories': categories,
+		}		
+		
+		found = False
+		_all_ingredients_ = list(dict.fromkeys(_all_ingredients_ + ingredients))
+		all_categories = list(dict.fromkeys(all_categories + categories))
+		
+		if all_recipes != None:
+			for m_recipe in all_recipes:
+				_recipe_ = m_recipe.val()
+				try:
+					if _recipe_["recipe_ingredients"] == ingredients and _recipe_["recipe_name"] == recipe_name:
+						found = True
+						break
+				except KeyError:
+					pass	
+		
+		if not found:
+			db.child('recipe').push(recipe)
+				
+	
+	db.child('all_ingredients').set(_all_ingredients_)
+	db.child('all_categories').set(all_categories)
+	print("Done!\nDb has been populated with new data")
+				
