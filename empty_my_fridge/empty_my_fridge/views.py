@@ -14,7 +14,8 @@ try:
 except ModuleNotFoundError:
     from empty_my_fridge.empty_my_fridge.model.user import User
 
-from . import food_network
+# from . import food_network
+from . import allrecipes
 try:
     from empty_my_fridge.empty_my_fridge.model.recipes import Recipes
 except ModuleNotFoundError:
@@ -47,7 +48,8 @@ m_user = User()
 m_message = Message()
 m_activity = ActivityPage()
 m_category = Category()
-recipes = Recipes(db, m_user, food_network)
+# recipes = Recipes(db, m_user, food_network)
+recipes = Recipes(db, m_user, allrecipes)
 recipes._get_all_recipes_()
 
 # Home Page
@@ -80,7 +82,8 @@ def scrape_page(request):
                 break
         if isAdmin:
             print(report)    
-            food_network.food_network(db)
+            # food_network.food_network(db)
+            allrecipes.allrecipes(db)
         else:
             report = "Your administrative privileges cannot be verified. Failed to scrape."
 
