@@ -20,7 +20,6 @@ from . import views
 #python manage.py runserver
 urlpatterns = [
     path('', views.home, name='homepage'),
-    path('fridge/',views.fridge, name='fridge'),
     path('home/', views.home, name='home'),
     path('recipe_list/', views.recipe_list, name='recipes'),
     path('recipe_page/', views.recipe_page, name='recipe_page'),
@@ -43,4 +42,7 @@ urlpatterns = [
     path('reset_password/', views.reset_password, name='reset_password'),
     path('upload_image/', views.upload_image, name='upload_image'),
     path('search/', views.get_recipes_by_category_ingredients, name='search'),
+    path('fridge/',views.fridge, name='fridge'),
+    #path('fridge/recipes',views.fridge_recipes, name='fridge'),
+
 ]

@@ -769,6 +769,42 @@ def _logout_(request):
         pass
     return HttpResponseRedirect("/empty_my_fridge/home/")
 
+def Fridge_matches():
+        all_recipes = db.child("recipe").get()
+        uid = m_user._getUser_Id_()
+        possible_recipes = []
+        partial_recipes = []
+        fridge_ingredients = db.child("users").child(uid).child("Fridge").get().val() # database is cleared of null values
+
+        for recipe in all_recipes.each():
+            recipe_details = recipe.val()
+            #this code takes long to get the recipe per ingredient
+            """
+            recipe_ingredients = db.child("recipe").child(recipe).child("recipe_ingredients").get().val()
+            if set(recipe_ingredients).issubset(set(fridge_ingredients)):
+                possible_recipes.append(db.child("recipe").child(recipe).get().val())
+            """
+            #this is an optimization and doesn't take long
+            try:
+                recipe_ingredients = recipe_details["recipe_ingredients"]
+                r_i = set(recipe_ingredients)
+                f_i = set(fridge_ingredients)
+                if r_i.issubset(f_i):
+                    key = str(recipe.key())
+                    possible_recipes.append(recipes.get_recipe(dict(recipe_details), key, uid))
+                elif((missing:=len(r_i-f_i))<3):
+                    key = str(recipe.key())
+                    #recp = recipes.get_recipe(dict(recipe_details), key, uid)
+                    
+                    partial_recipes.append(recipes.get_recipe(dict(recipe_details), key, uid))
+
+            except KeyError:
+                pass 
+            
+        print("pos\n", possible_recipes)  
+        print("par",len(partial_recipes),"\n", partial_recipes)
+        return partial_recipes
+        #return({"matches":possible_recipes,"partial":partial_recipes})
 
 @csrf_exempt
 def fridge(request):
@@ -828,10 +864,11 @@ def fridge(request):
     else: 
         fing_len = 0
 
-    btnclick = request.POST.get('serepbt')
+    btnclick = request.POST.get('find_Recipe')
 
-    #print(btnclick)
+    print(btnclick)
     if btnclick:#buttonclick
+        
         all_recipes = db.child("recipe").get()
         possible_recipes = []
         for recipe in all_recipes.each():
@@ -873,7 +910,7 @@ def fridge(request):
             curr_recipes = paginator.page(1)
         except EmptyPage:
             curr_recipes = paginator.page(paginator.num_pages)
-        
+        curr_recipes = Fridge_matches()
         data = {
             "user": m_user._getUser_(),
             "recipes": curr_recipes,
@@ -889,3 +926,6 @@ def fridge(request):
     
     context = {"ingredients" : all_ingredients, 'fing' : fridge_ingredients, "user": m_user._getUser_(),'fing_amount' : fing_len, }
     return render(request, 'fridge.html', context )
+
+
+    
