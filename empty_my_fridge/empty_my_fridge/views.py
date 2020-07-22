@@ -10,7 +10,6 @@ import json
 import sys
 sys.path.append('..')
 sys.path.append('empty_my_fridge/model')
-#sys.path.append('empty_my_fridge.empty_my_fridge.model')
 from . import allrecipes
 import config
 from user import User
@@ -38,6 +37,9 @@ recipes._get_all_recipes_()
 
 @csrf_exempt
 def home(request):
+    if recipes.get_scraped():
+        recipes._get_all_recipes_()
+        recipes.set_scraped(False)
     if m_user._isNone_():
         return render(request, 'home.html')
     else:
@@ -67,7 +69,8 @@ def scrape_page(request):
             start = time.time()
             allrecipes.allrecipes(db)
             end = time.time()
-            report = "Finished scraping in {0:.3f}s".format(end - start)
+            report = "Finished scraping in {0:.2f} min".format((end - start) / 60)
+            recipes.set_scraped(True)
         else:
             report = "Your administrative privileges cannot be verified. Failed to scrape."
 
@@ -94,6 +97,9 @@ def get_all_filtered_recipes():
 
 @csrf_exempt
 def recipe_page(request):
+    if recipes.get_scraped():
+        recipes._get_all_recipes_()
+        recipes.set_scraped(False)
     recipes.set_is_searched_for_recipes(False)
     recipes.set_recipe_name_to_find(None)
     navigate_to_recipe_page = "/empty_my_fridge/recipe_list/"
@@ -376,8 +382,8 @@ def upload_image(request):
     uid = m_user._getUser_Id_()
     if uid:
         _dir_ = "images/{0}/{1}".format(uid, file.name)
-        img = fb_storage.child(_dir_).put(file, request.session['token_id'])
-        link = fb_storage.child(_dir_).get_url(img["downloadTokens"])
+        img_details = fb_storage.child(_dir_).put(file, request.session['token_id'])
+        link = fb_storage.child(_dir_).get_url(img_details["downloadTokens"])
 
         userData = {
             'image': link,

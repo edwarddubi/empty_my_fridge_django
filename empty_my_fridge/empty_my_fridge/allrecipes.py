@@ -149,8 +149,21 @@ def parser(ingredient, food_array):
 	
 	
 def allrecipes(db):
+	menu = "Stop scraping after...page numbers completed.\n1. 3 pages\n2. 5 pages\n3. All pages\n4. Custom\nOption: "
+	option = input(menu)
+	if option == "1":
+		page_num = 3
+	elif option == "2":
+		page_num = 5
+	elif option == "3":
+		page_num = len(numbers) + 1
+	elif option == "4":
+		page_num = input("Custom: ")
+		page_num = int(page_num)
+
 	print('Getting all recipes in database. Please wait....')
 	all_recipes = db.child('recipe').get().each()
+	_all_ingredients_ = db.child("all_ingredients").get().val()
 	print('Done!')
 	print('\n')	
 	#Array that will hold the info for each individual recipe
@@ -248,17 +261,17 @@ def allrecipes(db):
 			#Used to have a 1 second delay for each recipe scraped. Helps prevents forced connection drops from host
 			time.sleep(1)
 		
-		if num % 15 == 0:
-			prompt = 'Idle: Scraping paused...\n{0} recipes have been scraped.\n*Note: If you exit, scraped recipes would be populated in database\nResume scraping? y/N: '.format((num - 1) * 10)
-			c = input(prompt)
-			if c.lower() == 'n':
-				print("Stopping...Please wait...")
-				break;
+		res = '{0} recipes have been scraped.\nStopping...Please wait...'.format((num - 1) * 21)
+		if page_num == num - 1:
+			print(res)
+			break;
+			
 
 
 	#[Title, Image, Link to Recipe, Ingredients array]
 	print("Populating database. please wait...")
-	_all_ingredients_ = []
+	if not _all_ingredients_:
+		_all_ingredients_ = []
 	for recipe in grand_recipe_list:
 		#Checks to see if list is empty (Will not inclide recipe_ing)
 		if not recipe[3]:

@@ -131,3 +131,6 @@ Refrain from pushing to master. push to your branch and allow the scrum master t
  - python setup.py bdist_wheel
  - twine upload dist/*
 
+## Gitignore
+ - git rm -r --cached .
+ - git add .
