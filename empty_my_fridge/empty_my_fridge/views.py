@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect, HttpResponseRedirect
 import pyrebase
-from empty_my_fridge import config
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
 from datetime import date
@@ -8,35 +7,20 @@ from django.views.decorators.cache import never_cache
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 import json
-
-try:
-    from empty_my_fridge.model.user import User
-except ModuleNotFoundError:
-    from empty_my_fridge.empty_my_fridge.model.user import User
-
+import sys
+sys.path.append('..')
+sys.path.append('empty_my_fridge/model')
+#sys.path.append('empty_my_fridge.empty_my_fridge.model')
 from . import allrecipes
-try:
-    from empty_my_fridge.empty_my_fridge.model.recipes import Recipes
-except ModuleNotFoundError:
-    from empty_my_fridge.model.recipes import Recipes
-
-try:
-    from empty_my_fridge.empty_my_fridge.model.message import Message
-except ModuleNotFoundError:
-    from empty_my_fridge.model.message import Message
-
-try:
-    from empty_my_fridge.empty_my_fridge.model.route import ActivityPage
-except ModuleNotFoundError:
-    from empty_my_fridge.model.route import ActivityPage
-
-try:
-    from empty_my_fridge.empty_my_fridge.model.category import Category
-except ModuleNotFoundError:
-    from empty_my_fridge.model.category import Category
-
+import config
+from user import User
+from recipes import Recipes
+from message import Message
+from route import ActivityPage
+from category import Category
 import time
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 
 firebase = pyrebase.initialize_app(config.myConfig())
 
@@ -79,8 +63,11 @@ def scrape_page(request):
                 isAdmin = True
                 break
         if isAdmin:
-            print(report)    
+            print(report)
+            start = time.time()
             allrecipes.allrecipes(db)
+            end = time.time()
+            report = "Finished scraping in {0:.3f}s".format(end - start)
         else:
             report = "Your administrative privileges cannot be verified. Failed to scrape."
 
@@ -424,6 +411,7 @@ def login(request):
 
 @csrf_exempt
 def _login_(request):
+    activity_page = None
     if request.method == 'GET':
         email = request.GET.get('email')
         password = request.GET.get('pass')
@@ -434,6 +422,8 @@ def _login_(request):
             activity_page = "/empty_my_fridge/{0}/?page={1}".format(activity_page, page)
         elif activity_page == "categories" and cat != "None":
             activity_page = "/empty_my_fridge/{0}/?category={1}".format(activity_page, cat)
+        elif not activity_page:
+            activity_page = "/empty_my_fridge/home/"
         else:
             activity_page = "/empty_my_fridge/{0}/".format(activity_page)
         
@@ -463,6 +453,7 @@ def _login_(request):
                     data = {
                         "message": msg
                     }
+                    
                     return render(request, "login.html", {"data": data})
                 
         except Exception as e:
@@ -475,11 +466,8 @@ def _login_(request):
                 "message": msg
             }
             return render(request, "login.html", {"data": data})
-    try:
-        if request.session['token_id'] is not None:
-            return HttpResponseRedirect(activity_page)
-    except KeyError:
-        return HttpResponseRedirect("/empty_my_fridge/login/")
+    print(activity_page)
+    return HttpResponseRedirect(activity_page)
 
 
 @csrf_exempt
