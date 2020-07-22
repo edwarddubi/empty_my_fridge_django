@@ -149,6 +149,10 @@ def parser(ingredient, food_array):
 	
 	
 def allrecipes(db):
+	print('Getting all recipes in database. Please wait....')
+	all_recipes = db.child('recipe').get().each()
+	print('Done!')
+	print('\n')	
 	#Array that will hold the info for each individual recipe
 	grand_recipe_list = [] 
 	print('Now scraping for recipes!')
@@ -157,7 +161,7 @@ def allrecipes(db):
 
 	num = 0
 	while num < 15:
-		print('Now scraping page ' + str(num) + ' out of ' + str(len(numbers)))
+		print('Now scraping page ' + str(num) + ' out of ' + str(len(numbers) + 1))
 		# ---------- ---------- Scraping Page With All Recipe Links---------- ----------
 		allrecipe = 'https://www.allrecipes.com/recipes/?page=' + str(num)
 		uClient = uReq(allrecipe)
@@ -243,10 +247,18 @@ def allrecipes(db):
 			grand_recipe_list.append(add_to_grand_list)
 			#Used to have a 1 second delay for each recipe scraped. Helps prevents forced connection drops from host
 			time.sleep(1)
+		
+		if num % 15 == 0:
+			prompt = 'Idle: Scraping paused...\n{0} recipes have been scraped.\n*Note: If you exit, scraped recipes would be populated in database\nResume scraping? y/N: '.format((num - 1) * 10)
+			c = input(prompt)
+			if c.lower() == 'n':
+				print("Stopping...Please wait...")
+				break;
 
 
-#[Title, Image, Link to Recipe, Ingredients array]
-	c = 0
+	#[Title, Image, Link to Recipe, Ingredients array]
+	print("Populating database. please wait...")
+	_all_ingredients_ = []
 	for recipe in grand_recipe_list:
 		#Checks to see if list is empty (Will not inclide recipe_ing)
 		if not recipe[3]:
@@ -264,9 +276,10 @@ def allrecipes(db):
 		#db.child('recipe').push(recipe)		
 		
 		found = False
-		all_recipes = db.child('recipe').get()
-		if all_recipes.each() != None:
-			for m_recipe in all_recipes.each():
+		_all_ingredients_ = list(dict.fromkeys(_all_ingredients_ + ingredients))
+
+		if all_recipes != None:
+			for m_recipe in all_recipes:
 				_recipe_ = m_recipe.val()
 				try:
 					if _recipe_["recipe_ingredients"] == ingredients and _recipe_["recipe_name"] == recipe_name:
@@ -276,23 +289,7 @@ def allrecipes(db):
 					pass	
 		
 		if not found:
-			db.child('recipe').push(recipe)	
-		
-		for ingredient in ingredients:
-			_ingredient_ = {
-				c : ingredient,
-			}
-			if ingredient and ingredient != "No ingredients" and ingredient != "":
-				all_ingredients = db.child("all_ingredients").get().val()
-				if all_ingredients != None:
-					found = False
-					for food_ingredient in all_ingredients:
-						if food_ingredient == ingredient:
-							found = True
-							break	
-					if not found:
-						db.child('all_ingredients').update(_ingredient_)
-						c+=1			
-				else:
-					db.child('all_ingredients').set(_ingredient_)
-					c+=1	
+			db.child('recipe').push(recipe)
+			
+	db.child('all_ingredients').set(_all_ingredients_)
+	print("Done!\nDb has been populated with new data")	

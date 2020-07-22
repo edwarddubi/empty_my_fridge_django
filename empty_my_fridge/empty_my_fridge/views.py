@@ -198,6 +198,7 @@ def category(request):
 
     data = {
         "user": user,
+        "activity" : "categories",
         "recipe_lst": curr_recipes,
         "category": cat,
         "scrollTop": scrollTop,
@@ -292,6 +293,7 @@ def get_recipes_by_category_ingredients(request):
     user = m_user._getUser_()
     data = {
         "user": user,
+        "activity": "search",
         "recipe_lst": curr_recipes,
         "category": value,
         "scrollTop": scrollTop,
@@ -363,8 +365,9 @@ def fav_recipe_onClick(request):
                     "stars").child(uid).set(time_liked)
             if navigate == "/empty_my_fridge/recipe_list/":
                 navigate += "?page=" + recipes.get_recipes_current_page()
-            if navigate == "/empty_my_fridge/categories/":
-                navigate +="?category=" + m_category.get_category() + "&page=" + m_category.get_category_page()
+            if navigate == "/empty_my_fridge/categories/" or navigate == "/empty_my_fridge/search/":
+                navigate += "?category=" + m_category.get_category() + "&page=" + m_category.get_category_page()
+            
             return HttpResponseRedirect(navigate)
 
 @csrf_exempt
@@ -420,8 +423,9 @@ def _login_(request):
         if activity_page == "recipe_list":
             page = recipes.get_recipes_current_page()
             activity_page = "/empty_my_fridge/{0}/?page={1}".format(activity_page, page)
-        elif activity_page == "categories" and cat != "None":
-            activity_page = "/empty_my_fridge/{0}/?category={1}".format(activity_page, cat)
+        elif (activity_page == "categories" or activity_page == "search") and cat != "None":
+            page = m_category.get_category_page()
+            activity_page = "/empty_my_fridge/{0}/?category={1}&page={2}".format(activity_page, cat, page)     
         elif not activity_page:
             activity_page = "/empty_my_fridge/home/"
         else:
@@ -466,7 +470,6 @@ def _login_(request):
                 "message": msg
             }
             return render(request, "login.html", {"data": data})
-    print(activity_page)
     return HttpResponseRedirect(activity_page)
 
 
@@ -491,7 +494,7 @@ def _register_(request):
             uid = user['localId']
             email = user['email']
             index_of_at = email.find("@")
-            username = email[:index_of_at] + uid[:5].lower()
+            username = email[:index_of_at] + uid[:5]
             today = date.today()
             joined = today.strftime("%B %d, %Y")
 
@@ -500,7 +503,7 @@ def _register_(request):
                 'email': email,
                 'joined': joined,
                 'userID': uid,
-                'username': username,
+                'username': username.lower(),
                 'image': 'https://react.semantic-ui.com/images/wireframe/square-image.png'
             }
             db.child('users').child(uid).set(userData)
