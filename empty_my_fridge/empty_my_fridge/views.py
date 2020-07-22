@@ -400,7 +400,7 @@ def upload_image(request):
 
 
 ##Authentication (Login and Register)
-@csrf_exempt
+
 def login(request):
     activity_page = None
     cat = None
@@ -422,7 +422,7 @@ def login(request):
     return render(request, 'login.html', {"data":data})
 
 
-@csrf_exempt
+
 def _login_(request):
     if request.method == 'GET':
         email = request.GET.get('email')
@@ -452,7 +452,13 @@ def _login_(request):
                     request.session['token_id'] = user['idToken']
                     request.session['uid'] = uid
                 else:
+                    try:
+                        del request.session['token_id']
+                        del request.session["uid"]
+                    except KeyError:
+                        pass
                     auth_fb.send_email_verification(user['idToken'])
+                    auth.logout(request)
                     msg = error_message('NOT_VERIFIED')
                     data = {
                         "message": msg
@@ -764,9 +770,9 @@ def _logout_(request):
     try:
         del request.session['token_id']
         del request.session["uid"]
-        auth.logout(request)
     except KeyError:
         pass
+    auth.logout(request)
     return HttpResponseRedirect("/empty_my_fridge/home/")
 
 
