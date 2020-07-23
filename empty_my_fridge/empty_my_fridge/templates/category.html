@@ -142,7 +142,7 @@
         <a
           id="login_btn"
           style="display: flex;"
-          href="{% url 'login'%}?activity=categories&category={{data.category}}"
+          href="{% url 'login'%}?activity={{data.activity}}&category={{data.category}}"
           class="item"
         >
           Login
@@ -182,10 +182,10 @@
         <div class="four wide column">
           <div
             class="ui link card purple raised"
-            style="margin: 10px; width: 300px; height: 360px;"
+            style="margin: 10px; width: 300px; height: 340px;"
           >
             <a class="ui medium image" href="{{recipe.recipe_link}}">
-              <img src="{{recipe.recipe_image}}" />
+              <img style="height: 215px;" src="{{recipe.recipe_image}}" />
             </a>
             <div class="content" style="text-align: center;">
               <a class="recipe_name" href="{{recipe.recipe_link}}"
@@ -213,7 +213,7 @@
                   <input
                     style="display: none;"
                     name="navigate"
-                    value="/empty_my_fridge/categories/"
+                    value="/empty_my_fridge/{{data.activity}}/"
                   />
                   <input
                     id="scrollY"
@@ -228,7 +228,7 @@
                   />
                   <input
                     style="display: none;"
-                    value="categories"
+                    value="{{data.activity}}"
                     name="activity"
                   />
                   {% if data.user and recipe.user_saved %}

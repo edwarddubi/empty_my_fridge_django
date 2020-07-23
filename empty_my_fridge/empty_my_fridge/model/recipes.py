@@ -11,6 +11,7 @@ class Recipes:
         self.m_user = None
         self.food_network = None
         self.visited_pages = ""
+        self.scraped = False
         
 
     def __init__(self, db, m_user, food_network):
@@ -24,7 +25,13 @@ class Recipes:
         self.m_user = m_user
         self.food_network = food_network
         self.visited_pages = ""
+        self.scraped = False
     
+    def set_scraped(self, scraped):
+        self.scraped = scraped
+
+    def get_scraped(self):
+        return self.scraped
 
     def set_visited_pages(self, page):
         self.visited_pages += "," + page
