@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect, HttpResponseRedirect
 import pyrebase
-from . import config
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
 from datetime import date
@@ -8,36 +7,19 @@ from django.views.decorators.cache import never_cache
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 import json
-
-try:
-    from empty_my_fridge.model.user import User
-except ModuleNotFoundError:
-    from empty_my_fridge.empty_my_fridge.model.user import User
-
-# from . import food_network
+import sys
+sys.path.append('..')
+sys.path.append('empty_my_fridge/model')
 from . import allrecipes
-try:
-    from empty_my_fridge.empty_my_fridge.model.recipes import Recipes
-except ModuleNotFoundError:
-    from empty_my_fridge.model.recipes import Recipes
-
-try:
-    from empty_my_fridge.empty_my_fridge.model.message import Message
-except ModuleNotFoundError:
-    from empty_my_fridge.model.message import Message
-
-try:
-    from empty_my_fridge.empty_my_fridge.model.route import ActivityPage
-except ModuleNotFoundError:
-    from empty_my_fridge.model.route import ActivityPage
-
-try:
-    from empty_my_fridge.empty_my_fridge.model.category import Category
-except ModuleNotFoundError:
-    from empty_my_fridge.model.category import Category
-
+import config
+from user import User
+from recipes import Recipes
+from message import Message
+from route import ActivityPage
+from category import Category
 import time
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 
 firebase = pyrebase.initialize_app(config.myConfig())
 
@@ -48,7 +30,6 @@ m_user = User()
 m_message = Message()
 m_activity = ActivityPage()
 m_category = Category()
-# recipes = Recipes(db, m_user, food_network)
 recipes = Recipes(db, m_user, allrecipes)
 recipes._get_all_recipes_()
 
@@ -56,6 +37,9 @@ recipes._get_all_recipes_()
 
 @csrf_exempt
 def home(request):
+    if recipes.get_scraped():
+        recipes._get_all_recipes_()
+        recipes.set_scraped(False)
     if m_user._isNone_():
         return render(request, 'home.html')
     else:
@@ -81,9 +65,12 @@ def scrape_page(request):
                 isAdmin = True
                 break
         if isAdmin:
-            print(report)    
-            # food_network.food_network(db)
+            print(report)
+            start = time.time()
             allrecipes.allrecipes(db)
+            end = time.time()
+            report = "Finished scraping in {0:.2f} min".format((end - start) / 60)
+            recipes.set_scraped(True)
         else:
             report = "Your administrative privileges cannot be verified. Failed to scrape."
 
@@ -110,6 +97,9 @@ def get_all_filtered_recipes():
 
 @csrf_exempt
 def recipe_page(request):
+    if recipes.get_scraped():
+        recipes._get_all_recipes_()
+        recipes.set_scraped(False)
     recipes.set_is_searched_for_recipes(False)
     recipes.set_recipe_name_to_find(None)
     navigate_to_recipe_page = "/empty_my_fridge/recipe_list/"
@@ -214,6 +204,7 @@ def category(request):
 
     data = {
         "user": user,
+        "activity" : "categories",
         "recipe_lst": curr_recipes,
         "category": cat,
         "scrollTop": scrollTop,
@@ -308,6 +299,7 @@ def get_recipes_by_category_ingredients(request):
     user = m_user._getUser_()
     data = {
         "user": user,
+        "activity": "search",
         "recipe_lst": curr_recipes,
         "category": value,
         "scrollTop": scrollTop,
@@ -379,8 +371,9 @@ def fav_recipe_onClick(request):
                     "stars").child(uid).set(time_liked)
             if navigate == "/empty_my_fridge/recipe_list/":
                 navigate += "?page=" + recipes.get_recipes_current_page()
-            if navigate == "/empty_my_fridge/categories/":
-                navigate +="?category=" + m_category.get_category() + "&page=" + m_category.get_category_page()
+            if navigate == "/empty_my_fridge/categories/" or navigate == "/empty_my_fridge/search/":
+                navigate += "?category=" + m_category.get_category() + "&page=" + m_category.get_category_page()
+            
             return HttpResponseRedirect(navigate)
 
 @csrf_exempt
@@ -389,8 +382,8 @@ def upload_image(request):
     uid = m_user._getUser_Id_()
     if uid:
         _dir_ = "images/{0}/{1}".format(uid, file.name)
-        img = fb_storage.child(_dir_).put(file, request.session['token_id'])
-        link = fb_storage.child(_dir_).get_url(img["downloadTokens"])
+        img_details = fb_storage.child(_dir_).put(file, request.session['token_id'])
+        link = fb_storage.child(_dir_).get_url(img_details["downloadTokens"])
 
         userData = {
             'image': link,
@@ -427,6 +420,7 @@ def login(request):
 
 @csrf_exempt
 def _login_(request):
+    activity_page = None
     if request.method == 'GET':
         email = request.GET.get('email')
         password = request.GET.get('pass')
@@ -435,8 +429,11 @@ def _login_(request):
         if activity_page == "recipe_list":
             page = recipes.get_recipes_current_page()
             activity_page = "/empty_my_fridge/{0}/?page={1}".format(activity_page, page)
-        elif activity_page == "categories" and cat != "None":
-            activity_page = "/empty_my_fridge/{0}/?category={1}".format(activity_page, cat)
+        elif (activity_page == "categories" or activity_page == "search") and cat != "None":
+            page = m_category.get_category_page()
+            activity_page = "/empty_my_fridge/{0}/?category={1}&page={2}".format(activity_page, cat, page)     
+        elif not activity_page:
+            activity_page = "/empty_my_fridge/home/"
         else:
             activity_page = "/empty_my_fridge/{0}/".format(activity_page)
         
@@ -455,11 +452,18 @@ def _login_(request):
                     request.session['token_id'] = user['idToken']
                     request.session['uid'] = uid
                 else:
+                    try:
+                        del request.session['token_id']
+                        del request.session["uid"]
+                    except KeyError:
+                        pass
                     auth_fb.send_email_verification(user['idToken'])
+                    auth.logout(request)
                     msg = error_message('NOT_VERIFIED')
                     data = {
                         "message": msg
                     }
+                    
                     return render(request, "login.html", {"data": data})
                 
         except Exception as e:
@@ -472,11 +476,7 @@ def _login_(request):
                 "message": msg
             }
             return render(request, "login.html", {"data": data})
-    try:
-        if request.session['token_id'] is not None:
-            return HttpResponseRedirect(activity_page)
-    except KeyError:
-        return HttpResponseRedirect("/empty_my_fridge/login/")
+    return HttpResponseRedirect(activity_page)
 
 
 @csrf_exempt
@@ -500,7 +500,7 @@ def _register_(request):
             uid = user['localId']
             email = user['email']
             index_of_at = email.find("@")
-            username = email[:index_of_at] + uid[:5].lower()
+            username = email[:index_of_at] + uid[:5]
             today = date.today()
             joined = today.strftime("%B %d, %Y")
 
@@ -509,7 +509,7 @@ def _register_(request):
                 'email': email,
                 'joined': joined,
                 'userID': uid,
-                'username': username,
+                'username': username.lower(),
                 'image': 'https://react.semantic-ui.com/images/wireframe/square-image.png'
             }
             db.child('users').child(uid).set(userData)
@@ -767,9 +767,9 @@ def _logout_(request):
     try:
         del request.session['token_id']
         del request.session["uid"]
-        auth.logout(request)
     except KeyError:
         pass
+    auth.logout(request)
     return HttpResponseRedirect("/empty_my_fridge/home/")
 
 def Fridge_matches():

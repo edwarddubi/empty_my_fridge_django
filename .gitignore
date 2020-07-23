@@ -3,13 +3,16 @@
 # dependencies
 
 # testing
+empty_my_fridge/config.py
 
 # production
-\build
-\dist
-\empty_my_fridge.egg-info
+/build
+/dist
+/empty_my_fridge.egg-info
 
 # misc
-empty_my_fridge\empty_my_fridge\config.py
-\.history
-
+/.history
+empty_my_fridge/__pycache__
+empty_my_fridge/empty_my_fridge/__pycache__
+empty_my_fridge/empty_my_fridge/model/__pycache__
+empty_my_fridge/db.sqlite3

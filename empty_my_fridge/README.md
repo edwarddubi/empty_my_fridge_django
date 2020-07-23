@@ -124,12 +124,6 @@ use command -> git checkout -b < branchName >
 
 Refrain from pushing to master. push to your branch and allow the scrum master to review your work before pushing to master
 
-## Deploy App to Google Cloud or Heroku
-
-- We would have to look into this
-- [We might need cloud functions to run our server on the hosting site](https://medium.com/firebase-developers/hosting-flask-servers-on-firebase-from-scratch-c97cfb204579)
-
-- If those don't work now, we might consider using heroku
 
 ## SetUp file
  - python -m pip install -U wheel twine setuptools
@@ -137,3 +131,6 @@ Refrain from pushing to master. push to your branch and allow the scrum master t
  - python setup.py bdist_wheel
  - twine upload dist/*
 
+## Gitignore
+ - git rm -r --cached .
+ - git add .
