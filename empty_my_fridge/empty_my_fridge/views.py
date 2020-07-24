@@ -219,9 +219,8 @@ def category(request):
         curr_recipes = paginator.page(paginator.num_pages)
     
     user = m_user._getUser_()    
-    sorted_recipes = sort_recipes(curr_recipes,"fav_A")
-    if sorted_recipes:
-        curr_recipes = sorted_recipes
+    
+    curr_recipes = sort_recipes(curr_recipes,"name_A") or curr_recipes
 
     data = {
         "user": user,
