@@ -170,6 +170,24 @@ def recipe_list(request):
         }
         return render(request, 'recipes.html', {"data": data})
 
+def sort_recipes(recipe_list, type):
+        result = None
+        def fav_sort(recipe):
+            try: 
+                print(len(recipe["stars"]))
+                return len(recipe["stars"])
+            except:
+                print(0)
+                return 0
+        if type is "name_A":
+            result =  sorted(recipe_list, key = lambda x: x["recipe_name"],reverse=False)
+        elif type is "name_D":
+            result =  sorted(recipe_list, key = lambda x: x["recipe_name"],reverse=True)
+        elif type is "fav_A":
+            result =  sorted(recipe_list, key = lambda x: fav_sort(x),reverse=False)
+        elif type is "fav_D":
+            result =  sorted(recipe_list, key = lambda x: fav_sort(x),reverse=True)
+        return result
 
 @csrf_exempt
 def category(request):
@@ -201,6 +219,9 @@ def category(request):
         curr_recipes = paginator.page(paginator.num_pages)
     
     user = m_user._getUser_()    
+    sorted_recipes = sort_recipes(curr_recipes,"fav_A")
+    if sorted_recipes:
+        curr_recipes = sorted_recipes
 
     data = {
         "user": user,
@@ -259,6 +280,7 @@ def get_unique_recipes(categories, ingredients):
                 categories.remove(recipe)
 
     return categories + ingredients
+
 
 
 @csrf_exempt
@@ -772,7 +794,7 @@ def _logout_(request):
     auth.logout(request)
     return HttpResponseRedirect("/empty_my_fridge/home/")
 
-def Fridge_matches():
+def Fridge_matches(all_recipes):
         all_recipes = db.child("recipe").get()
         uid = m_user._getUser_Id_()
         possible_recipes = []
@@ -795,19 +817,19 @@ def Fridge_matches():
                 if r_i.issubset(f_i):
                     key = str(recipe.key())
                     possible_recipes.append(recipes.get_recipe(dict(recipe_details), key, uid))
-                elif((missing:=len(r_i-f_i))<3):
+                elif(len(missing:=(r_i-f_i))<3):
                     key = str(recipe.key())
-                    #recp = recipes.get_recipe(dict(recipe_details), key, uid)
+                    recp = recipes.get_recipe(dict(recipe_details), key, uid)
                     
-                    partial_recipes.append(recipes.get_recipe(dict(recipe_details), key, uid))
+                    partial_recipes.append((recp,list(missing)))
 
             except KeyError:
                 pass 
             
         print("pos\n", possible_recipes)  
         print("par",len(partial_recipes),"\n", partial_recipes)
+        return({"exact":possible_recipes,"partial":partial_recipes})
         return partial_recipes
-        #return({"matches":possible_recipes,"partial":partial_recipes})
 
 @csrf_exempt
 def fridge(request):
@@ -873,24 +895,13 @@ def fridge(request):
     if btnclick:#buttonclick
         
         all_recipes = db.child("recipe").get()
-        possible_recipes = []
-        for recipe in all_recipes.each():
-            recipe_details = recipe.val()
-            #this code takes long to get the recipe per ingredient
-            """
-            recipe_ingredients = db.child("recipe").child(recipe).child("recipe_ingredients").get().val()
-            if set(recipe_ingredients).issubset(set(fridge_ingredients)):
-                possible_recipes.append(db.child("recipe").child(recipe).get().val())
-            """
-            #this is an optimization and doesn't take long
-            try:
-                recipe_ingredients = recipe_details["recipe_ingredients"]
-                if set(recipe_ingredients).issubset(set(fridge_ingredients)):
-                    key = str(recipe.key())
-                    possible_recipes.append(recipes.get_recipe(dict(recipe_details), key, uid))
 
-            except KeyError:
-                pass        
+        matches = Fridge_matches(all_recipes)
+        possible_recipes = matches["exact"]
+        partial = matches["partial"]
+        partial_recipes = []
+        for tup in partial:
+            partial_recipes.append(tup[0])
 
         scrollTop = 0
         keep_scroll_pos = False
@@ -903,9 +914,19 @@ def fridge(request):
         if len(possible_recipes) > 0:
             found_results = True
 
-        paginator = Paginator(possible_recipes, 48)
+        scrollTop = 0
+        keep_scroll_pos = False
+        if recipes.get_is_recipe_liked():
+            scrollTop = recipes.get_recipe_list_position()
+            recipes.set_is_recipe_liked(False)
+            keep_scroll_pos = True
+
+        total_recipes = possible_recipes + partial_recipes
+        paginator = Paginator(total_recipes, 48)
         page = request.GET.get('page')
-        recipes.set_recipes_current_page(page)
+        if not page:
+            page = "1"
+        m_category.set_category_page(page)
 
         try:
             curr_recipes = paginator.page(page)
@@ -913,14 +934,14 @@ def fridge(request):
             curr_recipes = paginator.page(1)
         except EmptyPage:
             curr_recipes = paginator.page(paginator.num_pages)
-        curr_recipes = Fridge_matches()
         data = {
             "user": m_user._getUser_(),
             "recipes": curr_recipes,
             "scrollTop": scrollTop,
+            "exact_num": len(possible_recipes),
             "keep_scroll_pos": keep_scroll_pos,
             "found_results": found_results,
-            "items": len(possible_recipes),
+            "items": len(curr_recipes),
             "isSearch": True
         }
         
@@ -929,6 +950,5 @@ def fridge(request):
     
     context = {"ingredients" : all_ingredients, 'fing' : fridge_ingredients, "user": m_user._getUser_(),'fing_amount' : fing_len, }
     return render(request, 'fridge.html', context )
-
 
     
