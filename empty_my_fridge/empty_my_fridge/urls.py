@@ -43,6 +43,6 @@ urlpatterns = [
     path('upload_image/', views.upload_image, name='upload_image'),
     path('search/', views.get_recipes_by_category_ingredients, name='search'),
     path('fridge/',views.fridge, name='fridge'),
-    #path('fridge/recipes',views.fridge_recipes, name='fridge'),
+    path('fridge/recipes',views.fridge_recipes, name='fridge'),
 
 ]

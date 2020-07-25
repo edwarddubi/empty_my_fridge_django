@@ -168,7 +168,8 @@ def recipe_list(request):
             "recipe_name" : _recipe_name_,
 
         }
-        return render(request, 'recipes.html', {"data": data})
+        return render(request, 'recipes.html', {"data": data})         
+
 
 def sort_recipes(recipe_list, type):
         result = None
@@ -179,13 +180,13 @@ def sort_recipes(recipe_list, type):
             except:
                 print(0)
                 return 0
-        if type is "name_A":
+        if type == "name_A":
             result =  sorted(recipe_list, key = lambda x: x["recipe_name"],reverse=False)
-        elif type is "name_D":
+        elif type == "name_D":
             result =  sorted(recipe_list, key = lambda x: x["recipe_name"],reverse=True)
-        elif type is "fav_A":
+        elif type == "fav_A":
             result =  sorted(recipe_list, key = lambda x: fav_sort(x),reverse=False)
-        elif type is "fav_D":
+        elif type == "fav_D":
             result =  sorted(recipe_list, key = lambda x: fav_sort(x),reverse=True)
         return result
 
@@ -205,6 +206,12 @@ def category(request):
         recipes.set_is_recipe_liked(False)
         keep_scroll_pos = True
 
+    print("sorting\n",request.POST.get('sorting'))
+    print("sort\n",request.POST.get('sort'))
+    sorting_type = request.POST.get('sorting')
+    recipe_lst = sort_recipes(recipe_lst,sorting_type) or recipe_lst
+
+
     paginator = Paginator(recipe_lst, 48)
     page = request.GET.get('page')
     if not page:
@@ -220,7 +227,8 @@ def category(request):
     
     user = m_user._getUser_()    
     
-    curr_recipes = sort_recipes(curr_recipes,"name_A") or curr_recipes
+    
+
 
     data = {
         "user": user,
@@ -857,7 +865,11 @@ def fridge(request):
    
     chk_food = request.POST.getlist('sav_ing')
     del_food = request.POST.getlist('del_ing')
-    
+
+    print(request.POST.get('remove_all'))
+
+    if(request.POST.get('remove_all')):
+        db.child("users").child(uid).child("Fridge").remove()
     #all_ingredients = all_ingredients[:50]
     
     if del_food:
@@ -889,65 +901,69 @@ def fridge(request):
         fing_len = 0
 
     btnclick = request.POST.get('find_Recipe')
-
-    print(btnclick)
-    if btnclick:#buttonclick
-        
-        all_recipes = db.child("recipe").get()
-
-        matches = Fridge_matches(all_recipes)
-        possible_recipes = matches["exact"]
-        partial = matches["partial"]
-        partial_recipes = []
-        for tup in partial:
-            partial_recipes.append(tup[0])
-
-        scrollTop = 0
-        keep_scroll_pos = False
-        found_results = False
-        if recipes.get_is_recipe_liked():
-            scrollTop = recipes.get_recipe_list_position()
-            recipes.set_is_recipe_liked(False)
-            keep_scroll_pos = True
-
-        if len(possible_recipes) > 0:
-            found_results = True
-
-        scrollTop = 0
-        keep_scroll_pos = False
-        if recipes.get_is_recipe_liked():
-            scrollTop = recipes.get_recipe_list_position()
-            recipes.set_is_recipe_liked(False)
-            keep_scroll_pos = True
-
-        total_recipes = possible_recipes + partial_recipes
-        paginator = Paginator(total_recipes, 48)
-        page = request.GET.get('page')
-        if not page:
-            page = "1"
-        m_category.set_category_page(page)
-
-        try:
-            curr_recipes = paginator.page(page)
-        except PageNotAnInteger:
-            curr_recipes = paginator.page(1)
-        except EmptyPage:
-            curr_recipes = paginator.page(paginator.num_pages)
-        data = {
-            "user": m_user._getUser_(),
-            "recipes": curr_recipes,
-            "scrollTop": scrollTop,
-            "exact_num": len(possible_recipes),
-            "keep_scroll_pos": keep_scroll_pos,
-            "found_results": found_results,
-            "items": len(curr_recipes),
-            "isSearch": True
-        }
-        
-        return render(request, 'fridge_recipes.html', {"data": data})
-
+    if btnclick:
+        return HttpResponseRedirect("/empty_my_fridge/fridge/recipes")
+    
     
     context = {"ingredients" : all_ingredients, 'fing' : fridge_ingredients, "user": m_user._getUser_(),'fing_amount' : fing_len, }
     return render(request, 'fridge.html', context )
 
+def fridge_recipes(request):
+    if m_user._isNone_():
+        fridge_ingredients = None
+        m_activity.set_activity_page("fridge")
+        return HttpResponseRedirect("/empty_my_fridge/login/")
+    
+    all_recipes = db.child("recipe").get()
+
+    matches = Fridge_matches(all_recipes)
+    possible_recipes = matches["exact"]
+    partial = matches["partial"]
+    partial_recipes = []
+    for tup in partial:
+        partial_recipes.append(tup[0])
+
+    scrollTop = 0
+    keep_scroll_pos = False
+    found_results = False
+    if recipes.get_is_recipe_liked():
+        scrollTop = recipes.get_recipe_list_position()
+        recipes.set_is_recipe_liked(False)
+        keep_scroll_pos = True
+
+    if len(possible_recipes) > 0:
+        found_results = True
+
+    scrollTop = 0
+    keep_scroll_pos = False
+    if recipes.get_is_recipe_liked():
+        scrollTop = recipes.get_recipe_list_position()
+        recipes.set_is_recipe_liked(False)
+        keep_scroll_pos = True
+
+    total_recipes = possible_recipes + partial_recipes
+    paginator = Paginator(total_recipes, 48)
+    page = request.GET.get('page')
+    if not page:
+        page = "1"
+    m_category.set_category_page(page)
+
+    try:
+        curr_recipes = paginator.page(page)
+    except PageNotAnInteger:
+        curr_recipes = paginator.page(1)
+    except EmptyPage:
+        curr_recipes = paginator.page(paginator.num_pages)
+    data = {
+        "user": m_user._getUser_(),
+        "recipes": curr_recipes,
+        "scrollTop": scrollTop,
+        "exact_num": len(possible_recipes),
+        "keep_scroll_pos": keep_scroll_pos,
+        "found_results": found_results,
+        "items": len(curr_recipes),
+        "isSearch": True
+    }
+    
+    return render(request, 'fridge_recipes.html', {"data": data})
     

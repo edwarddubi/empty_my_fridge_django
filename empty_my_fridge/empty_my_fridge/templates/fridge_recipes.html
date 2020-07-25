@@ -172,7 +172,7 @@
     </div>
     <!--End of Navigation Bar-->
 
-    {% if data.isSearch %} {% if data.found_results %}
+    {% if data.isSearch and data.found_results %}
     <div style="margin-top: 75px; padding-left: 90px;">
       <h2><i>Found Results ({{data.items}} Item(s))</i></h2>
     </div>
@@ -180,8 +180,12 @@
     <div style="margin-top: 75px; padding-left: 90px;">
       <h2><i>No Results Found! (0 Items)</i></h2>
     </div>
-    {% endif %} {% endif %}
-
+    {% endif %} 
+    <p class="description">
+      Not enough recipes? Click here to find recipes that you only 
+      missing a few ingredients for.        
+      </p>
+      <form></form>
     <!--Container-->
     <div class="ui container center aligned">
       <!--Recipe Cards-->
@@ -264,13 +268,13 @@
           </div>
         </div>
         {%else%}
-        {%if forloop.counter0 == data.exact_num %}
-        <!-- Delet if spacing cant be fixed -->
+        <!-- {%if forloop.counter0 == data.exact_num %}
+        Delet if spacing cant be fixed 
         <br/>
         <div class="ui hidden divider"></div>
         <h3 class="ui header">Missing a few ingredients</h3>
-        <br/>
-        {%endif%}
+        <br/> 
+        {%endif%}-->
         <div class="four wide column">
           <div
             class="ui link red card"
@@ -285,12 +289,12 @@
               >
             </div>
             <div class="extra content" bis_skin_checked="1">
-              <a>You  missing</a>
+              <!--<a>You  missing</a>
               <div class="ui list">
                 <div class="item">Apples</div>
                 <div class="item">Pears</div>
                 <div class="item">Oranges</div>
-              </div>
+              </div> -->
               <span class="left floated">
                 <div class="ui labeled button">
                   <div class="ui blue button">

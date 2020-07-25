@@ -322,7 +322,7 @@
 
           <ul>
             <form method="post">
-              <input type="submit" value="Add to Fridge" /><br />
+              <input type="submit" value="Add to Fridge"  id="butt"/><br />
               {% for food in ingredients %}
               <input type="checkbox" name="sav_ing" value="{{food}}" />
               <label> {{food}}</label><br />
@@ -338,8 +338,10 @@
               ingredients)</span
             >
           </h3>
+          
           <form method="post">
             <input type="submit" value="Remove from Fridge" />
+            <input type="submit" value="Remove all" method="post" name="remove_all" />
             <ul>
               {% for food in fing %}
               <input type="checkbox" name="del_ing" value="{{food}}" />
@@ -349,7 +351,7 @@
             </ul>
           </form>
           <a
-            class="fw_button small_fw_button"
+            class="fw_button small_fw_button" {% comment %}  href="{% url 'recipe' %}" {% endcomment %}
           >
           <form method = "post">
             <button class="ui fluid animated button" value = True  name= "find_Recipe" >

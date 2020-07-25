@@ -38,20 +38,20 @@
     }
 
     .recipe_name {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        font-size: large;
-        color:black;
-        font-weight: bolder;
-        display: -webkit-box;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 2;
-      }
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-size: large;
+      color: black;
+      font-weight: bolder;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+    }
 
-      .recipe_name:hover{
-        color: #3460e2;
-        text-decoration: underline;
-      }
+    .recipe_name:hover {
+      color: #3460e2;
+      text-decoration: underline;
+    }
 
     .ui.inverted.menu {
       background: #642b73; /* fallback for old browsers */
@@ -67,9 +67,9 @@
       ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
     }
     .center {
-    margin: auto;
-    width: 50%;
-  }
+      margin: auto;
+      width: 50%;
+    }
   </style>
 
   <body>
@@ -91,16 +91,28 @@
         <span class="text">Browse</span>
         <i class="dropdown icon"></i>
         <div class="menu inverted" style="margin-top: -1px;">
-          <a class="item" href="{% url 'category' %}?category=pastry">Pastries</a>
-          <a class="item" href="{% url 'category' %}?category=main dish">Meals</a>
-          <a class="item" href="{% url 'category' %}?category=appetizer">Appetizers</a>
-          <a class="item" href="{% url 'category' %}?category=dessert">Dessert</a>
+          <a class="item" href="{% url 'category' %}?category=pastry"
+            >Pastries</a
+          >
+          <a class="item" href="{% url 'category' %}?category=main dish"
+            >Meals</a
+          >
+          <a class="item" href="{% url 'category' %}?category=appetizer"
+            >Appetizers</a
+          >
+          <a class="item" href="{% url 'category' %}?category=dessert"
+            >Dessert</a
+          >
         </div>
       </div>
 
       <!--search and filter-->
       <div class="item">
-        <form action="/empty_my_fridge/search_and_filter/" method="get" class="ui form">
+        <form
+          action="/empty_my_fridge/search_and_filter/"
+          method="get"
+          class="ui form"
+        >
           <div class="ui icon input">
             <input
               type="text"
@@ -115,12 +127,13 @@
       <!--End of search and filter ui-->
       <div class="right menu">
         <a
-        id="fridge_btn"
-        style="display: flex;"
-        href="{% url 'fridge'%}"
-        class="item">
-        My Fridge
-      </a>
+          id="fridge_btn"
+          style="display: flex;"
+          href="{% url 'fridge'%}"
+          class="item"
+        >
+          My Fridge
+        </a>
         <a href="{% url 'profile'%}" class="item">
           {% if data.user %}
           <img
@@ -169,15 +182,41 @@
     </div>
     {% endif %}
 
+    <!-- Broken dropdown
+      <form method="post">
+      <input type="submit"  name="sorting" />
+      <select class="ui dropdown">
+        <option value="name_A" name="sorting" onchange="this.form.submit()">Name ascending</option>
+        <option value="name_D" name="sorting" onchange="form.submit()">Name descending</option>
+        <option value="fav_A" name="sorting" >Favorites ascending</option>
+        <option value="fav_D">Favorites descending</option>
+      </select>
+    </form>
+    <form method="post">
+    <div class="ui link simple dropdown item">
+      <span class="text">sorting</span>
+      <i class="dropdown icon"></i>
+      <div class="menu inverted" style="margin-top: -1px;">
+        <a class="item" method="post" value="name_A" name="sorting"
+          >Name ascending</a>
+        <a class="item" method="post" value="name_D" name="sorting"
+          >Name descending</a>
+        <a class="item" method="post" value="fav_A" name="sorting"
+          >Favorites ascending</a>
+        <a class="item" method="post" value="fav_D" name="sorting"
+          >Favorites descending</a>
+      </div>
+    </div>
+    </form> 
+    Broken dropdown-->
+    
+
     <!--Container-->
     <div class="ui container center aligned">
       <!--Recipe Cards-->
       {% if data.recipe_lst %}
-      <div
-        class="ui grid"
-        style="margin-top: 75px; margin-bottom: 75px;"
-      >
-      <!--column-->
+      <div class="ui grid" style="margin-top: 75px; margin-bottom: 75px;">
+        <!--column-->
         {% for recipe in data.recipe_lst %}
         <div class="four wide column">
           <div
@@ -203,7 +242,11 @@
                   </a>
                 </div>
               </span>
-              <form action="/empty_my_fridge/fav_recipe_onclick/" method="post" class="ui form">
+              <form
+                action="/empty_my_fridge/fav_recipe_onclick/"
+                method="post"
+                class="ui form"
+              >
                 <span class="right floated star">
                   <input
                     style="display: none;"
@@ -260,27 +303,48 @@
       <!--End of Recipe Cards-->
     </div>
     <!--Pagination-->
-      <div class="pagination">
-        <span class="step-links">
-            {% if data.recipe_lst.has_previous %}
-                <a href="?category={{ data.category }}&page=1" title="First" style="border: none; background-color: white; color:#031f3b"><<</a>
-                <a href="?category={{ data.category }}&page={{ data.recipe_lst.previous_page_number }}" style="border: none; background-color: white; color: #031f3b;">Previous</a>
-            {% endif %}
-    
-            <span class="current">
-                {% for num in data.recipe_lst.paginator.page_range %}
-                  {% if data.recipe_lst.number == num %}
-                    <a href="?category={{ data.category }}&page={{ num }}" style="background-color: #031f3b; color: white;">{{ num }}</a>
-                  {% else %}
-                    <a href="?category={{ data.category }}&page={{ num }}">{{ num }}</a>
-                  {% endif %}
-                {% endfor %}
-            </span>
-            {% if data.recipe_lst.has_next %}
-                <a href="?category={{ data.category }}&page={{ data.recipe_lst.next_page_number }}" style="border: none; background-color: white; color:#031f3b">Next</a>
-                <a href="?category={{ data.category }}&page={{ data.recipe_lst.paginator.num_pages }}" title="Last" style="border: none; background-color: white; color:#031f3b">>></a>
-            {% endif %}
+    <div class="pagination">
+      <span class="step-links">
+        {% if data.recipe_lst.has_previous %}
+        <a
+          href="?category={{ data.category }}&page=1"
+          title="First"
+          style="border: none; background-color: white; color: #031f3b;"
+          ><<</a
+        >
+        <a
+          href="?category={{ data.category }}&page={{ data.recipe_lst.previous_page_number }}"
+          style="border: none; background-color: white; color: #031f3b;"
+          >Previous</a
+        >
+        {% endif %}
+
+        <span class="current">
+          {% for num in data.recipe_lst.paginator.page_range %}
+          {% if data.recipe_lst.number == num %}
+          <a
+            href="?category={{ data.category }}&page={{ num }}"
+            style="background-color: #031f3b; color: white;"
+            >{{ num }}</a
+          >
+          {% else %}
+          <a href="?category={{ data.category }}&page={{ num }}">{{ num }}</a>
+          {% endif %} {% endfor %}
         </span>
+        {% if data.recipe_lst.has_next %}
+        <a
+          href="?category={{ data.category }}&page={{ data.recipe_lst.next_page_number }}"
+          style="border: none; background-color: white; color: #031f3b;"
+          >Next</a
+        >
+        <a
+          href="?category={{ data.category }}&page={{ data.recipe_lst.paginator.num_pages }}"
+          title="Last"
+          style="border: none; background-color: white; color: #031f3b;"
+          >>></a
+        >
+        {% endif %}
+      </span>
     </div>
     <!--End of Pagination-->
     {% if data.keep_scroll_pos %}
@@ -288,8 +352,7 @@
       var scrollTop = {{data.scrollTop}};
       window.scrollTo(0, scrollTop);
     </script>
-    {% endif %}
-    {% if data.recipe_lst %}
+    {% endif %} {% if data.recipe_lst %}
     <script>
       window.addEventListener("scroll", function (event) {
         var scrollY = this.scrollY;
@@ -299,9 +362,7 @@
         }
       });
     </script>
-    {% endif %}
-
-    {% if data.user %}
+    {% endif %} {% if data.user %}
     <script>
       document.getElementById("logout_btn").style.display = "flex";
       document.getElementById("login_btn").style.display = "none";
