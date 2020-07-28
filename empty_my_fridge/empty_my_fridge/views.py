@@ -175,10 +175,8 @@ def sort_recipes(recipe_list, type):
         result = None
         def fav_sort(recipe):
             try: 
-                print(len(recipe["stars"]))
                 return len(recipe["stars"])
             except:
-                print(0)
                 return 0
         if type == "name_A":
             result =  sorted(recipe_list, key = lambda x: x["recipe_name"],reverse=False)
@@ -206,8 +204,7 @@ def category(request):
         recipes.set_is_recipe_liked(False)
         keep_scroll_pos = True
 
-    print("sorting\n",request.POST.get('sorting'))
-    print("sort\n",request.POST.get('sort'))
+
     sorting_type = request.POST.get('sorting')
     recipe_lst = sort_recipes(recipe_lst,sorting_type) or recipe_lst
 
@@ -833,8 +830,7 @@ def Fridge_matches(all_recipes):
             except KeyError:
                 pass 
             
-        print("pos\n", possible_recipes)  
-        print("par",len(partial_recipes),"\n", partial_recipes)
+        
         return({"exact":possible_recipes,"partial":partial_recipes})
         return partial_recipes
 
@@ -866,7 +862,6 @@ def fridge(request):
     chk_food = request.POST.getlist('sav_ing')
     del_food = request.POST.getlist('del_ing')
 
-    print(request.POST.get('remove_all'))
 
     if(request.POST.get('remove_all')):
         db.child("users").child(uid).child("Fridge").remove()
@@ -908,6 +903,7 @@ def fridge(request):
     context = {"ingredients" : all_ingredients, 'fing' : fridge_ingredients, "user": m_user._getUser_(),'fing_amount' : fing_len, }
     return render(request, 'fridge.html', context )
 
+@csrf_exempt
 def fridge_recipes(request):
     if m_user._isNone_():
         fridge_ingredients = None
@@ -917,11 +913,28 @@ def fridge_recipes(request):
     all_recipes = db.child("recipe").get()
 
     matches = Fridge_matches(all_recipes)
+    
     possible_recipes = matches["exact"]
-    partial = matches["partial"]
-    partial_recipes = []
-    for tup in partial:
-        partial_recipes.append(tup[0])
+    disp_partial = False
+    print(request.POST.get('part'))
+    if request.method == "POST":
+        if (request.POST.get('part')=="True"):
+            print("if")
+            disp_partial = True
+            print("now true")
+            possible_recipes=[]
+            for tup in matches["partial"]:
+                possible_recipes.append(tup[0])
+        else:
+            print("else")
+            print("now false")
+            disp_partial = False
+   
+        
+    # partial = matches["partial"]     #remove
+    # partial_recipes = []     #remove
+    # for tup in partial:     #remove
+    #     partial_recipes.append(tup[0])     #remove
 
     scrollTop = 0
     keep_scroll_pos = False
@@ -941,8 +954,9 @@ def fridge_recipes(request):
         recipes.set_is_recipe_liked(False)
         keep_scroll_pos = True
 
-    total_recipes = possible_recipes + partial_recipes
-    paginator = Paginator(total_recipes, 48)
+    # total_recipes = possible_recipes + partial_recipes #rmeove
+    # paginator = Paginator(total_recipes, 48)            #remove
+    paginator = Paginator(possible_recipes, 48)   #change to poss_rec
     page = request.GET.get('page')
     if not page:
         page = "1"
@@ -957,6 +971,7 @@ def fridge_recipes(request):
     data = {
         "user": m_user._getUser_(),
         "recipes": curr_recipes,
+        "partial": disp_partial,
         "scrollTop": scrollTop,
         "exact_num": len(possible_recipes),
         "keep_scroll_pos": keep_scroll_pos,

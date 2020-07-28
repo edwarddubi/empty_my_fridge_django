@@ -181,34 +181,17 @@
       <h2><i>No Results Found! (0 Items): {{data.category}}</i></h2>
     </div>
     {% endif %}
-
-    <!-- Broken dropdown
-      <form method="post">
-      <input type="submit"  name="sorting" />
-      <select class="ui dropdown">
-        <option value="name_A" name="sorting" onchange="this.form.submit()">Name ascending</option>
-        <option value="name_D" name="sorting" onchange="form.submit()">Name descending</option>
-        <option value="fav_A" name="sorting" >Favorites ascending</option>
+    <form class="ui form" method="post">
+      <div class="inline field">
+        <select name="sorting">
+        <option value="name_A" >Name ascending</option>
+        <option value="name_D" >Name descending</option>
+        <option value="fav_A" >Favorites ascending</option>
         <option value="fav_D">Favorites descending</option>
-      </select>
-    </form>
-    <form method="post">
-    <div class="ui link simple dropdown item">
-      <span class="text">sorting</span>
-      <i class="dropdown icon"></i>
-      <div class="menu inverted" style="margin-top: -1px;">
-        <a class="item" method="post" value="name_A" name="sorting"
-          >Name ascending</a>
-        <a class="item" method="post" value="name_D" name="sorting"
-          >Name descending</a>
-        <a class="item" method="post" value="fav_A" name="sorting"
-          >Favorites ascending</a>
-        <a class="item" method="post" value="fav_D" name="sorting"
-          >Favorites descending</a>
+        </select>
+        <button type="submit">Sort</button>
       </div>
-    </div>
-    </form> 
-    Broken dropdown-->
+    </form>
     
 
     <!--Container-->

@@ -181,27 +181,42 @@
       <h2><i>No Results Found! (0 Items)</i></h2>
     </div>
     {% endif %} 
-    <p class="description">
+    <p class="description" style="padding-left: 90px;">
       Not enough recipes? Click here to find recipes that you only 
       missing a few ingredients for.        
       </p>
-      <form></form>
-    <!--Container-->
+      <form method = "post" style="padding-left: 95px;">
+          <!-- <button type= "submit" class="ui button" value= {{data.partial}} name="part">
+            Partial matches
+          </button> -->
+        {%if data.partial%}
+        <button class="ui toggle button active" value=False name="part">
+          Partial matches
+        </button>
+        {%else%}
+        <button class="ui toggle button inactive" value=True name="part" >
+         Partial matches
+        </button>
+        {%endif%}
+      </form> 
+  
+
+      <!--Container-->
     <div class="ui container center aligned">
       <!--Recipe Cards-->
       {% if data.recipes %}
       <div class="ui grid" style="margin-top: 75px; margin-bottom: 75px;">
         <!--column-->
-        {%for recipe in data.recipes%} {%if forloop.counter0 < data.exact_num%}
+        {%for recipe in data.recipes%} {%if not data.partial%}
         <div class="four wide column">
           <div
             class="ui link card"
             style="margin: 10px; width: 300px; height: 335px;"
           >
-            <a class="ui medium image">
-              <img src="{{recipe.recipe_image}}" />
+            <a  href="{{recipe.recipe_link}}"class="ui medium image">
+              <img style="height: 215px;" src="{{recipe.recipe_image}}" />
             </a>
-            <div class="content" style="text-align: center;">
+            <div class="content" style="text-align: center;" >
               <a class="recipe_name" href="{{recipe.recipe_link}}"
                 >{{recipe.recipe_name}}</a
               >
@@ -217,11 +232,7 @@
                   </a>
                 </div>
               </span>
-              <form
-                action="/empty_my_fridge/fav_recipe_onclick/"
-                method="post"
-                class="ui form"
-              >
+              <form action="/empty_my_fridge/fav_recipe_onclick/" method="post" class="ui form">
                 <span class="right floated star">
                   <input
                     style="display: none;"
@@ -231,7 +242,7 @@
                   <input
                     style="display: none;"
                     name="navigate"
-                    value="/empty_my_fridge/recipe_list/"
+                    value="/empty_my_fridge/fridge/recipes"
                   />
                   <input
                     id="scrollY"
@@ -241,13 +252,18 @@
                   />
                   <input
                     style="display: none;"
+                    value="recipe_list"
+                    name="activity"
+                  />
+                  <input
+                    style="display: none;"
                     value="{{data.isSearch}}"
                     name="isSearch"
                   />
-                  {% if recipe.user_saved %}
+                  {% if data.user and recipe.user_saved %}
                   <button
                     id="like"
-                    class="ui icon button disabled"
+                    class="ui icon button"
                     data-tooltip="Remove this from your Favorite Recipes"
                   >
                     <i class="star icon yellow"></i>
@@ -256,7 +272,7 @@
                   {% else %}
                   <button
                     id="like"
-                    class="ui icon button disabled"
+                    class="ui icon button"
                     data-tooltip="Add this to your Favorite Recipes"
                   >
                     <i class="star icon"></i>
@@ -268,20 +284,14 @@
           </div>
         </div>
         {%else%}
-        <!-- {%if forloop.counter0 == data.exact_num %}
-        Delet if spacing cant be fixed 
-        <br/>
-        <div class="ui hidden divider"></div>
-        <h3 class="ui header">Missing a few ingredients</h3>
-        <br/> 
-        {%endif%}-->
         <div class="four wide column">
           <div
             class="ui link red card"
             style="margin: 10px; width: 300px; height: 335px;"
           >
-            <a class="ui medium image">
-              <img src="{{recipe.recipe_image}}" />
+          <a  href="{{recipe.recipe_link}}" class="ui medium image">
+            <img style="height: 215px;" src="{{recipe.recipe_image}}" />
+          </a>
             </a>
             <div class="content" style="text-align: center;">
               <a class="recipe_name" href="{{recipe.recipe_link}}"
@@ -289,12 +299,6 @@
               >
             </div>
             <div class="extra content" bis_skin_checked="1">
-              <!--<a>You  missing</a>
-              <div class="ui list">
-                <div class="item">Apples</div>
-                <div class="item">Pears</div>
-                <div class="item">Oranges</div>
-              </div> -->
               <span class="left floated">
                 <div class="ui labeled button">
                   <div class="ui blue button">
@@ -305,11 +309,7 @@
                   </a>
                 </div>
               </span>
-              <form
-                action="/empty_my_fridge/fav_recipe_onclick/"
-                method="post"
-                class="ui form"
-              >
+              <form action="/empty_my_fridge/fav_recipe_onclick/" method="post" class="ui form">
                 <span class="right floated star">
                   <input
                     style="display: none;"
@@ -319,7 +319,7 @@
                   <input
                     style="display: none;"
                     name="navigate"
-                    value="/empty_my_fridge/recipe_list/"
+                    value="/empty_my_fridge/fridge/recipes"
                   />
                   <input
                     id="scrollY"
@@ -329,13 +329,18 @@
                   />
                   <input
                     style="display: none;"
+                    value="recipe_list"
+                    name="activity"
+                  />
+                  <input
+                    style="display: none;"
                     value="{{data.isSearch}}"
                     name="isSearch"
                   />
-                  {% if recipe.user_saved %}
+                  {% if data.user and recipe.user_saved %}
                   <button
                     id="like"
-                    class="ui icon button disabled"
+                    class="ui icon button"
                     data-tooltip="Remove this from your Favorite Recipes"
                   >
                     <i class="star icon yellow"></i>
@@ -344,7 +349,7 @@
                   {% else %}
                   <button
                     id="like"
-                    class="ui icon button disabled"
+                    class="ui icon button"
                     data-tooltip="Add this to your Favorite Recipes"
                   >
                     <i class="star icon"></i>
