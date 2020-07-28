@@ -916,18 +916,13 @@ def fridge_recipes(request):
     
     possible_recipes = matches["exact"]
     disp_partial = False
-    print(request.POST.get('part'))
     if request.method == "POST":
         if (request.POST.get('part')=="True"):
-            print("if")
             disp_partial = True
-            print("now true")
             possible_recipes=[]
             for tup in matches["partial"]:
                 possible_recipes.append(tup[0])
         else:
-            print("else")
-            print("now false")
             disp_partial = False
    
         
