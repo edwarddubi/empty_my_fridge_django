@@ -3,6 +3,7 @@ class Category:
         self.category = None
         self.category_page = "1"
         self.is_cat_and_ingrd = False
+        self.filter_list = None
 
     def set_category(self, category):
         self.category = category
@@ -21,3 +22,14 @@ class Category:
 
     def get_cat_and_ingrd(self):
         return self.is_cat_and_ingrd
+
+    def set_filter_list(self, filters):
+        if not filters:
+            self.filter_list = None
+        elif self.filter_list:
+            self.filter_list = list(dict.fromkeys(self.filter_list + filters))
+        else:
+            self.filter_list = filters
+
+    def get_filter_list(self):
+        return self.filter_list

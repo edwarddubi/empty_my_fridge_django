@@ -12,6 +12,7 @@ class Recipes:
         self.food_network = None
         self.visited_pages = ""
         self.scraped = False
+        self.filter_list = None
         
 
     def __init__(self, db, m_user, food_network):
@@ -26,6 +27,7 @@ class Recipes:
         self.food_network = food_network
         self.visited_pages = ""
         self.scraped = False
+        self.filter_list = None
     
     def set_scraped(self, scraped):
         self.scraped = scraped
@@ -146,3 +148,16 @@ class Recipes:
             pass    
 
         return recipe
+    
+    def set_filter_list(self, filters):
+        if not filters:
+            self.filter_list = None
+        elif len(filters) == 0:
+            self.filter_list = None
+        #elif self.filter_list:
+        #    self.filter_list = list(dict.fromkeys(self.filter_list + filters))
+        else:
+            self.filter_list = filters
+
+    def get_filter_list(self):
+        return self.filter_list
