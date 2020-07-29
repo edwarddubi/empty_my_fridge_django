@@ -154,8 +154,6 @@ class Recipes:
             self.filter_list = None
         elif len(filters) == 0:
             self.filter_list = None
-        #elif self.filter_list:
-        #    self.filter_list = list(dict.fromkeys(self.filter_list + filters))
         else:
             self.filter_list = filters
 

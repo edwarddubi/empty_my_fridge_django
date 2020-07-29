@@ -159,7 +159,172 @@
     </div>
     <!--End of Navigation Bar-->
 
-    
+    <!--Filtering-->
+    <button 
+    class="ui labeled icon button" 
+    id="filter" onclick="filter_menu()" 
+    style="margin-top: -15px; margin-left: 1px; color: #642b73; position: fixed;">
+      <i class="filter icon"></i>
+      Filter Recipes
+    </button>
+
+    <div class="ui sidebar inverted vertical menu" id="menu" style="width: 166px; height: 300px;">
+      <button class="mini ui icon basic pink button" onclick="close_menu()" style="margin-left: 133px;">
+        <i class="window close outline icon"></i>
+      </button>
+      <form method="post">
+        <div style="margin-top: 2px; text-align: center; color: white;">
+          <h3>Filter Recipes By:</h3>
+        </div>
+        <ul>
+          <div style="margin-top: 10px; margin-top: 5px; margin-left: 15px; color: white;">
+            <h4>Cuisine</h4>
+          </div>
+          <div class="ui checked checkbox" style="margin-top: 10px;">
+            <input type="checkbox" name="filter_data" value="asian" />
+            <label>Asian</label
+            ><br />
+          </div>
+          <div class="ui checked checkbox" style="margin-top: -10px;">
+            <input type="checkbox" name="filter_data" value="italian" />
+            <label>Italian</label
+            ><br />
+          </div>
+          <div class="ui checked checkbox" style="margin-top: -10px;">
+            <input type="checkbox" name="filter_data" value="mexican" />
+            <label>Mexican</label
+            ><br />
+          </div>
+
+          <div style="margin-top: 5px; margin-top: 5px; margin-left: 25px; color: white;">
+            <h4>Type</h4>
+          </div>
+          <div class="ui checkbox" style="margin-top: 10px;">
+            <input type="checkbox" name="filter_data" value="breakfast" />
+            <label>Breakfast</label
+            ><br />
+          </div>
+          <div class="ui checked checkbox" style="margin-top: -10px;">
+            <input type="checkbox" name="filter_data" value="lunch" />
+            <label>Lunch</label
+            ><br />
+          </div>
+          <div class="ui checked checkbox" style="margin-top: -10px;">
+            <input type="checkbox" name="filter_data" value="dinner" />
+            <label>Dinner</label
+            ><br />
+          </div>
+          <div class="ui checked checkbox" style="margin-top: -10px;">
+            <input type="checkbox" name="filter_data" value="dessert" />
+            <label>Dessert</label
+            ><br />
+          </div>
+
+          <div style="color: white; margin-top: 5px; margin-left: 25px;">
+            <h4>Diet</h4>
+          </div>
+          <div class="ui checked checkbox" style="margin-top: 10px;">
+            <input type="checkbox" name="filter_data" value="vegetarian" />
+            <label>Vegetarian</label
+            ><br />
+          </div>
+          <div class="ui checked checkbox" style="margin-top: -10px;">
+            <input type="checkbox" name="filter_data" value="vegan" />
+            <label>Vegan</label
+            ><br />
+          </div>
+          <div class="ui checked checkbox" style="margin-top: -10px;">
+            <input type="checkbox" name="filter_data" value="gluten free" />
+            <label>Gluten Free</label
+            ><br />
+          </div>
+        </ul>
+        <div style="color: white; margin-top: -10px; text-align: center;">
+          <h5>Only Show</h5>
+        </div>
+        <div style="color: white; margin-top: 2px; text-align: center;">
+          <h5>Exact Matches</h5>
+        </div>
+        <div class="ui toggle checkbox" style="margin-top: 10px; margin-left: 58px;">
+          <input type="checkbox" name="filter_style" value="True">
+          <label></label>
+        </div>
+          <button 
+          class="ui vertical animated button"
+          type="submit"
+          id="apply"
+          style="margin-left: 14px; margin-top: 20px; margin-bottom: 10px; width: 136px; height: 35px;"
+          tabindex="0"
+          bis_skin_checked="1">
+            <div class="visible content" bis_skin_checked="1">Apply</div>
+            <div class="hidden content" bis_skin_checked="1">
+              <i class="arrow right icon"></i>
+            </div>
+          </button> 
+        </form>
+        {% if data.active_filters %}
+          <div style="margin-top: 20px; margin-top: 15px; margin-bottom: 20px; text-align: center; color: white;">
+            <h3>Applied Filters:</h3>
+          </div>
+          <form method="POST">
+          {% for filter in data.active_filters %}
+            <div style="margin-top: 2px;">
+              <div class="ui checked checkbox" style="margin-top: -10px; margin-left: 45px">
+                <input type="checkbox" name="remove_filter" value="{{filter}}" />
+                <label>{{filter}}</label
+                ><br />
+              </div>
+            </div>
+          {% endfor %}
+          <button 
+          class="ui button" 
+          type="submit" name="remove" 
+          style="margin-left: 14px; margin-top: 2px; width: 136px; height: 35px;">
+            Remove
+          </button>
+        
+        <button 
+        class="ui vertical animated button"
+        type="submit"
+        name="clear"
+        value="True"
+        style="margin-left: 14px; margin-top: 5px; margin-bottom: 10px; width: 136px; height: 35px;"
+        tabindex="0"
+        bis_skin_checked="1">
+          <div class="visible content" bis_skin_checked="1">Clear All</div>
+          <div class="hidden content" bis_skin_checked="1">
+            <i class="trash alternate outline icon"></i>
+          </div>
+        </button>
+      </form>
+    {% endif %}
+    </div>
+      <script>
+        var m = document.getElementById("menu");
+        function filter_menu(){
+          m.setAttribute("class", "ui visible sidebar inverted vertical menu")
+        }
+        function close_menu(){
+          m.setAttribute("class", "ui sidebar inverted vertical menu")
+        }
+      </script>
+    <!--End of Filtering-->
+
+    {% if not data.recipe_lst %}
+      <div style="margin-top: 75px; margin-left: 190px;">
+        <h2><i>No Results Found! (0 Items)</i></h2>
+      </div>
+    {% endif %}
+
+    {% if data.isSearch %} {% if data.found_results %}
+    <div style="margin-top: 75px; padding-left: 90px;">
+      <h2><i>Found Results ({{data.items}} Item(s))</i></h2>
+    </div>
+    {% else %}
+    <div style="margin-top: 75px; padding-left: 90px;">
+      <h2><i>No Results Found! (0 Items)</i></h2>
+    </div>
+    {% endif %} {% endif %}
 
     <!--Container-->
     <div class="ui container center aligned">

@@ -43,5 +43,4 @@ urlpatterns = [
     path('reset_password/', views.reset_password, name='reset_password'),
     path('upload_image/', views.upload_image, name='upload_image'),
     path('search/', views.get_recipes_by_category_ingredients, name='search'),
-    path('clear/', views.clear_filters, name='clear')
 ]

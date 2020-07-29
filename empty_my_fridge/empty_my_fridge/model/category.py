@@ -26,8 +26,8 @@ class Category:
     def set_filter_list(self, filters):
         if not filters:
             self.filter_list = None
-        elif self.filter_list:
-            self.filter_list = list(dict.fromkeys(self.filter_list + filters))
+        elif len(filters) == 0:
+            self.filter_list = None
         else:
             self.filter_list = filters
 

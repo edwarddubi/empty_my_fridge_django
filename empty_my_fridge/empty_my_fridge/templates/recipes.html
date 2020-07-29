@@ -161,16 +161,18 @@
     <!--End of Navigation Bar-->
 
     <!--Filtering-->
-    <button 
-    class="ui labeled icon button" 
-    id="filter" onclick="filter_menu()" 
-    style="margin-top: -15px; margin-left: 1px; color: #642b73; position: fixed;">
-      <i class="filter icon"></i>
-      Filter Recipes
-    </button>
+    <div>
+      <button 
+      class="ui labeled icon button" 
+      id="filter" onclick="filter_menu()" 
+      style="margin-top: -15px; margin-left: 1px; color: #642b73; position: fixed;">
+        <i class="filter icon"></i>
+        Filter Recipes
+      </button>
+    </div>
 
     <div class="ui sidebar inverted vertical menu" id="menu" style="width: 166px; height: 300px;">
-      <button class="mini ui icon basic pink button" onclick="close_menu()" style="margin-left: 135px;">
+      <button class="mini ui icon basic pink button" onclick="close_menu()" style="margin-left: 133px;">
         <i class="window close outline icon"></i>
       </button>
       <form method="post">
@@ -230,7 +232,7 @@
             ><br />
           </div>
           <div class="ui checked checkbox" style="margin-top: -10px;">
-            <input type="checkbox" name="filter_data" value="keto" />
+            <input type="checkbox" name="filter_data" value="vegan" />
             <label>Vegan</label
             ><br />
           </div>
@@ -244,25 +246,12 @@
           <h5>Only Show</h5>
         </div>
         <div style="color: white; margin-top: 2px; text-align: center;">
-          <h5>Complete Matches</h5>
+          <h5>Exact Matches</h5>
         </div>
         <div class="ui toggle checkbox" style="margin-top: 10px; margin-left: 58px;">
           <input type="checkbox" name="filter_style" value="True">
           <label></label>
         </div>
-
-        {% if data.active_filters %}
-          <div class="ui vertical labeled icon buttons" bis_skin_checked="1" style="margin-left: 15px; margin-top: 15px;">
-            <button class="ui button" type="submit" id="apply">
-              Apply
-              <i class="arrow alternate circle right outline icon"></i>
-            </button>
-            <button class="ui button" type="submit" name="remove" value="True">
-              Remove
-              <i class="trash alternate icon"></i>
-            </button>
-          </div>
-        {% else %}
           <button 
           class="ui vertical animated button"
           type="submit"
@@ -274,37 +263,45 @@
             <div class="hidden content" bis_skin_checked="1">
               <i class="arrow right icon"></i>
             </div>
+          </button> 
+        </form>
+        {% if data.active_filters %}
+          <div style="margin-top: 20px; margin-top: 15px; margin-bottom: 20px; text-align: center; color: white;">
+            <h3>Applied Filters:</h3>
+          </div>
+          <form method="POST">
+          {% for filter in data.active_filters %}
+            <div style="margin-top: 2px;">
+              <div class="ui checked checkbox" style="margin-top: -10px; margin-left: 45px">
+                <input type="checkbox" name="remove_filter" value="{{filter}}" />
+                <label>{{filter}}</label
+                ><br />
+              </div>
+            </div>
+          {% endfor %}
+          <button 
+          class="ui button" 
+          type="submit" name="remove" 
+          style="margin-left: 14px; margin-top: 2px; width: 136px; height: 35px;">
+            Remove
           </button>
-        {% endif %}
-
-    </form>
-    {% if data.active_filters %}
-      <div style="margin-top: 20px; margin-top: 15px; text-align: center; color: white;">
-        <h3>Applied Filters:</h3>
-      </div>
-      {% for filter in data.active_filters %}
-        <div style="margin-top: 2px; text-align: center;">
-          <p>{{filter}}</p>
-        </div>
-      {% endfor %}
-      <form>
-        <a 
+        
+        <button 
         class="ui vertical animated button"
-        href="{% url 'clear' %}"
         type="submit"
-        id="clear"
-        style="margin-left: 14px; margin-top: 10px; margin-bottom: 10px; width: 136px; height: 35px;"
+        name="clear"
+        value="True"
+        style="margin-left: 14px; margin-top: 5px; margin-bottom: 10px; width: 136px; height: 35px;"
         tabindex="0"
         bis_skin_checked="1">
           <div class="visible content" bis_skin_checked="1">Clear All</div>
           <div class="hidden content" bis_skin_checked="1">
-            <i class="trash icon"></i>
+            <i class="trash alternate outline icon"></i>
           </div>
-        </a>
+        </button>
       </form>
     {% endif %}
     </div>
-
       <script>
         var m = document.getElementById("menu");
         function filter_menu(){
@@ -315,7 +312,12 @@
         }
       </script>
     <!--End of Filtering-->
-
+    
+    {% if not data.recipes %}
+      <div style="margin-top: 75px; margin-left: 190px;">
+        <h2><i>No Results Found! (0 Items)</i></h2>
+      </div>
+    {% endif %}
 
     {% if data.isSearch %} {% if data.found_results %}
     <div style="margin-top: 75px; padding-left: 90px;">

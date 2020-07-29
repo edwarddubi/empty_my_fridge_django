@@ -113,10 +113,13 @@ def unique_filtered_recipes(recipes):
           unique_recipes.append(recipe)
     return unique_recipes
 
-def set_active_filters(filters, removal):
+def set_active_filters(filters, removal, isCategory):
     new_filters = []
     new_unique_filters = []
-    curr_filters = recipes.get_filter_list()
+    if isCategory:
+        curr_filters = m_category.get_filter_list()
+    else:
+        curr_filters = recipes.get_filter_list()
 
     if curr_filters is not None:
         new_filters = curr_filters + filters
@@ -130,8 +133,12 @@ def set_active_filters(filters, removal):
         for filter in removal:
             if filter in new_unique_filters:
                 new_unique_filters.remove(filter)
-    recipes.set_filter_list(new_unique_filters)
-
+    if isCategory:
+        m_category.set_filter_list(new_unique_filters)
+        recipes.set_filter_list(None)
+    else:
+        recipes.set_filter_list(new_unique_filters)
+        m_category.set_filter_list(None)
 
 @csrf_exempt
 def filter(recipe_list, filter_list, isComplete):
@@ -164,10 +171,6 @@ def filter(recipe_list, filter_list, isComplete):
     filtered_recipes = unique_filtered_recipes(filtered_recipes)
     return filtered_recipes
 
-@csrf_exempt
-def clear_filters(request):
-    recipes.set_filter_list(None)
-    return HttpResponseRedirect("/recipe_page/")
 
 @csrf_exempt
 def recipe_list(request):
@@ -175,24 +178,30 @@ def recipe_list(request):
     isSearch = False
     isComplete = False
     isRemoving = False
+    isClearing = False
     to_remove = []
     filters = request.POST.getlist('filter_data')
+    remove_list = request.POST.getlist('remove_filter')
+    clear_all = request.POST.get('clear')
     curr_filters = recipes.get_filter_list()
-    choice = request.POST.get('remove')
-    print(choice)
-    filter_style = request.POST.get('filter_style')
-    if choice:
-        isRemoving = True
-    if filter_style:
-        isComplete = True
 
-    if filters:
+    if clear_all:
+        isClearing = True
+
+    if isClearing:
+        recipes.set_filter_list(None)
+    else:
+        filter_style = request.POST.get('filter_style')
+        if remove_list is not None:
+            isRemoving = True
+        if filter_style:
+            isComplete = True
+        
         if isRemoving:
             if curr_filters is not None:
-                for option in filters:
-                    if option in curr_filters:
-                        to_remove.append(option)
-        set_active_filters(filters, to_remove)
+                for option in remove_list:
+                    to_remove.append(option)
+        set_active_filters(filters, to_remove, False)
     
     all_recipes = []
     _recipe_name_ = None
@@ -261,12 +270,37 @@ def recipe_list(request):
 @csrf_exempt
 def category(request):
     cat = request.GET.get('category')
-    """
+    isComplete = False
+    isRemoving = False
+    isClearing = False
+    to_remove = []
+    m_category.set_filter_list(None)
     filters = request.POST.getlist('filter_data')
-    if filters:
-        m_category.set_filter_list(filters)
-    """
-    #print(filters)
+    remove_list = request.POST.getlist('remove_filter')
+    clear_all = request.POST.get('clear')
+    curr_filters = m_category.get_filter_list()
+
+    if clear_all:
+        isClearing = True
+
+    if isClearing:
+        m_category.set_filter_list(None)
+    else:
+        filter_style = request.POST.get('filter_style')
+        if remove_list is not None:
+            isRemoving = True
+        if filter_style:
+            isComplete = True
+        
+        if isRemoving:
+            if curr_filters is not None:
+                for option in remove_list:
+                    to_remove.append(option)
+        print(filters)
+        set_active_filters(filters, to_remove, True)
+        print(m_category.get_filter_list())
+
+    
     m_category.set_category(cat)
     found_results = False
     recipe_lst = get_recipes_by_category(cat)
@@ -280,13 +314,11 @@ def category(request):
         recipes.set_is_recipe_liked(False)
         keep_scroll_pos = True
 
-    """
+    
     filters = m_category.get_filter_list()
-    print(filters)
+    print("filter:" , filters)
     if filters:
-        recipe_lst = filter(recipe_lst, filters)
-    """
-
+        recipe_lst = filter(recipe_lst, filters, isComplete)
 
     paginator = Paginator(recipe_lst, 48)
     page = request.GET.get('page')
@@ -312,6 +344,7 @@ def category(request):
         "keep_scroll_pos": keep_scroll_pos,
         "found_results": found_results,
         "items": len(recipe_lst),
+        "active_filters": filters,
     }
 
     return render(request, 'category.html', {"data": data})
