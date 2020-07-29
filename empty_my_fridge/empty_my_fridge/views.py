@@ -69,7 +69,17 @@ def scrape_page(request):
             start = time.time()
             allrecipes.allrecipes(db)
             end = time.time()
-            report = "Finished scraping in {0:.2f} min".format((end - start) / 60)
+
+            total_time = end - start
+            print(total_time)
+            minutes = 0
+            while total_time >= 0:
+                if total_time - 60 >= 0:
+                    minutes += 1
+                total_time -= 60
+
+            seconds = total_time + 60
+            report = "Finished scraping in {0} minute(s) and {1:0.1f} seconds.".format(minutes, seconds)
             recipes.set_scraped(True)
         else:
             report = "Your administrative privileges cannot be verified. Failed to scrape."
