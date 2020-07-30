@@ -12,6 +12,8 @@ class Recipes:
         self.food_network = None
         self.visited_pages = ""
         self.scraped = False
+        self.sorting_type="name_A"
+
         
 
     def __init__(self, db, m_user, food_network):
@@ -26,6 +28,14 @@ class Recipes:
         self.food_network = food_network
         self.visited_pages = ""
         self.scraped = False
+        self.sorting_type="name_A"
+
+
+    def get_sorting_type(self):
+        return self.sorting_type
+
+    def set_sorting_type(self, type):
+        self.sorting_type = type
     
     def set_scraped(self, scraped):
         self.scraped = scraped

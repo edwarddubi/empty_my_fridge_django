@@ -185,18 +185,20 @@
       Not enough recipes? Click here to find recipes that you only 
       missing a few ingredients for.        
       </p>
+      <!-- Toggle fridge rceipes button-->
       <form method = "post" style="padding-left: 95px;">
-          <!-- <button type= "submit" class="ui button" value= {{data.partial}} name="part">
-            Partial matches
-          </button> -->
         {%if data.partial%}
-        <button class="ui toggle button active" value=False name="part">
-          Partial matches
-        </button>
+        <div class="ui toggle checkbox">
+          <input type="checkbox" name="part" type="submit" checked="checked" value=False name="part"
+          onchange="form.submit()">
+          <label>Displaying recipes that are missing 1-3 ingredients in your fridge</label>
+        </div>
         {%else%}
-        <button class="ui toggle button inactive" value=True name="part" >
-         Partial matches
-        </button>
+        <div class="ui toggle checkbox">
+          <input type="checkbox" name="part" type="submit" value=True name="part"
+          onchange="form.submit()">
+          <label>Displaying recipes you can make with ingredients in your fridge</label>
+        </div>
         {%endif%}
       </form> 
   
