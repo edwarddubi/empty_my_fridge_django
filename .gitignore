@@ -15,4 +15,4 @@ empty_my_fridge/config.py
 empty_my_fridge/__pycache__
 empty_my_fridge/empty_my_fridge/__pycache__
 empty_my_fridge/empty_my_fridge/model/__pycache__
-empty_my_fridge/db.sqlite3
+#empty_my_fridge/db.sqlite3

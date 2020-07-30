@@ -156,3 +156,14 @@ class Recipes:
             pass    
 
         return recipe
+    
+    def set_filter_list(self, filters):
+        if not filters:
+            self.filter_list = None
+        elif len(filters) == 0:
+            self.filter_list = None
+        else:
+            self.filter_list = filters
+
+    def get_filter_list(self):
+        return self.filter_list
