@@ -66,7 +66,8 @@ def Fridge_matches(all_recipes):
             if r_i.issubset(f_i):
                 possible_recipes.append(recipe)
             elif(len(missing:=(r_i-f_i))<4):
-                partial_recipes.append((recipe,list(missing)))
+                recipe.set_missing_ingredients(missing)
+                partial_recipes.append(recip)
         except KeyError:
             pass
         return({"exact":possible_recipes,"partial":partial_recipes})
@@ -283,8 +284,7 @@ def recipe_list(request):
             matches = Fridge_matches(all_recipes)
             all_recipes=[]
             if(matches):
-                for tup in matches["partial"]:
-                    all_recipes.append(tup[0])
+                all_recipes =matches["partial"]
             disp_fridge = (True, True)
         if(sorting_type:=request.POST.get('sorting')):
             recipes.set_sorting_type(sorting_type)
@@ -404,8 +404,7 @@ def category(request):
             matches = Fridge_matches(recipe_lst)
             recipe_lst=[]
             if(matches):
-                for tup in matches["partial"]:
-                    recipe_lst.append(tup[0])
+                recipe_lst = matches["partial"]
             disp_fridge = (True, True)
         if(sorting_type:=request.POST.get('sorting')):
             recipes.set_sorting_type(sorting_type)
@@ -530,8 +529,7 @@ def get_recipes_by_category_ingredients(request):
             matches = Fridge_matches(result_list)
             result_list=[]
             if(matches):
-                for tup in matches["partial"]:
-                    result_list.append(tup[0])
+                result_list =matches["partial"]
             disp_fridge = (True, True)
         if(sorting_type:=request.POST.get('sorting')):
             recipes.set_sorting_type(sorting_type)
@@ -1112,8 +1110,7 @@ def fridge_recipes(request):
         if (request.POST.get('part')=="True"):
             disp_partial = True
             possible_recipes=[]
-            for tup in matches["partial"]:
-                possible_recipes.append(tup[0])
+            possible_recipes =matches["partial"]
         else:
             disp_partial = False
 
