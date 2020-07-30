@@ -287,18 +287,21 @@
       <div class="flex myfridge main_fridge_holder">
         <div class="myfridge_inner myfridge_a">
           <span class="myfridge_list_holder">
-            <h3>Getting started</h3>
+            <h3 style= "position: sticky; top: 0;">Getting started</h3>
 
-            <div class="search-container">
+            <div class="search-container" style= "position: sticky; top: 60px;">
               <form>
+              <div class="inline field" style="background-color: white;">
+
                 <input
                   type="text"
                   placeholder="Search.."
                   name="search_ingredients"
-                  id="search"
-                  
-                />
-                <button  class="ui button" type="submit" id = "search_but" >Search</button>
+                  id="search"/>
+                  <button class= "compact big ui icon button" onclick="form.submit()">
+                  <i class="search icon " ></i>
+                </button>
+                </div>
               </form>
             </div>
 
@@ -322,16 +325,21 @@
 
           <ul>
             <form method="post">
-              <input type="submit" value="Add to Fridge"  id="butt"/><br />
               {% for food in ingredients %}
               <input type="checkbox" name="sav_ing" value="{{food}}" />
               <label> {{food}}</label><br />
               {% endfor %}
+              <a class="fw_button small_fw_button" style= "position: sticky; bottom: 0;">
+                <button class="ui fluid animated positive button" onclick="form.submit()" name= "find_Recipe" >
+                  <div class="visible content">Add recipes to Fridge</div>
+                  <div class="hidden content"><i aria-hidden="true" class="add icon"></i></div>
+                </button>
+              </a>
             </form>
           </ul>
         </div>
         <div class="myfridge_inner myfridge_d">
-          <h3>
+          <h3 style= "position: sticky; top: 0;">
             My Fridge
             <span class="smaller"
               >(<span class="num_myfridge">{{fing_amount}}</span>
@@ -340,8 +348,12 @@
           </h3>
           
           <form method="post">
-            <input type="submit" value="Remove from Fridge" />
-            <input type="submit" value="Remove all" method="post" name="remove_all" />
+              <div class="ui buttons" style= "position: sticky; top: 60px">
+                <button class="ui button" style= "width: 60%; "type="submit" >Remove from Fridge</button>
+                <div class="or"></div>
+                <button class="ui right floated negative button" 
+                type="submit" value="Remove all" method="post" name="remove_all">Remove all</button>
+              </div>
             <ul>
               {% for food in fing %}
               <input type="checkbox" name="del_ing" value="{{food}}" />
@@ -351,7 +363,7 @@
             </ul>
           </form>
           <a
-            class="fw_button small_fw_button" {% comment %}  href="{% url 'recipe' %}" {% endcomment %}
+            class="fw_button small_fw_button" style= "position: sticky; bottom: 0;"
           >
           <form method = "post">
             <button class="ui fluid animated button" value = True  name= "find_Recipe" >
