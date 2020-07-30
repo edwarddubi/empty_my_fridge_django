@@ -259,15 +259,18 @@ def allrecipes(db):
 						category = category.strip()
 						category_list.append(category.lower())
 				elif recipe_script_legacy != None:
-					step_0 = str(recipe_script_legacy[30])
-					step_1 = step_0.split('var RdpInferredTastePrefs = [')
-					step_2 = " ".join(step_1[1].split())
-					step_3 = step_2.split(']')[0].strip()
-					step_4 = step_3.replace('"', '')
-					step_5 = step_4.split(',')
-					for category in step_5:
-						category = category.strip()
-						category_list.append(category.lower())
+					try:
+						step_0 = str(recipe_script_legacy[30])
+						step_1 = step_0.split('var RdpInferredTastePrefs = [')
+						step_2 = " ".join(step_1[1].split())
+						step_3 = step_2.split(']')[0].strip()
+						step_4 = step_3.replace('"', '')
+						step_5 = step_4.split(',')
+						for category in step_5:
+							category = category.strip()
+							category_list.append(category.lower())
+					except IndexError:
+						pass
 				else:	
 					for category in recipe_cat:
 						category = category.text.strip()

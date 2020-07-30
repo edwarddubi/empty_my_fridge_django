@@ -163,7 +163,7 @@
     <!--Filtering-->
     <div>
       <button 
-      class="ui labeled icon button" 
+      class="ui labeled icon button sticky" 
       id="filter" onclick="filter_menu()" 
       style="margin-top: -15px; margin-left: 1px; color: #642b73; position: fixed;">
         <i class="filter icon"></i>
@@ -309,11 +309,14 @@
     </div>
       <script>
         var m = document.getElementById("menu");
+        var filter_btn = document.getElementById("filter")
         function filter_menu(){
           m.setAttribute("class", "ui visible sidebar inverted vertical menu")
+          filter_btn.setAttribute("class", "ui labeled icon button")
         }
         function close_menu(){
           m.setAttribute("class", "ui sidebar inverted vertical menu")
+          filter_btn.setAttribute("class", "ui labeled icon button sticky")
         }
       </script>
     <!--End of Filtering-->
@@ -407,7 +410,7 @@
             style="margin: 10px; width: 300px; height: 340px;"
           >
             <a class="ui medium image" href="{{recipe.recipe_link}}">
-              <img style="height: 215px;" src="{{recipe.recipe_image}}" />
+              <img style="height: 215px; object-fit: cover;" src="{{recipe.recipe_image}}" />
             </a>
             <div class="content" style="text-align: center;">
               <a

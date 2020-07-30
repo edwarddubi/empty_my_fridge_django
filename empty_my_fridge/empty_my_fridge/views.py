@@ -630,19 +630,22 @@ def fav_recipe_onClick(request):
 
 @csrf_exempt
 def upload_image(request):
-    file = request.FILES['img']
-    uid = m_user._getUser_Id_()
-    if uid:
-        _dir_ = "images/{0}/{1}".format(uid, file.name)
-        img_details = fb_storage.child(_dir_).put(file, request.session['token_id'])
-        link = fb_storage.child(_dir_).get_url(img_details["downloadTokens"])
+    try:
+        file = request.FILES['img']
+        uid = m_user._getUser_Id_()
+        if uid:
+            _dir_ = "images/{0}/{1}".format(uid, file.name)
+            img_details = fb_storage.child(_dir_).put(file, request.session['token_id'])
+            link = fb_storage.child(_dir_).get_url(img_details["downloadTokens"])
 
-        userData = {
-            'image': link,
-        }
-        db.child("users").child(uid).update(userData)
-        _user_ = dict(db.child("users").child(uid).get().val())
-        m_user._setUser_(_user_)
+            userData = {
+                'image': link,
+            }
+            db.child("users").child(uid).update(userData)
+            _user_ = dict(db.child("users").child(uid).get().val())
+            m_user._setUser_(_user_)
+    except Exception:
+        pass
         
     return HttpResponseRedirect('/empty_my_fridge/edit_profile/')
 
