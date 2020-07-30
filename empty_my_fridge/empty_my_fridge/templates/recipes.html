@@ -319,7 +319,8 @@
       </div>
     {% endif %}
 
-    {% if data.isSearch and not data.isFilter %} {% if data.found_results %}
+    {% if data.isSearch and not data.isFilter %} 
+    {% if data.found_results %}
     <div style="margin-top: 75px; padding-left: 190px;">
       <h2><i>Found Results ({{data.items}} Item(s)): {{data.recipe_name}} </i></h2>
     </div>
@@ -327,8 +328,10 @@
     <div style="margin-top: 75px; padding-left: 190px;">
       <h2><i>No Results Found! (0 Items): {{data.recipe_name}}</i></h2>
     </div>
-    {% endif %} {% endif %}
-    <div style= "margin-top: 75px; padding-left: 90px;">
+    {% endif %} 
+    {% endif %}
+
+    <div style= "margin-top: 75px; margin-left: 900px; padding-left: 90px;">
       <!-- Toggle fridge rceipes button-->
       <form method = "post" style="padding-left: 95px;">
         {%if data.fridge.0%}
@@ -363,26 +366,23 @@
           {%if data.sorting_type == "name_A"%}
             <option value="name_A" >Name ascending</option>
             <option value="name_D" >Name descending</option>
-            <option value="fav_A" >Favorites ascending</option>
-            <option value="fav_D">Favorites descending</option>
+            <option value="fav_A" >Least Popular</option>
+            <option value="fav_D">Most Popular</option>
           {%elif data.sorting_type == "name_D"%}
             <option value="name_D" >Name descending</option>
             <option value="name_A" >Name ascending</option>
-            <option value="fav_A" >Favorites ascending</option>
-            <option value="fav_D">Favorites descending</option>
+            <option value="fav_A" >Least Popular</option>
+            <option value="fav_D">Most Popular</option>
           {%elif data.sorting_type == "fav_A"%}
-            <option value="fav_A" >Favorites ascending</option>
+            <option value="fav_A" >Least Popular</option>
             <option value="name_D" >Name descending</option>
             <option value="name_A" >Name ascending</option>
-            <option value="fav_D">Favorites descending</option>
+            <option value="fav_D">Most Popular</option>
           {%elif data.sorting_type == "fav_D"%}
-            <option value="fav_D">Favorites descending</option>
+            <option value="fav_D">Most Popular</option>
             <option value="name_D" >Name descending</option>
             <option value="name_A" >Name ascending</option>
-            <option value="fav_A" >Favorites ascending</option>
-          {%else%}
-            <option value="name_A" >{{data.sorting_type}}</option>
-            <option value="fav_A" >Favorites ascending</option
+            <option value="fav_A" >Least Popular</option>
           {%endif%}
           </select>
           <button type="submit">Sort</button>

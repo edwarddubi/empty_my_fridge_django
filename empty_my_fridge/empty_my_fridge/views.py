@@ -73,19 +73,14 @@ def Fridge_matches(all_recipes):
 
 def sort_recipes(recipe_list, type):
         result = None
-        def fav_sort(recipe):
-            try: 
-                return len(recipe["stars"])
-            except:
-                return 0
         if type == "name_A":
             result =  sorted(recipe_list, key = lambda x: x["recipe_name"],reverse=False)
         elif type == "name_D":
             result =  sorted(recipe_list, key = lambda x: x["recipe_name"],reverse=True)
         elif type == "fav_A":
-            result =  sorted(recipe_list, key = lambda x: fav_sort(x),reverse=False)
+            result =  sorted(recipe_list, key = lambda x: x["likes"],reverse=False)
         elif type == "fav_D":
-            result =  sorted(recipe_list, key = lambda x: fav_sort(x),reverse=True)
+            result =  sorted(recipe_list, key = lambda x: x["likes"],reverse=True)
         return result
 
 @csrf_exempt
@@ -426,9 +421,6 @@ def category(request):
         curr_recipes = paginator.page(paginator.num_pages)
     
     user = m_user._getUser_()    
-    
-    
-
 
     data = {
         "user": user,
@@ -1041,9 +1033,10 @@ def fridge(request):
     
     all_ingredients = []
     _all_ingredients_ = db.child("all_ingredients").get().val()
-    for ingredient in _all_ingredients_:
-        if ingredient:
-            all_ingredients.append(ingredient)
+    if _all_ingredients_:
+        for ingredient in _all_ingredients_:
+            if ingredient:
+                all_ingredients.append(ingredient)
     
     if len(all_ingredients) > 0:
         all_ingredients = sorted(all_ingredients)

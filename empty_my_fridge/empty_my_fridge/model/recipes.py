@@ -12,7 +12,8 @@ class Recipes:
         self.food_network = None
         self.visited_pages = ""
         self.scraped = False
-        self.sorting_type="name_A"
+        self.sorting_type = "name_A"
+        self.filter_list = None
 
         
 
@@ -28,7 +29,8 @@ class Recipes:
         self.food_network = food_network
         self.visited_pages = ""
         self.scraped = False
-        self.sorting_type="name_A"
+        self.sorting_type = "name_A"
+        self.filter_list = None
 
 
     def get_sorting_type(self):

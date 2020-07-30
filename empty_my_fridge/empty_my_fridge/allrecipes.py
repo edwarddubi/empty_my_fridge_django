@@ -289,6 +289,8 @@ def allrecipes(db):
 		#db.child('recipe').push(recipe)		
 		
 		found = False
+
+		#if ingredients not in _all_ingredients_:
 		_all_ingredients_ = list(dict.fromkeys(_all_ingredients_ + ingredients))
 
 		if all_recipes != None:
