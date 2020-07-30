@@ -371,7 +371,6 @@ def category(request):
                     to_remove.append(option)
         set_active_filters(filters, to_remove, True)
 
-    
     m_category.set_category(cat)
     found_results = False
     recipe_lst = get_recipes_by_category(cat)
@@ -406,6 +405,8 @@ def category(request):
         if(sorting_type:=request.POST.get('sorting')):
             recipes.set_sorting_type(sorting_type)
 
+    if filters:
+        recipe_lst = filter(recipe_lst, filters, isComplete)
     recipe_lst = sort_recipes(recipe_lst, recipes.get_sorting_type())
 
     paginator = Paginator(recipe_lst, 48)
@@ -434,8 +435,8 @@ def category(request):
         "items": len(recipe_lst),
         "fridge": disp_fridge,
         "sorting_type": recipes.get_sorting_type(),
+        "active_filters": filters
     }
-
     return render(request, 'category.html', {"data": data})
 
 
