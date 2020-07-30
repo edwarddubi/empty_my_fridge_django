@@ -245,16 +245,40 @@ def allrecipes(db):
 			# ---------- ---------- Getting Recipe Categories ---------- ----------
 			category_list = []
 			if recipe_cat != None:
-				for category in recipe_cat:
-					category = category.text.strip()
-					if category == 'Home': # Not a category
-						continue
-					elif category == 'Chevron Right': # Weird '<' character
-						continue
-					elif category == 'Recipes': # Not a category
-						continue
-					else:
+				recipe_script_pin = page_soup.find("script", {"id":"karma-loader"})
+				recipe_script_legacy = page_soup.find_all("script")
+
+				if recipe_script_pin != None:
+					step_0 = str(recipe_script_pin)
+					step_1 = step_0.split('tags: [')
+					step_2 = " ".join(step_1[1].split())
+					step_3 = step_2.split(']')[0].strip()
+					step_4 = step_3.replace('"', '')
+					step_5 = step_4.split(',')
+					for category in step_5:
+						category = category.strip()
 						category_list.append(category.lower())
+				elif recipe_script_legacy != None:
+					step_0 = str(recipe_script_legacy[30])
+					step_1 = step_0.split('var RdpInferredTastePrefs = [')
+					step_2 = " ".join(step_1[1].split())
+					step_3 = step_2.split(']')[0].strip()
+					step_4 = step_3.replace('"', '')
+					step_5 = step_4.split(',')
+					for category in step_5:
+						category = category.strip()
+						category_list.append(category.lower())
+				else:	
+					for category in recipe_cat:
+						category = category.text.strip()
+						if category == 'Home': # Not a category
+							continue
+						elif category == 'Chevron Right': # Weird '<' character
+							continue
+						elif category == 'Recipes': # Not a category
+							continue
+						else:
+							category_list.append(category.lower())
 			add_to_grand_list.append(category_list)
 
 			grand_recipe_list.append(add_to_grand_list)
