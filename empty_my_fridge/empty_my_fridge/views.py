@@ -1033,9 +1033,8 @@ def _logout_(request):
 def fridge(request):
     uid = None
     if m_user._isNone_():
-        fridge_ingredients = None
-        m_activity.set_activity_page("fridge")
-        return HttpResponseRedirect("/empty_my_fridge/login/")
+        activity_page = "/empty_my_fridge/login/?activity=fridge"
+        return HttpResponseRedirect(activity_page)
     else:
         uid = m_user._getUser_Id_()
         #user = m_user._getUser_()
@@ -1101,9 +1100,9 @@ def fridge(request):
 @csrf_exempt
 def fridge_recipes(request):
     if m_user._isNone_():
-        fridge_ingredients = None
-        m_activity.set_activity_page("fridge")
-        return HttpResponseRedirect("/empty_my_fridge/login/")
+        activity_page = "/empty_my_fridge/login/?activity=fridge"
+        return HttpResponseRedirect(activity_page)
+        
     
     all_recipes = recipes.get_all_recipes()
     matches = Fridge_matches(all_recipes)
