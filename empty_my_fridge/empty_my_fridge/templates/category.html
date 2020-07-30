@@ -91,18 +91,10 @@
         <span class="text">Browse</span>
         <i class="dropdown icon"></i>
         <div class="menu inverted" style="margin-top: -1px;">
-          <a class="item" href="{% url 'category' %}?category=pastry"
-            >Pastries</a
-          >
-          <a class="item" href="{% url 'category' %}?category=main dish"
-            >Meals</a
-          >
-          <a class="item" href="{% url 'category' %}?category=appetizer"
-            >Appetizers</a
-          >
-          <a class="item" href="{% url 'category' %}?category=dessert"
-            >Dessert</a
-          >
+          <a class="item" href="{% url 'category' %}?category=asian">Asian</a>
+          <a class="item" href="{% url 'category' %}?category=french">French</a>
+          <a class="item" href="{% url 'category' %}?category=italian">Italian</a>
+          <a class="item" href="{% url 'category' %}?category=mexican">Mexican</a>
         </div>
       </div>
 
@@ -199,6 +191,11 @@
             ><br />
           </div>
           <div class="ui checked checkbox" style="margin-top: -10px;">
+            <input type="checkbox" name="filter_data" value="french" />
+            <label>French</label
+            ><br />
+          </div>
+          <div class="ui checked checkbox" style="margin-top: -10px;">
             <input type="checkbox" name="filter_data" value="italian" />
             <label>Italian</label
             ><br />
@@ -208,28 +205,22 @@
             <label>Mexican</label
             ><br />
           </div>
-
-          <div style="margin-top: 5px; margin-top: 5px; margin-left: 25px; color: white;">
-            <h4>Type</h4>
+          <div style="margin-top: 5px; margin-top: 5px; margin-left: 21px; color: white;">
+            <h4>Flavor</h4>
           </div>
           <div class="ui checkbox" style="margin-top: 10px;">
-            <input type="checkbox" name="filter_data" value="breakfast" />
-            <label>Breakfast</label
+            <input type="checkbox" name="filter_data" value="savory" />
+            <label>Savory</label
+            ><br />
+          </div>
+          <div class="ui checked checkbox" style="margin-top: -10px; margin-right: 2px;">
+            <input type="checkbox" name="filter_data" value="spicy" />
+            <label>Spicy</label
             ><br />
           </div>
           <div class="ui checked checkbox" style="margin-top: -10px;">
-            <input type="checkbox" name="filter_data" value="lunch" />
-            <label>Lunch</label
-            ><br />
-          </div>
-          <div class="ui checked checkbox" style="margin-top: -10px;">
-            <input type="checkbox" name="filter_data" value="dinner" />
-            <label>Dinner</label
-            ><br />
-          </div>
-          <div class="ui checked checkbox" style="margin-top: -10px;">
-            <input type="checkbox" name="filter_data" value="dessert" />
-            <label>Dessert</label
+            <input type="checkbox" name="filter_data" value="sweet" />
+            <label>Sweet</label
             ><br />
           </div>
 
@@ -237,8 +228,13 @@
             <h4>Diet</h4>
           </div>
           <div class="ui checked checkbox" style="margin-top: 10px;">
-            <input type="checkbox" name="filter_data" value="vegetarian" />
-            <label>Vegetarian</label
+            <input type="checkbox" name="filter_data" value="dairyfree" />
+            <label>Dairy Free</label
+            ><br />
+          </div>
+          <div class="ui checked checkbox" style="margin-top: -10px;">
+            <input type="checkbox" name="filter_data" value="glutenfree" />
+            <label>Gluten Free</label
             ><br />
           </div>
           <div class="ui checked checkbox" style="margin-top: -10px;">
@@ -247,8 +243,8 @@
             ><br />
           </div>
           <div class="ui checked checkbox" style="margin-top: -10px;">
-            <input type="checkbox" name="filter_data" value="gluten free" />
-            <label>Gluten Free</label
+            <input type="checkbox" name="filter_data" value="vegetarian" />
+            <label>Vegetarian</label
             ><br />
           </div>
         </ul>

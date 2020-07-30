@@ -40,14 +40,14 @@
         Recipes
       </a>
 
-      <div class="ui dropdown item simple">
+      <div class="ui link simple dropdown item">
         <span class="text">Browse</span>
         <i class="dropdown icon"></i>
         <div class="menu inverted" style="margin-top: -1px;">
-          <a class="item" href="{% url 'category' %}?category=pastry">Pastries</a>
-          <a class="item" href="{% url 'category' %}?category=main dish">Meals</a>
-          <a class="item" href="{% url 'category' %}?category=appetizer">Appetizers</a>
-          <a class="item" href="{% url 'category' %}?category=dessert">Dessert</a>
+          <a class="item" href="{% url 'category' %}?category=asian">Asian</a>
+          <a class="item" href="{% url 'category' %}?category=french">French</a>
+          <a class="item" href="{% url 'category' %}?category=italian">Italian</a>
+          <a class="item" href="{% url 'category' %}?category=mexican">Mexican</a>
         </div>
       </div>
 
@@ -166,7 +166,7 @@
             <img src="https://firebasestorage.googleapis.com/v0/b/empty-my-fridge-6197d.appspot.com/o/pasta.png?alt=media&token=7a26bc16-dc99-40d7-8a23-862a58973127" />
           </a>
           <div class="content" style="text-align: center; font-size: large;">
-            <a class="header" href="{% url 'category' %}?category=main dish">Dinner</a>
+            <a class="header" href="{% url 'category' %}?category=dinner">Dinner</a>
           </div>
         </div>
       </form>
@@ -190,10 +190,10 @@
             style="width: 200px; height: 200px; margin: 20px; background-color:rgba(226, 255, 145, 0.76);"
           >
             <a class="ui centered medium image" style="width: 200px; height: 150px;" href="{% url 'category' %}?category=side dish">
-              <img src="https://firebasestorage.googleapis.com/v0/b/empty-my-fridge-6197d.appspot.com/o/tofu.png?alt=media&token=8564bb0f-b176-48c8-b040-e0db2a135d4b" />
+              <img src="https://firebasestorage.googleapis.com/v0/b/empty-my-fridge-6197d.appspot.com/o/salad.png?alt=media&token=316448ed-d64d-41f3-9bdf-a35f795b0f8a" />
             </a>
             <div class="content" style="text-align: center; font-size: large;">
-              <a class="header" href="{% url 'category' %}?category=side dish">Sides</a>
+              <a class="header" href="{% url 'category' %}?category=appetizer">Appetizers</a>
             </div>
           </div>
         </form>
@@ -203,10 +203,10 @@
             style="width: 200px; height: 200px; margin: 20px; background-color:rgba(164, 108, 255, 0.50);"
           >
             <a class="ui centered medium image" style="width: 200px; height: 150px;" href="{% url 'category' %}?category=vegan">
-              <img src="https://firebasestorage.googleapis.com/v0/b/empty-my-fridge-6197d.appspot.com/o/salad.png?alt=media&token=316448ed-d64d-41f3-9bdf-a35f795b0f8a" />
+              <img src="https://firebasestorage.googleapis.com/v0/b/empty-my-fridge-6197d.appspot.com/o/sushi.png?alt=media&token=f881a6f2-38d9-42af-9482-a64271f1cc8e" />
             </a>
             <div class="content" style="text-align: center; font-size: large;">
-              <a class="header" href="{% url 'category' %}?category=vegan">Vegan</a>
+              <a class="header" href="{% url 'category' %}?category=maindish">Main Dishes</a>
             </div>
           </div>
         </form>
@@ -216,15 +216,14 @@
             style="width: 200px; height: 200px; margin: 20px; background-color: rgba(255, 155, 185, 0.64);"
           >
             <a class="ui centered medium image" style="width: 200px; height: 150px;" href="{% url 'category' %}?category=gluten free">
-              <img src="https://firebasestorage.googleapis.com/v0/b/empty-my-fridge-6197d.appspot.com/o/sushi.png?alt=media&token=f881a6f2-38d9-42af-9482-a64271f1cc8e" />
+              <img src="https://www.jing.fm/clipimg/full/168-1685068_mac-and-cheese-clipart-png.png" />
             </a>
             <div class="content" style="text-align: center; font-size: large;">
-              <a class="header" href="{% url 'category' %}?category=gluten free">Gluten Free</a>
+              <a class="header" href="{% url 'category' %}?category=sidedish">Side Dishes</a>
             </div>
           </div>
         </form>
       </div>
-
     </div>
 
     

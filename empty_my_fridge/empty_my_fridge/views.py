@@ -37,6 +37,8 @@ recipes._get_all_recipes_()
 
 @csrf_exempt
 def home(request):
+    m_category.set_filter_list(None)
+    recipes.set_filter_list(None)
     if recipes.get_scraped():
         recipes._get_all_recipes_()
         recipes.set_scraped(False)
@@ -346,7 +348,6 @@ def category(request):
     isRemoving = False
     isClearing = False
     to_remove = []
-    m_category.set_filter_list(None)
     filters = request.POST.getlist('filter_data')
     remove_list = request.POST.getlist('remove_filter')
     clear_all = request.POST.get('clear')
@@ -442,17 +443,18 @@ def get_recipes_by_category(category):
     all_recipes = db.child('recipe').get()
     uid = m_user._getUser_Id_()
     recipe_lst = []
-    for recipe in all_recipes.each():
-        recipe_details = recipe.val()
-        try:
-            categories = recipe_details["recipe_categories"]
-            if categories:
-                if any(category in c for c in categories) :
-                    key = str(recipe.key())
-                    _recipe_ = recipes.get_recipe(dict(recipe_details), key, uid)
-                    recipe_lst.append(_recipe_)
-        except KeyError:
-            pass
+    if all_recipes.each():
+        for recipe in all_recipes.each():
+            recipe_details = recipe.val()
+            try:
+                categories = recipe_details["recipe_categories"]
+                if categories:
+                    if any(category in c for c in categories) :
+                        key = str(recipe.key())
+                        _recipe_ = recipes.get_recipe(dict(recipe_details), key, uid)
+                        recipe_lst.append(_recipe_)
+            except KeyError:
+                pass
     return recipe_lst
 
 

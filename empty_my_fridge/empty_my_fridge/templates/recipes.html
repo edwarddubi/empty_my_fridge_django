@@ -88,14 +88,14 @@
         Recipes
       </a>
 
-      <div class="ui link dropdown simple item">
+      <div class="ui link simple dropdown item">
         <span class="text">Browse</span>
         <i class="dropdown icon"></i>
         <div class="menu inverted" style="margin-top: -1px;">
-          <a class="item" href="{% url 'category' %}?category=pastry">Pastries</a>
-          <a class="item" href="{% url 'category' %}?category=main dish">Meals</a>
-          <a class="item" href="{% url 'category' %}?category=appetizer">Appetizers</a>
-          <a class="item" href="{% url 'category' %}?category=dessert">Dessert</a>
+          <a class="item" href="{% url 'category' %}?category=asian">Asian</a>
+          <a class="item" href="{% url 'category' %}?category=french">French</a>
+          <a class="item" href="{% url 'category' %}?category=italian">Italian</a>
+          <a class="item" href="{% url 'category' %}?category=mexican">Mexican</a>
         </div>
       </div>
 
@@ -227,8 +227,13 @@
             <h4>Diet</h4>
           </div>
           <div class="ui checked checkbox" style="margin-top: 10px;">
-            <input type="checkbox" name="filter_data" value="vegetarian" />
-            <label>Vegetarian</label
+            <input type="checkbox" name="filter_data" value="dairyfree" />
+            <label>Dairy Free</label
+            ><br />
+          </div>
+          <div class="ui checked checkbox" style="margin-top: -10px;">
+            <input type="checkbox" name="filter_data" value="glutenfree" />
+            <label>Gluten Free</label
             ><br />
           </div>
           <div class="ui checked checkbox" style="margin-top: -10px;">
@@ -237,8 +242,8 @@
             ><br />
           </div>
           <div class="ui checked checkbox" style="margin-top: -10px;">
-            <input type="checkbox" name="filter_data" value="gluten free" />
-            <label>Gluten Free</label
+            <input type="checkbox" name="filter_data" value="vegetarian" />
+            <label>Vegetarian</label
             ><br />
           </div>
         </ul>
