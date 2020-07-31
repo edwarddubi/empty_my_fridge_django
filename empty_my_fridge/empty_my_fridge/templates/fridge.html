@@ -205,11 +205,11 @@
           margin-inline-end: 0px;
           padding-inline-start: 10px;
         }
-        a.fw_button.small_fw_button {
+        .fw_button.small_fw_button {
           font-size: 1.4rem;
           padding: 15px 20px;
         }
-        a.fw_button {
+        .fw_button {
           cursor: pointer;
           background: #c6426e;
           border-radius: 4px;
@@ -222,7 +222,7 @@
           font-weight: 400;
           position: relative;
         }
-        a.fw_button span+.icon path {
+        .fw_button span+.icon path {
           stroke: #642b73;
         }
         h1, h2, h3, h4, h5, h6 {
@@ -284,6 +284,47 @@
           </li>
         </ol>
       </div>
+      <!--Start of popup code-->
+      <div style="position: fixed; top: 50%; left: 50%; width: 30%%; z-index: 1; transform: translate(-50%, -50%);"
+      id="popup1" class="overlay">
+        {%if popup.add%}
+            <div class="ui success message">
+              <a href=""  > <i class="close icon" style="float: right"></i> </a>
+              <div class="header">
+                Added ingredients to your fridge.
+              </div>
+              <p>The following ingredients have been added to your fridge</p>
+              <ul>
+                {% for ingredient in popup.add %}
+                    <li>{{ingredient}}</li>
+                {% endfor %}
+              </ul>
+            </div>   
+        {% elif popup.del%}
+          <div class="ui negative message">
+              <a href=""  > <i class="close icon" style="float: right"></i> </a>
+              <div class="header">
+                Removed ingredients to your fridge:
+              </div>
+              <p>The following ingredients have been removed to your fridge:</p>
+                <ul>
+              {% for ingredient in popup.del %}
+                  <li>{{ingredient}}</li>
+              {% endfor %}
+                </ul>
+            </div>
+        {% elif popup.all%}
+          <div class="ui negative message">
+              <a href=""  > <i class="close icon" style="float: right"></i> </a>
+              <div class="header">
+                Removed all ingredients from your fridge
+              </div>
+              <p>All ingredients from your list has been removed, Your fridge is now empty.</p>
+            </div>
+        
+        {% endif %}
+        </div>
+        <!--End of popup code-->
       <div class="flex myfridge main_fridge_holder">
         <div class="myfridge_inner myfridge_a">
           <span class="myfridge_list_holder">
@@ -304,7 +345,6 @@
                 </div>
               </form>
             </div>
-
             <style>
               #search{
                 display: inline-block;
@@ -324,20 +364,74 @@
           </span>
 
           <ul>
-            <form method="post">
-              {% for food in ingredients %}
+            <form method="post" action="">
+              {%if ingredients%}{% for food in ingredients %}
+              
               <input type="checkbox" name="sav_ing" value="{{food}}" />
               <label> {{food}}</label><br />
               {% endfor %}
-              <a class="fw_button small_fw_button" style= "position: sticky; bottom: 0;">
-                <button class="ui fluid animated positive button" onclick="form.submit()" name= "find_Recipe" >
-                  <div class="visible content">Add recipes to Fridge</div>
-                  <div class="hidden content"><i aria-hidden="true" class="add icon"></i></div>
+              {%else%}
+              <p>No ingredients found</p>
+              {%endif%}
+              <div class="fw_button small_fw_button" style= "position: sticky; bottom: 0;"  >
+                <button class="ui fluid animated positive button" name= "find_Recipe"  onclick="form.submit()">
+                  <div class="visible content" >Add recipes to Fridge</div>
+                  <div class="hidden content"><i aria-hidden="true" class="add icon" ></i></div>
                 </button>
-              </a>
+              </div>
             </form>
           </ul>
-        </div>
+          </div>
+          
+        <style>
+          onload="href=#popup1"
+          .overlay {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            
+            transition: opacity 500ms;
+            visibility: hidden;
+            opacity: 0;
+          }
+          .overlay:target {
+            visibility: visible;
+            opacity: 1;
+          }
+
+          .popup {
+            margin: 70px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 5px;
+            width: 30%;
+            position: center;
+            transition: all 5s ease-in-out;
+            width: 50%;
+            border: 1px solid rgb(0, 0, 0);
+          }
+
+          .popup h2 {
+            margin-top: 0;
+            color: #333;
+            font-family: Tahoma, Arial, sans-serif;
+          }
+          
+          .popup .content {
+            
+            max-height: 40%;
+            overflow: auto;
+          }
+
+          @media screen and (max-width: 700px){
+              .popup{
+              width: 70%;
+            }
+          }
+    
+        </style>
         <div class="myfridge_inner myfridge_d">
           <h3 style= "position: sticky; top: 0;">
             My Fridge
@@ -363,7 +457,7 @@
             </ul>
           </form>
           <a
-            class="fw_button small_fw_button" style= "position: sticky; bottom: 0;"
+            class="fw_button small_fw_button" style= "position: sticky;  bottom: 0;"
           >
           <form method = "post">
             <button class="ui fluid animated button" value = True  name= "find_Recipe" >
