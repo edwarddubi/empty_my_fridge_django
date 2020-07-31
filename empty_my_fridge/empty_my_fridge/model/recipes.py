@@ -12,8 +12,8 @@ class Recipes:
         self.food_network = None
         self.visited_pages = ""
         self.scraped = False
-        self.sorting_type = "name_A"
         self.filter_list = None
+        self.sorting_type = "name_A"
         self.fridge_recipes = None
         self.is_fridge = False
 

@@ -279,6 +279,38 @@
         </div>
         {%else%}
         <div class="four wide column">
+        <div class="tooltip">
+        {%if recipe.missing_ingredients%}              
+          <span class="tooltiptext">You are currently missing:
+            <ul>
+                {%for mis in recipe.missing_ingredients%}
+                  <li>{{mis}}</li>
+                {% endfor %}
+            </ul>
+          </span>
+        {%endif%}
+        <style>
+
+          .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 45%;
+            background-color: white;
+            color: black;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 0;
+            border: 2px solid red;
+
+            /* Position the tooltip */
+            position: absolute;
+            z-index: 20;
+            right: 5px;
+          }
+          
+          .tooltip:hover .tooltiptext {
+            visibility: visible;
+          }
+        </style>
           <div
             class="ui link red card"
             style="margin: 10px; width: 300px; height: 340px;"
@@ -357,6 +389,7 @@
                 </span>
               </form>
             </div>
+          </div>
           </div>
         </div>
         {%endif%}

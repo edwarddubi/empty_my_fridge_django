@@ -405,6 +405,38 @@
         <!--column-->
         {% for recipe in data.recipes %}
         <div class="four wide column">
+        <div class="tooltip">
+        {%if recipe.missing_ingredients and data.fridge.1%}              
+          <span class="tooltiptext">You are currently missing:
+            <ul>
+                {%for mis in recipe.missing_ingredients%}
+                  <li>{{mis}}</li>
+                {% endfor %}
+            </ul>
+          </span>
+        {%endif%}
+        <style>
+
+          .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 45%;
+            background-color: white;
+            color: black;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 0;
+            border: 2px solid red;
+
+            /* Position the tooltip */
+            position: absolute;
+            z-index: 20;
+            right: 5px;
+          }
+          
+          .tooltip:hover .tooltiptext {
+            visibility: visible;
+          }
+        </style>
           <div
             class="ui link card purple raised"
             style="margin: 10px; width: 300px; height: 340px;"
@@ -498,6 +530,7 @@
               </form>
             </div>
           </div>
+        </div>
         </div>
         {% endfor %}
       </div>
