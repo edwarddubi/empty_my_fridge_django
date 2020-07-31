@@ -423,12 +423,21 @@
               <span class="left floated">
                 <div class="ui labeled button">
                   <div class="ui blue button">
-                    <i class="heart icon"></i> Favorites
+                    Favorites
                   </div>
                   <a class="ui basic blue left pointing label">
                     {{recipe.likes}}
                   </a>
                 </div>
+                {%if recipe.missing_ingredients%}
+                <button
+                  class="ui red icon button"
+                  style="margin-left: 3px"
+                  data-tooltip="{{recipe.missing_ingredients}}"
+                >
+                  <i class="question circle outline icon"></i>
+                </button>
+              {%endif%}
               </span>
               <form
                 action="/empty_my_fridge/fav_recipe_onclick/"

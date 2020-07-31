@@ -14,6 +14,7 @@ class Recipes:
         self.scraped = False
         self.sorting_type = "name_A"
         self.filter_list = None
+        self.missing_ingredients = None
 
         
 
@@ -31,6 +32,14 @@ class Recipes:
         self.scraped = False
         self.sorting_type = "name_A"
         self.filter_list = None
+        self.missing_ingredients = None
+
+    def get_missing_ingredients(self):
+        return self.missing_ingredients
+
+    def set_missing_ingredients(self, lst):
+        self.missing_ingredients = lst
+
 
 
     def get_sorting_type(self):
