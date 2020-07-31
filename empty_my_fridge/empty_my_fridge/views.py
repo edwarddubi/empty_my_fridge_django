@@ -1134,14 +1134,12 @@ def friend_requests(request):
             print(deny)
             #they chose to use email....
             if email:
-                #thisUser = db.child("users").order_by_child("email").equal_to(email).get()
                 for person in users.each():
                     person = dict(person.val())
                     if person["email"] == email:
                         thisUser = person
                         break
             elif username:
-                #thisUser = db.child("users").order_by_child("username").equal_to(username).get()
                 for person in users.each():
                     person = dict(person.val())
                     if person["username"] == username:
@@ -1199,6 +1197,7 @@ def friend_requests(request):
             if accept or deny:
                 return HttpResponseRedirect("/empty_my_fridge/friend_requests/")
             #they chose to use userID...
+        
         print(friends)
         if friends:
             for key, value in friends.items():
@@ -1208,10 +1207,7 @@ def friend_requests(request):
                 if value["added_back"] == "False":
                     friends_list.append(dict(thisFren))
         num_of_friends = len(friends_list)
-        print("isSent: ")
-        print(isSent)
-        print("isSub: ")
-        print(isSub)
+        
         #print(found)
         data = {
             "user": user,
