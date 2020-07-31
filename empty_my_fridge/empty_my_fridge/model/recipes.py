@@ -146,8 +146,14 @@ class Recipes:
         if all_recipes.each() != None:
             for recipe in all_recipes.each():
                 key = str(recipe.key())
-                _recipe_ = self.get_recipe(dict(recipe.val()), key, self.m_user._getUser_Id_())
-                recipe_list.append(_recipe_)
+                try:
+                    name = recipe.val()["recipe_name"]
+                    _recipe_ = self.get_recipe(dict(recipe.val()), key, self.m_user._getUser_Id_())
+                    recipe_list.append(_recipe_)
+                except KeyError:
+                    self.db.child("recipe").child(key).remove()
+                    continue
+
 
         self.recipe_list = recipe_list  
 

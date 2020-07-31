@@ -140,10 +140,14 @@ def get_all_filtered_recipes():
     all_recipes = db.child("recipe").get()
     if all_recipes.each() != None:
         for recipe in all_recipes.each():
-            if recipe.val()["recipe_name"].lower().find(word.lower()) != -1:
-                key = str(recipe.key())
-                _recipe_ = recipes.get_recipe(dict(recipe.val()), key, uid)
-                recipe_list.append(_recipe_)
+            key = str(recipe.key())
+            try:
+                if recipe.val()["recipe_name"].lower().find(word.lower()) != -1:
+                    _recipe_ = recipes.get_recipe(dict(recipe.val()), key, uid)
+                    recipe_list.append(_recipe_)
+            except KeyError:
+                db.child("recipe").child(key).remove()
+                continue
     return recipe_list
 
 # Recipe Page
@@ -1111,7 +1115,7 @@ def public_personal_recipes(request):
 def remove_white_spaces(items):
     new_items = []
     for item in items:
-        new_items.append(item.strip())
+        new_items.append(item.strip().lower())
     return new_items
 
 
