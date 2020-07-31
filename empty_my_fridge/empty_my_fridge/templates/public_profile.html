@@ -2,12 +2,13 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Account Settings</title>
+    <title>{{data.pUser.name}}'s Profile Page</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css"
     />
   </head>
+
   <style>
     .ui.inverted.menu {
       background: #642b73; /* fallback for old browsers */
@@ -36,10 +37,11 @@
       ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
     }
   </style>
+
   <body>
     {% csrf_token %}
     <!--Navigation Bar-->
-    <div class="ui secondary inverted top fixed menu">
+    <div class="ui inverted secondary top fixed menu">
       <div class="item">
         <h3>Empty My Fridge</h3>
       </div>
@@ -50,13 +52,13 @@
       <a href="{% url 'recipe_page'%}" class="item">
         Recipes
       </a>
-      <div class="ui link simple dropdown item">
+      <div class="ui link dropdown simple item">
         <span class="text">Browse</span>
         <i class="dropdown icon"></i>
-        <div class="menu inverted" style="margin-top: -1px;">
-          <a class="item" href="{% url 'category' %}?category=breakfast">Breakfast</a>
-          <a class="item" href="{% url 'category' %}?category=lunch">Lunch</a>
-          <a class="item" href="{% url 'category' %}?category=dinner">Dinner</a>
+        <div class="menu inverted">
+          <a class="item" href="{% url 'category' %}?category=pastry">Pastries</a>
+          <a class="item" href="{% url 'category' %}?category=main dish">Meals</a>
+          <a class="item" href="{% url 'category' %}?category=appetizer">Appetizers</a>
           <a class="item" href="{% url 'category' %}?category=dessert">Dessert</a>
         </div>
       </div>
@@ -78,9 +80,10 @@
       <!--End of search and filter ui-->
       <div class="right menu">
         <a
+        id="fridge_btn"
+        style="display: flex;"
         href="{% url 'fridge'%}"
-        class="item"
-      >
+        class="item">
         My Fridge
       </a>
         <a href="{% url 'profile'%}" class="item active">
@@ -105,10 +108,10 @@
         <img
            id="user_image" style="height: 180px; width: 180px;"
           class="ui avatar image small"
-          src="{{data.user.image}} "
+          src="{{data.pUser.image}}"
         />
-        <div style="margin-left: 5px; margin-top: 75px;">
-          <h2 style="color: bisque;">{{data.user.name}}</h2>
+        <div style="margin-left: 5px; margin-top: 15%;">
+          <h2 style="color: bisque;">{{data.pUser.name}}</h2>
         </div>
       </div>
     </div>
@@ -117,87 +120,60 @@
 
     <div class="ui container" style="margin-top: 20px; margin-bottom: 250px;">
       <div class="ui pointing menu">
-        <a href="{% url 'profile'%}" class="item">
-          About Me
+        <a class="active item">
+          About {{data.pUser.name}}
         </a>
-        <a href="{% url 'friends'%}" class="item">
+        <a href="{% url 'public_friends'%}?id={{data.pUser.userID}}" class="item">
           Friends
         </a>
-        <a
-        href="{% url 'friend_requests'%}"
-        class="item"
-      >
-        Friend Requests
-      </a>
-        <a href="{% url 'favorite_recipes'%}" class="item">
-          My Favorite Recipes
+        <a href="{% url 'public_fav_recipes'%}?id={{data.pUser.userID}}" class="item">
+          Favorite Recipes
         </a>
-        <a href="{% url 'personal_recipes'%}" class="item">
+        <a href="{% url 'public_personal_recipes'%}?id={{data.pUser.userID}}" class="item">
           Personal Recipes
         </a>
 
-        <div class="right menu">
-          <a href="{% url 'edit_profile'%}" class="item">
-            Edit Profile
-          </a>
-          <a
-            href="{% url 'account_settings'%}"
-            class="active item"
-          >
-            Account Settings
-          </a>
-        </div>
       </div>
+      <!--Segment as Holder-->
       <div style="margin-bottom: 50px;" class="ui raised segment">
-        <form action="/empty_my_fridge/recover_password/" method="post" class="ui form">
+        <div class="ui form">
           <div style="width: 30%;" class="field">
-            <label>Email</label>
-            <input
-              value="{{data.user.email}}"
-              readonly=""
-              name="email"
-              type="email"
-            />
+            <label>Full Name</label>
+            <input value="{{data.pUser.name}}" readonly="" type="text" />
           </div>
-          <input style="display: none;" value="account_settings" name="activity" />
-          <button class="ui button orange" type="submit">
-            Change Password
-          </button>
-        </form>
-        {% if data.admin %}
-        <a href="{% url 'scrape_page'%}">
-          <button onclick="startScrape()" style="margin-top: 10px; width: 150px;" class="ui button purple">
-            Scrape
-          </button>
-          <p id="scrape"></p>
-        </a>
-        {% endif %}
-        
-        <div
-          style="display: none;"
-          id="message"
-          class="ui {{data.msg_type}} message"
-        >
-          <div class="header">
-            {{data.msg_type}}
+          <div style="width: 30%;" class="field">
+            <label>Username</label>
+            <input value="@{{data.pUser.username}}" readonly="" type="text" />
           </div>
-          <p>{{data.message}}</p>
+          {% if data.pUser.bio %}
+          <div style="width: 30%;" class="field">
+            <label>Bio</label>
+            <textarea readonly="" rows="3">{{data.pUser.bio}}</textarea>
+          </div>
+          {% else %}
+          <div style="width: 30%;" class="field">
+            <label>Bio</label>
+            <textarea readonly="" rows="3">I am new here</textarea>
+          </div>
+          {% endif %} 
+          {% if data.pUser.country %}
+          <div style="width: 60%;" class="two fields">
+            <div class="field">
+              <label>Country</label>
+              <input value="{{data.pUser.country}}" readonly="" type="text" />
+            </div>
+            <div class="field">
+              <label>State</label>
+              <input value="{{data.pUser.state}}" readonly="" type="text" />
+            </div>
+          </div>
+          {% endif %}
+          {% if data.pUser.blog %}
+          <a href="{{data.pUser.blog}}">Personal Blog</a>
+          {% endif %}
+          <p>Joined: {{data.pUser.joined}}</p>
         </div>
       </div>
     </div>
-
-    {% if data.message %}
-    <script>
-      document.getElementById("message").style.display = "block";
-    </script>
-    {% endif %} 
-    {% if data.user %}
-    <script>
-      function startScrape(){
-        document.getElementById("scrape").innerHTML = "Scraping...Please wait"
-      }
-     
-    </script>
-    {% endif %}
   </body>
 </html>

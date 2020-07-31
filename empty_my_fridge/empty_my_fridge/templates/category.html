@@ -91,18 +91,10 @@
         <span class="text">Browse</span>
         <i class="dropdown icon"></i>
         <div class="menu inverted" style="margin-top: -1px;">
-          <a class="item" href="{% url 'category' %}?category=pastry"
-            >Pastries</a
-          >
-          <a class="item" href="{% url 'category' %}?category=main dish"
-            >Meals</a
-          >
-          <a class="item" href="{% url 'category' %}?category=appetizer"
-            >Appetizers</a
-          >
-          <a class="item" href="{% url 'category' %}?category=dessert"
-            >Dessert</a
-          >
+          <a class="item" href="{% url 'category' %}?category=breakfast">Breakfast</a>
+          <a class="item" href="{% url 'category' %}?category=lunch">Lunch</a>
+          <a class="item" href="{% url 'category' %}?category=dinner">Dinner</a>
+          <a class="item" href="{% url 'category' %}?category=dessert">Dessert</a>
         </div>
       </div>
 
@@ -174,7 +166,7 @@
 
     <!--Filtering-->
     <button 
-    class="ui labeled icon button" 
+    class="ui labeled icon button sticky" 
     id="filter" onclick="filter_menu()" 
     style="margin-top: -15px; margin-left: 1px; color: #642b73; position: fixed;">
       <i class="filter icon"></i>
@@ -199,6 +191,11 @@
             ><br />
           </div>
           <div class="ui checked checkbox" style="margin-top: -10px;">
+            <input type="checkbox" name="filter_data" value="french" />
+            <label>French</label
+            ><br />
+          </div>
+          <div class="ui checked checkbox" style="margin-top: -10px;">
             <input type="checkbox" name="filter_data" value="italian" />
             <label>Italian</label
             ><br />
@@ -208,28 +205,22 @@
             <label>Mexican</label
             ><br />
           </div>
-
-          <div style="margin-top: 5px; margin-top: 5px; margin-left: 25px; color: white;">
-            <h4>Type</h4>
+          <div style="margin-top: 5px; margin-top: 5px; margin-left: 21px; color: white;">
+            <h4>Flavor</h4>
           </div>
           <div class="ui checkbox" style="margin-top: 10px;">
-            <input type="checkbox" name="filter_data" value="breakfast" />
-            <label>Breakfast</label
+            <input type="checkbox" name="filter_data" value="savory" />
+            <label>Savory</label
+            ><br />
+          </div>
+          <div class="ui checked checkbox" style="margin-top: -10px; margin-right: 2px;">
+            <input type="checkbox" name="filter_data" value="spicy" />
+            <label>Spicy</label
             ><br />
           </div>
           <div class="ui checked checkbox" style="margin-top: -10px;">
-            <input type="checkbox" name="filter_data" value="lunch" />
-            <label>Lunch</label
-            ><br />
-          </div>
-          <div class="ui checked checkbox" style="margin-top: -10px;">
-            <input type="checkbox" name="filter_data" value="dinner" />
-            <label>Dinner</label
-            ><br />
-          </div>
-          <div class="ui checked checkbox" style="margin-top: -10px;">
-            <input type="checkbox" name="filter_data" value="dessert" />
-            <label>Dessert</label
+            <input type="checkbox" name="filter_data" value="sweet" />
+            <label>Sweet</label
             ><br />
           </div>
 
@@ -237,8 +228,13 @@
             <h4>Diet</h4>
           </div>
           <div class="ui checked checkbox" style="margin-top: 10px;">
-            <input type="checkbox" name="filter_data" value="vegetarian" />
-            <label>Vegetarian</label
+            <input type="checkbox" name="filter_data" value="dairyfree" />
+            <label>Dairy Free</label
+            ><br />
+          </div>
+          <div class="ui checked checkbox" style="margin-top: -10px;">
+            <input type="checkbox" name="filter_data" value="glutenfree" />
+            <label>Gluten Free</label
             ><br />
           </div>
           <div class="ui checked checkbox" style="margin-top: -10px;">
@@ -247,8 +243,8 @@
             ><br />
           </div>
           <div class="ui checked checkbox" style="margin-top: -10px;">
-            <input type="checkbox" name="filter_data" value="gluten free" />
-            <label>Gluten Free</label
+            <input type="checkbox" name="filter_data" value="vegetarian" />
+            <label>Vegetarian</label
             ><br />
           </div>
         </ul>
@@ -314,11 +310,14 @@
     </div>
       <script>
         var m = document.getElementById("menu");
+        var filter_btn = document.getElementById("filter")
         function filter_menu(){
           m.setAttribute("class", "ui visible sidebar inverted vertical menu")
+          filter_btn.setAttribute("class", "ui labeled icon button")
         }
         function close_menu(){
           m.setAttribute("class", "ui sidebar inverted vertical menu")
+          filter_btn.setAttribute("class", "ui labeled icon button sticky")
         }
       </script>
     <!--End of Filtering-->
@@ -375,26 +374,26 @@
           {%if data.sorting_type == "name_A"%}
             <option value="name_A" >Name ascending</option>
             <option value="name_D" >Name descending</option>
-            <option value="fav_A" >Favorites ascending</option>
-            <option value="fav_D">Favorites descending</option>
+            <option value="fav_A" >Least Popular</option>
+            <option value="fav_D">Most Popular</option>
           {%elif data.sorting_type == "name_D"%}
             <option value="name_D" >Name descending</option>
             <option value="name_A" >Name ascending</option>
-            <option value="fav_A" >Favorites ascending</option>
-            <option value="fav_D">Favorites descending</option>
+            <option value="fav_A" >Least Popular</option>
+            <option value="fav_D">Most Popular</option>
           {%elif data.sorting_type == "fav_A"%}
-            <option value="fav_A" >Favorites ascending</option>
+            <option value="fav_A" >Least Popular</option>
             <option value="name_D" >Name descending</option>
             <option value="name_A" >Name ascending</option>
-            <option value="fav_D">Favorites descending</option>
+            <option value="fav_D">Most Popular</option>
           {%elif data.sorting_type == "fav_D"%}
-            <option value="fav_D">Favorites descending</option>
+            <option value="fav_D">Most Popular</option>
             <option value="name_D" >Name descending</option>
             <option value="name_A" >Name ascending</option>
-            <option value="fav_A" >Favorites ascending</option>
+            <option value="fav_A" >Least Popular</option>
           {%else%}
             <option value="name_A" >{{data.sorting_type}}</option>
-            <option value="fav_A" >Favorites ascending</option
+            <option value="fav_A" >Least Popular</option
           {%endif%}
           </select>
           <button type="submit">Sort</button>
@@ -527,6 +526,7 @@
       <!--End of Recipe Cards-->
     </div>
     <!--Pagination-->
+    {% if data.recipe_lst %}
     <div class="pagination">
       <span class="step-links">
         {% if data.recipe_lst.has_previous %}
@@ -570,6 +570,8 @@
         {% endif %}
       </span>
     </div>
+    {% endif %}
+    
     <!--End of Pagination-->
     {% if data.keep_scroll_pos %}
     <script>

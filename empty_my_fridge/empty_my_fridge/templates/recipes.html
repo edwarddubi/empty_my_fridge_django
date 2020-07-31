@@ -88,13 +88,13 @@
         Recipes
       </a>
 
-      <div class="ui link dropdown simple item">
+      <div class="ui link simple dropdown item">
         <span class="text">Browse</span>
         <i class="dropdown icon"></i>
         <div class="menu inverted" style="margin-top: -1px;">
-          <a class="item" href="{% url 'category' %}?category=pastry">Pastries</a>
-          <a class="item" href="{% url 'category' %}?category=main dish">Meals</a>
-          <a class="item" href="{% url 'category' %}?category=appetizer">Appetizers</a>
+          <a class="item" href="{% url 'category' %}?category=breakfast">Breakfast</a>
+          <a class="item" href="{% url 'category' %}?category=lunch">Lunch</a>
+          <a class="item" href="{% url 'category' %}?category=dinner">Dinner</a>
           <a class="item" href="{% url 'category' %}?category=dessert">Dessert</a>
         </div>
       </div>
@@ -163,7 +163,7 @@
     <!--Filtering-->
     <div>
       <button 
-      class="ui labeled icon button" 
+      class="ui labeled icon button sticky" 
       id="filter" onclick="filter_menu()" 
       style="margin-top: -15px; margin-left: 1px; color: #642b73; position: fixed;">
         <i class="filter icon"></i>
@@ -227,8 +227,13 @@
             <h4>Diet</h4>
           </div>
           <div class="ui checked checkbox" style="margin-top: 10px;">
-            <input type="checkbox" name="filter_data" value="vegetarian" />
-            <label>Vegetarian</label
+            <input type="checkbox" name="filter_data" value="dairyfree" />
+            <label>Dairy Free</label
+            ><br />
+          </div>
+          <div class="ui checked checkbox" style="margin-top: -10px;">
+            <input type="checkbox" name="filter_data" value="glutenfree" />
+            <label>Gluten Free</label
             ><br />
           </div>
           <div class="ui checked checkbox" style="margin-top: -10px;">
@@ -237,8 +242,8 @@
             ><br />
           </div>
           <div class="ui checked checkbox" style="margin-top: -10px;">
-            <input type="checkbox" name="filter_data" value="gluten free" />
-            <label>Gluten Free</label
+            <input type="checkbox" name="filter_data" value="vegetarian" />
+            <label>Vegetarian</label
             ><br />
           </div>
         </ul>
@@ -304,11 +309,14 @@
     </div>
       <script>
         var m = document.getElementById("menu");
+        var filter_btn = document.getElementById("filter")
         function filter_menu(){
           m.setAttribute("class", "ui visible sidebar inverted vertical menu")
+          filter_btn.setAttribute("class", "ui labeled icon button")
         }
         function close_menu(){
           m.setAttribute("class", "ui sidebar inverted vertical menu")
+          filter_btn.setAttribute("class", "ui labeled icon button sticky")
         }
       </script>
     <!--End of Filtering-->
@@ -319,7 +327,8 @@
       </div>
     {% endif %}
 
-    {% if data.isSearch and not data.isFilter %} {% if data.found_results %}
+    {% if data.isSearch and not data.isFilter %} 
+    {% if data.found_results %}
     <div style="margin-top: 75px; padding-left: 190px;">
       <h2><i>Found Results ({{data.items}} Item(s)): {{data.recipe_name}} </i></h2>
     </div>
@@ -327,8 +336,10 @@
     <div style="margin-top: 75px; padding-left: 190px;">
       <h2><i>No Results Found! (0 Items): {{data.recipe_name}}</i></h2>
     </div>
-    {% endif %} {% endif %}
-    <div style= "margin-top: 75px; padding-left: 90px;">
+    {% endif %} 
+    {% endif %}
+
+    <div style= "margin-top: 75px; position: relative; padding-left: 90px;">
       <!-- Toggle fridge rceipes button-->
       <form method = "post" style="padding-left: 95px;">
         {%if data.fridge.0%}
@@ -363,26 +374,23 @@
           {%if data.sorting_type == "name_A"%}
             <option value="name_A" >Name ascending</option>
             <option value="name_D" >Name descending</option>
-            <option value="fav_A" >Favorites ascending</option>
-            <option value="fav_D">Favorites descending</option>
+            <option value="fav_A" >Least Popular</option>
+            <option value="fav_D">Most Popular</option>
           {%elif data.sorting_type == "name_D"%}
             <option value="name_D" >Name descending</option>
             <option value="name_A" >Name ascending</option>
-            <option value="fav_A" >Favorites ascending</option>
-            <option value="fav_D">Favorites descending</option>
+            <option value="fav_A" >Least Popular</option>
+            <option value="fav_D">Most Popular</option>
           {%elif data.sorting_type == "fav_A"%}
-            <option value="fav_A" >Favorites ascending</option>
+            <option value="fav_A" >Least Popular</option>
             <option value="name_D" >Name descending</option>
             <option value="name_A" >Name ascending</option>
-            <option value="fav_D">Favorites descending</option>
+            <option value="fav_D">Most Popular</option>
           {%elif data.sorting_type == "fav_D"%}
-            <option value="fav_D">Favorites descending</option>
+            <option value="fav_D">Most Popular</option>
             <option value="name_D" >Name descending</option>
             <option value="name_A" >Name ascending</option>
-            <option value="fav_A" >Favorites ascending</option>
-          {%else%}
-            <option value="name_A" >{{data.sorting_type}}</option>
-            <option value="fav_A" >Favorites ascending</option
+            <option value="fav_A" >Least Popular</option>
           {%endif%}
           </select>
           <button type="submit">Sort</button>
@@ -433,15 +441,28 @@
             class="ui link card purple raised"
             style="margin: 10px; width: 300px; height: 340px;"
           >
-            <a class="ui medium image" href="{{recipe.recipe_link}}">
-              <img style="height: 215px;" src="{{recipe.recipe_image}}" />
-            </a>
+          {% if recipe.recipe_link %}
+          <a class="ui medium image" href="{{recipe.recipe_link}}">
+            <img style="height: 215px; object-fit: cover;" src="{{recipe.recipe_image}}" />
+          </a>
+          {% else %}
+          <a class="ui medium image" href="{% url 'recipe_format'%}?id={{recipe.recipe_id}}">
+            <img style="height: 215px; object-fit: cover;" src="{{recipe.recipe_image}}" />
+          </a>
+          {% endif %}
+           
             <div class="content" style="text-align: center;">
+              {% if recipe.recipe_link %}
               <a
                 class="recipe_name"
                 href="{{recipe.recipe_link}}"
                 >{{recipe.recipe_name}}</a
               >
+              {% else %}
+              <a class="recipe_name"
+              href="{% url 'recipe_format'%}?id={{recipe.recipe_id}}">{{recipe.recipe_name}}</a>
+              {% endif %}
+              
             </div>
             <div class="extra content" bis_skin_checked="1">
               <span class="left floated">
@@ -479,6 +500,11 @@
                   />
                   <input
                     style="display: none;"
+                    value="{{data.fridge_recipes}}"
+                    name="fridge_recipes"
+                  />
+                  <input
+                    style="display: none;"
                     value="{{data.isSearch}}"
                     name="isSearch"
                   />
@@ -513,6 +539,7 @@
     </div>
 
     <!--Pagination-->
+    {% if data.recipes %}
     <div class="pagination">
       <span class="step-links">
         {% if data.recipes.has_previous %}
@@ -555,6 +582,8 @@
         {% endif %}
       </span>
     </div>
+    {% endif %}
+   
     <!--End of Pagination-->
 
     {% if data.keep_scroll_pos %}

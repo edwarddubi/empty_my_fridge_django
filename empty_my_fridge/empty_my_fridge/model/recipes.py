@@ -12,9 +12,11 @@ class Recipes:
         self.food_network = None
         self.visited_pages = ""
         self.scraped = False
-        self.sorting_type="name_A"
-        self.missing_ingredients = None
         self.filter_list = None
+        self.sorting_type = "name_A"
+        self.fridge_recipes = None
+        self.is_fridge = False
+
         
 
     def __init__(self, db, m_user, food_network):
@@ -29,16 +31,22 @@ class Recipes:
         self.food_network = food_network
         self.visited_pages = ""
         self.scraped = False
-        self.sorting_type="name_A"
-        self.missing_ingredients = None
+        self.sorting_type = "name_A"
         self.filter_list = None
+        self.fridge_recipes = None
+        self.is_fridge = False
 
+    def get_fridge_recipes(self):
+        return self.fridge_recipes
 
-    def get_missing_ingredients(self):
-        return self.missing_ingredients
-    
-    def set_missing_ingredients(self, lst):
-        self.missing_ingredients = lst
+    def set_fridge_recipes(self, fridge_recipes):
+        self.fridge_recipes = fridge_recipes
+
+    def get_is_fridge(self):
+        return self.is_fridge
+
+    def set_is_fridge(self, is_fridge):
+        self.is_fridge = is_fridge
 
     def get_sorting_type(self):
         return self.sorting_type

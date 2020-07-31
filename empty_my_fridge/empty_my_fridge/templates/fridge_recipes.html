@@ -87,22 +87,14 @@
         Recipes
       </a>
 
-      <div class="ui link dropdown simple item">
+      <div class="ui link simple dropdown item">
         <span class="text">Browse</span>
         <i class="dropdown icon"></i>
         <div class="menu inverted" style="margin-top: -1px;">
-          <a class="item" href="{% url 'category' %}?category=pastry"
-            >Pastries</a
-          >
-          <a class="item" href="{% url 'category' %}?category=main dish"
-            >Meals</a
-          >
-          <a class="item" href="{% url 'category' %}?category=appetizer"
-            >Appetizers</a
-          >
-          <a class="item" href="{% url 'category' %}?category=dessert"
-            >Dessert</a
-          >
+          <a class="item" href="{% url 'category' %}?category=breakfast">Breakfast</a>
+          <a class="item" href="{% url 'category' %}?category=lunch">Lunch</a>
+          <a class="item" href="{% url 'category' %}?category=dinner">Dinner</a>
+          <a class="item" href="{% url 'category' %}?category=dessert">Dessert</a>
         </div>
       </div>
 
@@ -213,10 +205,10 @@
         <div class="four wide column">
           <div
             class="ui link card"
-            style="margin: 10px; width: 300px; height: 335px;"
+            style="margin: 10px; width: 300px; height: 340px;"
           >
-            <a  href="{{recipe.recipe_link}}"class="ui medium image">
-              <img style="height: 215px;" src="{{recipe.recipe_image}}" />
+            <a href="{{recipe.recipe_link}}"class="ui medium image">
+              <img style="height: 215px; object-fit: cover;" src="{{recipe.recipe_image}}" />
             </a>
             <div class="content" style="text-align: center;" >
               <a class="recipe_name" href="{{recipe.recipe_link}}"
@@ -321,10 +313,10 @@
         </style>
           <div
             class="ui link red card"
-            style="margin: 10px; width: 300px; height: 335px;"
+            style="margin: 10px; width: 300px; height: 340px;"
           >
           <a  href="{{recipe.recipe_link}}" class="ui medium image">
-            <img style="height: 215px;" src="{{recipe.recipe_image}}" />
+            <img style="height: 215px; object-fit: cover;" src="{{recipe.recipe_image}}" />
           </a>
             </a>
             <div class="content" style="text-align: center;">
@@ -360,6 +352,11 @@
                     style="display: none;"
                     value=""
                     name="scroll_y"
+                  />
+                  <input
+                    style="display: none;"
+                    value="{{data.fridge_recipes}}"
+                    name="fridge_recipes"
                   />
                   <input
                     style="display: none;"
@@ -401,8 +398,9 @@
       {% endif %}
       <!--End of Recipe Cards-->
     </div>
-
+    
     <!--Pagination-->
+    {% if data.recipes %}
     <div class="pagination">
       <span class="step-links">
         {% if data.recipes.has_previous %}
@@ -445,6 +443,9 @@
         {% endif %}
       </span>
     </div>
+    {% endif %}
+
+   
     <!--End of Pagination-->
 
     {% if data.keep_scroll_pos %}
