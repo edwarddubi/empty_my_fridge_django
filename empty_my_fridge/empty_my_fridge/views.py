@@ -25,6 +25,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 firebase = pyrebase.initialize_app(config.myConfig())
 
+fb_storage = firebase.storage()
 auth_fb = firebase.auth()
 db = firebase.database()
 m_user = User()
@@ -425,6 +426,40 @@ def profile(request):
         }
         return render(request, "profile.html", {"data": data})
 
+@csrf_exempt
+def public_profile(request):
+    user_details = {}
+    pUser_details = {}
+    if m_user._isNone_():
+        return HttpResponseRedirect("/empty_my_fridge/login/")
+    else:
+        #set the user that's still logged in
+        uid = m_user._getUser_Id_()
+        user = db.child("users").child(uid).get().val()
+        user_details = dict(user)
+        m_user._setUser_(user_details)
+
+
+        #if a user was posted (which is the only way to get to this page),
+        #   then, grab that user's ID and return an object with that user's info
+        print("request.method: ")
+        print(request.method)
+        friend_id = request.GET.get("id")
+        print(friend_id)
+        m_user.set_myFriend_id(friend_id)
+
+        if friend_id:
+            pUser = db.child("users").child(friend_id).get().val()
+            print("pUser: ")
+            print(pUser)
+            pUser_details = dict(pUser)
+            #pUser._setUser_(user_details)
+    data = {
+        "user": user_details,
+        "pUser": pUser_details
+    }
+    return render(request, "public_profile.html", {"data": data})
+
 
 @csrf_exempt
 def edit_profile(request):
@@ -435,7 +470,7 @@ def edit_profile(request):
         return render(request, 'edit_profile.html', {"data": user_details})
 
 @csrf_exempt
-def personal_recipes(request):
+def public_personal_recipes(request):
     recipe_details = None
     msg = None
     msg_type = None
@@ -447,43 +482,461 @@ def personal_recipes(request):
     else:
         user = m_user._getUser_()
         uid = m_user._getUser_Id_()
+        friend_id = m_user.get_myFriend_id()
+        pUser = db.child("users").child(friend_id).get().val()
+
+        my_recipes = db.child("users").child(friend_id).child("recipes").get().val()
+        if not my_recipes:
+            no_rec = "Looks like they don't have any personal recipes at the moment..."
+    data = {
+        "user": user,
+        "pUser": pUser,
+        "message": msg,
+        "msg_type": msg_type,
+    }
+    return render(request, 'public_personal_recipes.html', {"data": data, "my_recipes": my_recipes, "no_rec": no_rec})
+
+@csrf_exempt
+def personal_recipes(request):
+    recipe_details = None
+    msg = None
+    msg_type = None
+    userRecipe = None
+    no_rec = None
+    my_recipes = []
+    my_recipe_list = []
+    link = "https://firebasestorage.googleapis.com/v0/b/empty-my-fridge-ff73c.appspot.com/o/cutePlate.jpg?alt=media&token=229f016f-e151-4bf7-b569-d6a07a6a2c18"
+
+    if m_user._isNone_():
+        return HttpResponseRedirect("/empty_my_fridge/login/") 
+    else:
+        user = m_user._getUser_()
+        uid = m_user._getUser_Id_()
         my_recipes = db.child("users").child(uid).child("recipes").get().val()
         if not my_recipes:
             print("NO RECIPES")
             no_rec = "There are no recipes to show... use the form on the left to add some!"
-
+        
         if request.method == "POST":
+
             title = request.POST.get("title")
-            ingredients = request.POST.get("search_ingredients").split(",")
-            description = request.POST.get("description")
-            steps = request.POST.get("steps")
-            privacy = request.POST.get("privacy")
-            userRecipe = {
-            'title': title,
-            'description': description,
-            'steps': steps,
-            'ingredients': ingredients,
-            'privacy': privacy
-            }
-            
-            if my_recipes:
-                my_recipes.append(userRecipe)
-                db.child("users").child(uid).child("recipes").set(my_recipes)
-                msg = "Changes saved successfully."
-                msg_type = "success"
+            print(title)
+            if not title:
+                recipe_id = request.POST.get("delete_recipe")
+                print(recipe_id)
+                db.child("users").child(uid).child("recipes").child(recipe_id).remove()
+                db.child("recipe").child(recipe_id).remove()
             else:
-                userRecipe = [userRecipe]
-                db.child("users").child(uid).child("recipes").set(userRecipe)
-                pass
-    #context = {"ingredients": all_ingredients}
-    my_recipes = db.child("users").child(uid).child("recipes").get().val()
+                ingredients = request.POST.get("ingredients").split(",")
+                measurements = request.POST.get("measurements").split(",")
+                
+                if len(ingredients) == len(measurements):
+                    r_key = db.generate_key()
+                    description = request.POST.get("description")
+                    recipe_categories = request.POST.get("recipe_categories").split(",")
+                    steps = request.POST.get("steps").splitlines()
+                    privacy = request.POST.get("privacy")
+                    clicked = request.POST.get("rec_link")
+
+                    userRecipe = {
+                    'recipe_name': title,
+                    'recipe_id': r_key,
+                    'description': description,
+                    'recipe_categories': recipe_categories,
+                    'steps': steps,
+                    'recipe_ingredients': ingredients,
+                    'measurements': measurements,
+                    'privacy': privacy,
+                    'recipe_image': link,
+                    'uid': uid
+                    }
+                    if privacy == "2":
+                        thisIng = db.child("all_ingredients").get().val()
+                        if thisIng:
+                            thisIng = list(dict.fromkeys(thisIng+ingredients))
+                        else:
+                            thisIng = ingredients
+                        
+                        db.child("all_ingredients").set(thisIng)
+                        db.child("recipe").child(r_key).set(userRecipe)
+                    
+                    db.child("users").child(uid).child("recipes").child(r_key).set(userRecipe)
+                    
+                    msg = "Your recipe has been created!"
+                    msg_type = "success"
+                else:
+                    msg = "Looks like you're missing an ingredient or a measurement... try again!"
+                    msg_type = "error"
+
+    my_recipes = db.child("users").child(uid).child("recipes").get().each()
+
+    if my_recipes:
+        for recipe in my_recipes:
+            recipe_details = recipe.val()
+            key = str(recipe.key())
+            recipe_details["recipe_id"] = key
+            my_recipe_list.append(recipe_details)
+    
     data = {
         "user": user,
         "message": msg,
         "msg_type": msg_type,
     }
-    return render(request, 'personal_recipes.html', {"data": data, "my_recipes": my_recipes, "no_rec": no_rec})
+    return render(request, 'personal_recipes.html', {"data": data, "my_recipes": my_recipe_list, "no_rec": no_rec})
 
+
+
+@csrf_exempt
+def user_friends(request):
+    remove = False
+    if m_user._isNone_():
+        return HttpResponseRedirect("/empty_my_fridge/login/")
+    else:
+        user = m_user._getUser_()
+        uid = m_user._getUser_Id_()
+        friends_list = []
+        friends = db.child("users").child(uid).child("friends").get().val()
+        num_of_friends = 0
+        if friends.items() != None:
+            for _key_,value in friends.items():
+                #_key_ = str(fren.key()) #grabs friend's unique id
+                thisFren = db.child("users").child(_key_).get().val() #what does .val() do at the end?
+                #nt(value["added_back"])
+                if value["added_back"] == "True":
+                    friend_details = dict(thisFren)
+                    # print(friend_details)
+                    friends_list.append(friend_details)
+
+        if request.method == "POST":
+            print("is being DELETED...")
+            deny = request.POST.get("deny")
+            thisFren = db.child("users").child(deny).get().val() #what does .val() do at the end?
+            #once you find the right person...
+            if thisFren:
+                #delete them from my friend list...
+                db.child("users").child(uid).child("friends").child(deny).remove()
+                remove = True
+                return HttpResponseRedirect("/empty_my_fridge/friends/")
+        
+        num_of_friends = len(friends_list)
+        data = {
+            "user": user,
+            "friends": friends_list,
+            "num_of_friends": num_of_friends
+        }
+
+        return render(request, 'friends.html', {"data": data})
+
+@csrf_exempt
+def public_friends(request):
+    remove = False
+    if m_user._isNone_():
+        return HttpResponseRedirect("/empty_my_fridge/login/")
+    else:
+        user = m_user._getUser_()
+        uid = m_user._getUser_Id_()
+        #get friend's object
+        friend_id = request.GET.get("id")
+        print("friend_id: ")
+        print(friend_id)
+
+        if friend_id:
+            pUser = db.child("users").child(friend_id).get().val()
+            # print("pUser: ")
+            # print(pUser)
+            pUser_details = dict(pUser)
+            #pUser._setUser_(user_details)
+
+        friends_list = []
+        friends = db.child("users").child(friend_id).child("friends").get().val()
+        print("has friends: ")
+        print(friends)
+        num_of_friends = 0
+        if friends.items() != None:
+            for _key_,value in friends.items():
+                print("key")
+                print(_key_)
+                #_key_ = str(fren.key()) #grabs friend's unique id
+                #added_back"])
+                if value["added_back"]:
+                    thisFren = db.child("users").child(_key_).get().val()
+                    friend_details = dict(thisFren)
+                    # print(friend_details)
+                    friends_list.append(friend_details)
+        print(friends_list)
+        num_of_friends = len(friends_list)
+        data = {
+            "user": user,
+            "pUser": pUser,
+            "friends": friends_list,
+            "num_of_friends": num_of_friends
+        }
+
+        return render(request, 'public_friends.html', {"data": data})
+
+@csrf_exempt
+def friend_requests(request):
+    print("in friend_request!")
+    if m_user._isNone_():
+        return HttpResponseRedirect("/empty_my_fridge/login/")
+    else:
+        user = m_user._getUser_()
+        uid = m_user._getUser_Id_()
+        users = db.child("users").get()
+        found = False
+        isSent = False
+        isSub = False
+        thisUser = None
+        friend_added = False
+        friend_deleted = False
+
+        friends_list = []
+        friends = db.child("users").child(uid).child("friends").get().val()
+        #print(friends)
+        num_of_friends = 0
+    
+
+        #we're posting an email or id to check
+        if request.method == "POST":
+            friends = db.child("users").child(uid).child("friends").get().val()
+            
+            isSent = True
+            email = request.POST.get("email")
+            username = request.POST.get("username")
+            accept = request.POST.get("accept")
+            print("accept: ")
+            print(accept)
+            deny = request.POST.get("deny")
+            print("deny: ")
+            print(deny)
+            #they chose to use email....
+            if email:
+                #thisUser = db.child("users").order_by_child("email").equal_to(email).get()
+                for person in users.each():
+                    person = dict(person.val())
+                    if person["email"] == email:
+                        thisUser = person
+                        break
+            elif username:
+                #thisUser = db.child("users").order_by_child("username").equal_to(username).get()
+                for person in users.each():
+                    person = dict(person.val())
+                    if person["username"] == username:
+                        thisUser = person
+                        break
+            if accept:
+                isSub = True
+                print("is being ADDED.... ")
+                #so if you actually have friends...
+                #if friends:
+                    #look through them...
+                   # for fren in friends.each():
+                thisFren = db.child("users").child(uid).child("friends").child(accept).get().val() #what does .val() do at the end?
+                print("thisFren: ")
+                print(thisFren)
+                #set them true on my friend list...
+                db.child("users").child(uid).child("friends").child(accept).update({"added_back": "True"})
+               # thisFren["added_back"] = True
+                
+                #and add me as a friend on theirs...
+                me = dict(user)
+                me = {
+                    "added_back": True,
+                    "userID": uid
+                }
+                db.child("users").child(accept).child("friends").child(uid).set(me)
+                friend_added = True
+            if deny:
+                isSub = True
+                print("is being DELETED...")
+                thisFren = db.child("users").child(deny).get().val() #what does .val() do at the end?
+                #once you find the right person...
+                if thisFren:
+                    #delete them from my friend list...
+                    db.child("users").child(uid).child("friends").child(deny).remove()
+                    friend_deleted = True
+            #print(thisUser)
+
+            if thisUser:
+                #thisEmail = thisUser["email"]
+                #once we've found the right user, add us to their friends list!
+                _key_ = thisUser["userID"] #grabs person's unique id
+                thisFren = db.child("users").child(_key_).get().val()
+                if thisFren:
+                    me = {
+                        "added_back": False,
+                        "userID": uid
+                    }
+                    # me["added_back"] = False
+                    # me["user_id"] = uid
+                    # their_friends.append(me)
+                    
+                    db.child("users").child(_key_).child("friends").child(uid).set(me)
+                    found = True
+            return HttpResponseRedirect("/empty_my_fridge/friend_requests/")
+            #they chose to use userID...
+        print(friends)
+        if friends:
+            for key, value in friends.items():
+                thisFren = db.child("users").child(key).get().val()
+ 
+                #once you find the right person...
+                if value["added_back"] == "False":
+                    friends_list.append(dict(thisFren))
+        num_of_friends = len(friends_list)
+        print("isSent: ")
+        print(isSent)
+        print("isSub: ")
+        print(isSub)
+        #print(found)
+        data = {
+            "user": user,
+            "found": found,
+            "isSent": isSent,
+            "isSub": isSub,
+            "friends": friends_list,
+            "num_of_friends": num_of_friends,
+            "friend_added": friend_added,
+            "friend_deleted": friend_deleted
+        }
+    
+    return render(request, 'friend_requests.html', {"data": data})
+
+@csrf_exempt
+def add_friend(request):
+    if m_user._isNone_():
+        return HttpResponseRedirect("/empty_my_fridge/login/")
+    else:
+        user = m_user._getUser_()
+        uid = m_user._getUser_Id_()
+        friends_list = []
+        friends = db.child("users").child(uid).child("friends").get()
+        if request.method == "POST":
+            frenID = request.POST.get("frenID")
+            if friends.each() != None:
+                for fren in friends.each():
+                    _key_ = str(fren.key()) #grabs friend's unique id
+                    thisFren = db.child("users").child(_key_).get().val() #what does .val() do at the end?
+                    #once you find the right person...
+                    if thisFren["userID"] == frenID:
+                        #add them to my friend list...
+                        friends_list.remove(fren)
+                        their_friends = db.child("users").child(uid).child("friends").get()
+                        
+                        #and add me to theirs...
+                        me = dict(user)
+                        me["added_back"] = True
+                        me["user_id"] = uid
+                        their_friends.append(me)
+                        friend_added = True
+
+
+        
+        data = {
+            "user": user,
+            "friend_added": friend_added
+        }
+
+        return render(request, 'friends.html', {"data": data})
+
+@csrf_exempt
+def delete_friend(request):
+    if m_user._isNone_():
+        return HttpResponseRedirect("/empty_my_fridge/login/")
+    else:
+        user = m_user._getUser_()
+        uid = m_user._getUser_Id_()
+        friends_list = []
+        friends = db.child("users").child(uid).child("friends").get()
+        friend_deleted = False
+        if request.method == "POST":
+            frenID = request.POST.get("frenID")
+            if friends.each() != None:
+                for fren in friends.each():
+                    _key_ = str(fren.key()) #grabs friend's unique id
+                    thisFren = db.child("users").child(_key_).get().val() #what does .val() do at the end?
+                    #once you find the right person...
+                    if thisFren["userID"] == frenID:
+                        #remove them from my friend list...
+                        friends_list.remove(fren)
+                        their_friends = db.child("users").child(uid).child("friends").get()
+                        
+                        #and remove me from theirs...
+                        me = dict(user)
+                        me["added_back"] = True
+                        me["user_id"] = uid
+                        their_friends.remove(me)
+                        friend_added = True
+
+
+        
+        data = {
+            "user": user,
+            "friend_added": friend_added
+        }
+
+        return render(request, 'friends.html', {"data": data})
+
+@csrf_exempt
+def recipe_format(request):
+    user = m_user._getUser_()
+    uid = m_user._getUser_Id_()
+    print_list = []
+    recipe_id = request.GET.get("id")
+    print(recipe_id)
+    link = None
+    #"https://firebasestorage.googleapis.com/v0/b/empty-my-fridge-ff73c.appspot.com/o/cutePlate.jpg?alt=media&token=229f016f-e151-4bf7-b569-d6a07a6a2c18"
+
+    if request.method == "POST":
+        # recipe_id = request.POST.get("recipe_id")
+        # print(recipe_id)
+        try:
+            file = request.FILES['img']
+            print("file: ")
+            print(file.name)
+            
+            _dir_ = "recipe_images/{0}/{1}".format(uid, file.name)
+            img_details = fb_storage.child(_dir_).put(file, request.session['token_id'])
+            link = fb_storage.child(_dir_).get_url(img_details["downloadTokens"])
+        except Exception:
+            pass
+
+    recipe_image_update = {
+            "recipe_image": link
+        }
+    this_recipe = db.child("recipe").child(recipe_id).get().val()
+    print(this_recipe)
+    print(link)
+    if this_recipe and link:
+         db.child("recipe").child(recipe_id).update(recipe_image_update)
+         db.child("users").child(uid).child("recipes").child(recipe_id).update(recipe_image_update)
+         this_recipe["recipe_image"] = link
+
+    elif not this_recipe and link:
+    
+        db.child("users").child(uid).child("recipes").child(recipe_id).update(recipe_image_update)
+
+    if not this_recipe:
+        this_recipe = db.child("users").child(uid).child("recipes").child(recipe_id).get().val()
+
+    try:
+        if uid:
+            if this_recipe["uid"] == uid:
+                this_recipe["belongsToUser"] = True
+    except KeyError:
+        pass
+    for (measurement, ingredient) in zip(this_recipe["measurements"], this_recipe["recipe_ingredients"]):
+        combo = measurement + ": " + ingredient
+        print_list.append(combo)
+    
+    print("Recipe")
+    
+    data = {
+        "recipe": this_recipe,
+        "ingredients": print_list,
+        "recipe_id": recipe_id
+    }
+    return render(request, 'recipe_format.html', {"data": data})
 
 
 @csrf_exempt
@@ -598,6 +1051,39 @@ def error_message(type):
 
 # logOut
 
+@csrf_exempt
+def public_fav_recipes(request):
+    if m_user._isNone_():
+            return HttpResponseRedirect("/empty_my_fridge/login/")
+    else:
+        user = m_user._getUser_()
+        uid = m_user._getUser_Id_()
+        friend_id = m_user.get_myFriend_id()
+        pUser = db.child("users").child(friend_id).get().val()
+        
+        fav_recipes_list = []
+
+        fav_recipes = db.child("user_fav_recipes").child(friend_id).get()
+        num_of_fav_recipes = 0
+        if fav_recipes.each():
+            for recipe in fav_recipes.each():
+                _key_ = str(recipe.key())
+                user_fav_recipe = db.child("recipe").child(_key_).get().val()
+                if user_fav_recipe:
+                    recipe_details = dict(user_fav_recipe)
+                    recipe_details["user_saved"] = True
+                    recipe_details["recipe_id"] = _key_
+                    fav_recipes_list.append(recipe_details)
+
+        num_of_fav_recipes = len(fav_recipes_list)
+        data = {
+            "user": user,
+            "pUser": pUser,
+            "fav_recipes": fav_recipes_list,
+            "num_of_fav_recipes": num_of_fav_recipes,
+        }
+
+        return render(request, 'public_fav_recipes.html', {"data": data})
 
 @csrf_exempt
 def _logout_(request):

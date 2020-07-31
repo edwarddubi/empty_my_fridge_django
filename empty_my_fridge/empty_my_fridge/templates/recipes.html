@@ -176,11 +176,13 @@
               <img src="{{recipe.recipe_image}}" />
             </a>
             <div class="content" style="text-align: center;">
-              <a
-                class="recipe_name"
-                href="{{recipe.recipe_link}}"
-                >{{recipe.recipe_name}}</a
-              >
+              {% if recipe.recipe_link %}
+                <a class="recipe_name"
+                href="{{recipe.recipe_link}}">{{recipe.recipe_name}}</a>
+                {% else %}
+                <a class="recipe_name"
+                href="{% url 'recipe_format'%}?id={{recipe.recipe_id}}">{{recipe.recipe_name}}</a>
+                {% endif %}
             </div>
             <div class="extra content" bis_skin_checked="1">
               <span class="left floated">

@@ -44,7 +44,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+<<<<<<< HEAD:empty_my_fridge/cpanel/settings.py
     app,
+=======
+    'cpanel'
+>>>>>>> cb0951cb2e5030d8a0f22df350d69a1e724cc45e:cpanel/cpanel/settings.py
 ]
 
 MIDDLEWARE = [
@@ -69,7 +73,7 @@ ROOT_URLCONF = urls
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['templates'],
+        'DIRS': [os.path.join(BASE_DIR,'templates'),'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

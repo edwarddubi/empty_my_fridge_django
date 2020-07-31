@@ -3,11 +3,13 @@ class User:
     def __init__(self, user, uid):
         self.user = user
         self.uid = uid
+        self.myFriend_id = None
         #super().__init__()
 
     def __init__(self):
         self.user = None
         self.uid = None
+        self.myFriend_id = None
 
     def _getUser_(self):
         return self.user
@@ -42,4 +44,10 @@ class User:
     def _isNone_(self):
         if self.user is None and self.uid is None:
             return True
-        return False                               
+        return False     
+
+    def get_myFriend_id(self):
+        return self.myFriend_id
+
+    def set_myFriend_id(self, myFriend_id):
+        self.myFriend_id = myFriend_id
