@@ -210,20 +210,29 @@ def filter(recipe_list, filter_list, isComplete):
             if len(filtered_recipes) == 0 and not started:
                 started = True
                 for recipe in recipe_list:
-                    categories = recipe["recipe_categories"]
-                    if any(filter in f for f in categories):
-                        filtered_recipes.append(recipe)
+                    try:
+                        categories = recipe["recipe_categories"]
+                        if any(filter in f for f in categories):
+                            filtered_recipes.append(recipe)
+                    except KeyError:
+                        pass
             else:
                 for recipe in filtered_recipes:
-                    categories = recipe["recipe_categories"]
-                    if not any(filter in f for f in categories):
-                        duplicate_recipes.append(recipe)
+                    try:
+                        categories = recipe["recipe_categories"]
+                        if not any(filter in f for f in categories):
+                            duplicate_recipes.append(recipe)
+                    except KeyError:
+                        pass
     else:
         for filter in filter_list:
             for recipe in recipe_list:
-                categories = recipe["recipe_categories"]
-                if any(filter in f for f in categories):
-                    filtered_recipes.append(recipe)
+                try:
+                    categories = recipe["recipe_categories"]
+                    if any(filter in f for f in categories):
+                        filtered_recipes.append(recipe)
+                except KeyError:
+                    pass
     for duplicate in duplicate_recipes:
         if duplicate in filtered_recipes:
             filtered_recipes.remove(duplicate)
