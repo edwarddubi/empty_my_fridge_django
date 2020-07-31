@@ -65,7 +65,7 @@ def Fridge_matches(all_recipes):
             if r_i.issubset(f_i):
                 possible_recipes.append(recipe)
             elif(len(missing:=(r_i-f_i))<4):
-                recipe["missing_ingredents"]=list(missing)
+                recipe["missing_ingredients"]=list(missing)
                 partial_recipes.append(recipe)
         except KeyError:
             pass
@@ -398,19 +398,19 @@ def category(request):
             if m_user._isNone_():
                 activity_page = "/empty_my_fridge/login/?activity=recipe_list"
                 return HttpResponseRedirect(activity_page)
-            matches = Fridge_matches(all_recipes)
-            all_recipes=[]
+            matches = Fridge_matches(recipe_lst)
+            recipe_lst=[]
             if(matches):
-                all_recipes = matches["partial"]
+                recipe_lst = matches["partial"]
             disp_fridge = (True, True)
         elif(fridge_lst:=request.POST.get('fridge')=="True"):
             if m_user._isNone_():
                 activity_page = "/empty_my_fridge/login/?activity=recipe_list"
                 return HttpResponseRedirect(activity_page)
-            matches = Fridge_matches(all_recipes)
-            all_recipes=[]
+            matches = Fridge_matches(recipe_lst)
+            recipe_lst=[]
             if(matches):
-                all_recipes = matches["exact"]
+                recipe_lst = matches["exact"]
             disp_fridge = (True, False)
         if(sorting_type:=request.POST.get('sorting')):
             recipes.set_sorting_type(sorting_type)
@@ -526,19 +526,19 @@ def get_recipes_by_category_ingredients(request):
             if m_user._isNone_():
                 activity_page = "/empty_my_fridge/login/?activity=recipe_list"
                 return HttpResponseRedirect(activity_page)
-            matches = Fridge_matches(all_recipes)
-            all_recipes=[]
+            matches = Fridge_matches(result_list)
+            result_list=[]
             if(matches):
-                all_recipes = matches["partial"]
+                result_list = matches["partial"]
             disp_fridge = (True, True)
         elif(fridge_lst:=request.POST.get('fridge')=="True"):
             if m_user._isNone_():
                 activity_page = "/empty_my_fridge/login/?activity=recipe_list"
                 return HttpResponseRedirect(activity_page)
-            matches = Fridge_matches(all_recipes)
-            all_recipes=[]
+            matches = Fridge_matches(result_list)
+            result_list=[]
             if(matches):
-                all_recipes = matches["exact"]
+                result_list = matches["exact"]
             disp_fridge = (True, False)
         if(sorting_type:=request.POST.get('sorting')):
             recipes.set_sorting_type(sorting_type)

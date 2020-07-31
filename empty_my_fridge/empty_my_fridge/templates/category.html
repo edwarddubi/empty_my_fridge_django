@@ -329,7 +329,8 @@
       </div>
     {% endif %}
 
-    {% if data.isSearch %} {% if data.found_results %}
+    {% if data.isSearch %} 
+    {% if data.found_results %}
     <div style="margin-top: 75px; padding-left: 190px;">
       <h2><i>Found Results ({{data.items}} Item(s))</i></h2>
     </div>
@@ -337,6 +338,7 @@
     <div style="margin-top: 75px; padding-left: 190px;">
       <h2><i>No Results Found! (0 Items)</i></h2>
     </div>
+    {% endif %}
     {% endif %}
     <div style= "margin-top: 75px; padding-left: 90px;">
       <!-- Toggle fridge rceipes button-->
@@ -408,82 +410,115 @@
         <!--column-->
         {% for recipe in data.recipe_lst %}
         <div class="four wide column">
-          <div
-            class="ui link card purple raised"
-            style="margin: 10px; width: 300px; height: 340px;"
-          >
-            <a class="ui medium image" href="{{recipe.recipe_link}}">
-              <img style="height: 215px;" src="{{recipe.recipe_image}}" />
-            </a>
-            <div class="content" style="text-align: center;">
-              <a class="recipe_name" href="{{recipe.recipe_link}}"
-                >{{recipe.recipe_name}}</a
-              >
-            </div>
-            <div class="extra content" bis_skin_checked="1">
-              <span class="left floated">
-                <div class="ui labeled button">
-                  <div class="ui blue button">
-                    <i class="heart icon"></i> Favorites
-                  </div>
-                  <a class="ui basic blue left pointing label">
-                    {{recipe.likes}}
-                  </a>
-                </div>
+          <div class="tooltip">
+            {%if recipe.missing_ingredients and data.fridge.1%}              
+              <span class="tooltiptext">You are currently missing:
+                <ul>
+                    {%for mis in recipe.missing_ingredients%}
+                      <li>{{mis}}</li>
+                    {% endfor %}
+                </ul>
               </span>
-              <form
-                action="/empty_my_fridge/fav_recipe_onclick/"
-                method="post"
-                class="ui form"
-              >
-                <span class="right floated star">
-                  <input
-                    style="display: none;"
-                    name="recipe_id"
-                    value="{{recipe.recipe_id}}"
-                  />
-                  <input
-                    style="display: none;"
-                    name="navigate"
-                    value="/empty_my_fridge/{{data.activity}}/"
-                  />
-                  <input
-                    id="scrollY"
-                    style="display: none;"
-                    value=""
-                    name="scroll_y"
-                  />
-                  <input
-                    style="display: none;"
-                    value="{{isSearch}}"
-                    name="isSearch"
-                  />
-                  <input
-                    style="display: none;"
-                    value="{{data.activity}}"
-                    name="activity"
-                  />
-                  {% if data.user and recipe.user_saved %}
-                  <button
-                    id="like"
-                    class="ui icon button"
-                    data-tooltip="Remove this from your Favorite Recipes"
-                  >
-                    <i class="star icon yellow"></i>
-                  </button>
+            {%endif%}
+            <style>
 
-                  {% else %}
-                  <button
-                    id="like"
-                    class="ui icon button"
-                    data-tooltip="Add this to your Favorite Recipes"
+              .tooltip .tooltiptext {
+                visibility: hidden;
+                width: 45%;
+                background-color: white;
+                color: black;
+                text-align: center;
+                border-radius: 6px;
+                padding: 5px 0;
+                border: 2px solid red;
+
+                /* Position the tooltip */
+                position: absolute;
+                z-index: 20;
+                right: 5px;
+              }
+              
+              .tooltip:hover .tooltiptext {
+                visibility: visible;
+              }
+            </style>
+              <div
+                class="ui link card purple raised"
+                style="margin: 10px; width: 300px; height: 340px;"
+              >
+                <a class="ui medium image" href="{{recipe.recipe_link}}">
+                  <img style="height: 215px;" src="{{recipe.recipe_image}}" />
+                </a>
+                <div class="content" style="text-align: center;">
+                  <a class="recipe_name" href="{{recipe.recipe_link}}"
+                    >{{recipe.recipe_name}}</a
                   >
-                    <i class="star icon"></i>
-                  </button>
-                  {% endif %}
-                </span>
-              </form>
-            </div>
+                </div>
+                <div class="extra content" bis_skin_checked="1">
+                  <span class="left floated">
+                    <div class="ui labeled button">
+                      <div class="ui blue button">
+                        <i class="heart icon"></i> Favorites
+                      </div>
+                      <a class="ui basic blue left pointing label">
+                        {{recipe.likes}}
+                      </a>
+                    </div>
+                  </span>
+                  <form
+                    action="/empty_my_fridge/fav_recipe_onclick/"
+                    method="post"
+                    class="ui form"
+                  >
+                    <span class="right floated star">
+                      <input
+                        style="display: none;"
+                        name="recipe_id"
+                        value="{{recipe.recipe_id}}"
+                      />
+                      <input
+                        style="display: none;"
+                        name="navigate"
+                        value="/empty_my_fridge/{{data.activity}}/"
+                      />
+                      <input
+                        id="scrollY"
+                        style="display: none;"
+                        value=""
+                        name="scroll_y"
+                      />
+                      <input
+                        style="display: none;"
+                        value="{{isSearch}}"
+                        name="isSearch"
+                      />
+                      <input
+                        style="display: none;"
+                        value="{{data.activity}}"
+                        name="activity"
+                      />
+                      {% if data.user and recipe.user_saved %}
+                      <button
+                        id="like"
+                        class="ui icon button"
+                        data-tooltip="Remove this from your Favorite Recipes"
+                      >
+                        <i class="star icon yellow"></i>
+                      </button>
+
+                      {% else %}
+                      <button
+                        id="like"
+                        class="ui icon button"
+                        data-tooltip="Add this to your Favorite Recipes"
+                      >
+                        <i class="star icon"></i>
+                      </button>
+                      {% endif %}
+                    </span>
+                  </form>
+                </div>
+              </div>
           </div>
         </div>
         {% endfor %}

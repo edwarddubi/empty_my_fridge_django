@@ -14,7 +14,7 @@ class Recipes:
         self.scraped = False
         self.sorting_type="name_A"
         self.missing_ingredients = None
-
+        self.filter_list = None
         
 
     def __init__(self, db, m_user, food_network):
@@ -31,6 +31,7 @@ class Recipes:
         self.scraped = False
         self.sorting_type="name_A"
         self.missing_ingredients = None
+        self.filter_list = None
 
 
     def get_missing_ingredients(self):
