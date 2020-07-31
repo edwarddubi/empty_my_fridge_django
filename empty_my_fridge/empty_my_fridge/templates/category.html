@@ -1,595 +1,475 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Home Page</title>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css"
-    />
-  </head>
 
-  <style>
-    /* pagination position styling */
-    .pagination {
-      position: relative;
-      margin-bottom: 50px;
-      margin-top: -25px;
-      text-align: center;
-    }
-    /* pagination styling */
-    .pagination a {
-      color: #031f3b;
-      padding: 10px 18px;
-      border: 2px solid #031f3b;
-      font-size: medium;
-      text-decoration: none;
-    }
-    /* pagination hover effect on non-active */
-    .pagination a:hover:not(.active) {
-      background-color: #031f3b;
-      color: white;
-    }
-    /* pagination hover effect on active*/
-    .pagination a:hover {
-      background-color: #031f3b;
-      color: white;
-      text-decoration: underline;
-    }
+<head>
+  <meta charset="UTF-8" />
+  <title>Home Page</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css" />
+</head>
 
-    .recipe_name {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      font-size: large;
-      color: black;
-      font-weight: bolder;
-      display: -webkit-box;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 2;
-    }
+<style>
+  /* pagination position styling */
+  .pagination {
+    position: relative;
+    margin-bottom: 50px;
+    margin-top: -25px;
+    text-align: center;
+  }
 
-    .recipe_name:hover {
-      color: #3460e2;
-      text-decoration: underline;
-    }
+  /* pagination styling */
+  .pagination a {
+    color: #031f3b;
+    padding: 10px 18px;
+    border: 2px solid #031f3b;
+    font-size: medium;
+    text-decoration: none;
+  }
 
-    .ui.inverted.menu {
-      background: #642b73; /* fallback for old browsers */
-      background: -webkit-linear-gradient(
-        to right,
+  /* pagination hover effect on non-active */
+  .pagination a:hover:not(.active) {
+    background-color: #031f3b;
+    color: white;
+  }
+
+  /* pagination hover effect on active*/
+  .pagination a:hover {
+    background-color: #031f3b;
+    color: white;
+    text-decoration: underline;
+  }
+
+  .recipe_name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: large;
+    color: black;
+    font-weight: bolder;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .recipe_name:hover {
+    color: #3460e2;
+    text-decoration: underline;
+  }
+
+  .ui.inverted.menu {
+    background: #642b73;
+    /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right,
         #c6426e,
-        #642b73
-      ); /* Chrome 10-25, Safari 5.1-6 */
-      background: linear-gradient(
-        to right,
+        #642b73);
+    /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right,
         #c6426e,
-        #642b73
-      ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-    }
-    .center {
-      margin: auto;
-      width: 50%;
-    }
-  </style>
+        #642b73);
+    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  }
 
-  <body>
-    {% csrf_token %}
-    <!--Navigation Bar-->
-    <div class="ui top inverted secondary fixed menu">
-      <div class="item">
-        <h3>Empty My Fridge</h3>
-      </div>
+  .center {
+    margin: auto;
+    width: 50%;
+  }
+</style>
 
-      <a href="{% url 'home' %}" class="item">
-        Home
-      </a>
-      <a href="{% url 'recipe_page'%}" class="item">
-        Recipes
-      </a>
+<body>
+  {% csrf_token %}
+  <!--Navigation Bar-->
+  <div class="ui top inverted secondary fixed menu">
+    <div class="item">
+      <h3>Empty My Fridge</h3>
+    </div>
 
-      <div class="ui link simple dropdown item">
-        <span class="text">Browse</span>
-        <i class="dropdown icon"></i>
-        <div class="menu inverted" style="margin-top: -1px;">
-          <a class="item" href="{% url 'category' %}?category=breakfast">Breakfast</a>
-          <a class="item" href="{% url 'category' %}?category=lunch">Lunch</a>
-          <a class="item" href="{% url 'category' %}?category=dinner">Dinner</a>
-          <a class="item" href="{% url 'category' %}?category=dessert">Dessert</a>
-        </div>
-      </div>
+    <a href="{% url 'home' %}" class="item">
+      Home
+    </a>
+    <a href="{% url 'recipe_page'%}" class="item">
+      Recipes
+    </a>
 
-      <!--search and filter-->
-      <div class="item">
-        <form
-          action="/empty_my_fridge/search_and_filter/"
-          method="get"
-          class="ui form"
-        >
-          <div class="ui icon input">
-            <input
-              type="text"
-              name="recipe_to_filter"
-              placeholder="Search for recipes..."
-            />
-            <i class="search icon"></i>
-          </div>
-          <button class="ui button white">Go</button>
-        </form>
-      </div>
-      <!--End of search and filter ui-->
-      <div class="right menu">
-        <a
-          id="fridge_btn"
-          style="display: flex;"
-          href="{% url 'fridge'%}"
-          class="item"
-        >
-          My Fridge
-        </a>
-        <a href="{% url 'profile'%}" class="item">
-          {% if data.user %}
-          <img
-            id="image_profile"
-            class="ui avatar image mini"
-            style="height: 35px; width: 35px;"
-            src="{{data.user.image}}"
-          />
-          {% else %}
-          <img
-            id="image_profile"
-            class="ui avatar image mini"
-            style="height: 35px; width: 35px;"
-            src="https://react.semantic-ui.com/images/wireframe/square-image.png"
-          />
-          {% endif %}
-          <p id="hi_name">{{data.user.name}}</p>
-        </a>
-        <a
-          id="login_btn"
-          style="display: flex;"
-          href="{% url 'login'%}?activity={{data.activity}}&category={{data.category}}"
-          class="item"
-        >
-          Login
-        </a>
-        <a
-          id="logout_btn"
-          style="display: none;"
-          href="{% url 'logout'%}"
-          class="item"
-        >
-          Logout
-        </a>
+    <div class="ui link simple dropdown item">
+      <span class="text">Browse</span>
+      <i class="dropdown icon"></i>
+      <div class="menu inverted" style="margin-top: -1px;">
+        <a class="item" href="{% url 'category' %}?category=breakfast">Breakfast</a>
+        <a class="item" href="{% url 'category' %}?category=lunch">Lunch</a>
+        <a class="item" href="{% url 'category' %}?category=dinner">Dinner</a>
+        <a class="item" href="{% url 'category' %}?category=dessert">Dessert</a>
       </div>
     </div>
-    <!--End of Navigation Bar-->
 
-    <!--Filtering-->
-    <button 
-    class="ui labeled icon button sticky" 
-    id="filter" onclick="filter_menu()" 
-    style="margin-top: -15px; margin-left: 1px; color: #642b73; position: fixed;">
-      <i class="filter icon"></i>
-      Filter Recipes
-    </button>
-
-    <div class="ui sidebar inverted vertical menu" id="menu" style="width: 166px; height: 300px;">
-      <button class="mini ui icon basic pink button" onclick="close_menu()" style="margin-left: 133px;">
-        <i class="window close outline icon"></i>
-      </button>
-      <form method="post">
-        <div style="margin-top: 2px; text-align: center; color: white;">
-          <h3>Filter Recipes By:</h3>
+    <!--search and filter-->
+    <div class="item">
+      <form action="/empty_my_fridge/search_and_filter/" method="get" class="ui form">
+        <div class="ui icon input">
+          <input type="text" name="recipe_to_filter" placeholder="Search for recipes..." />
+          <i class="search icon"></i>
         </div>
-        <ul>
-          <div style="margin-top: 10px; margin-top: 5px; margin-left: 15px; color: white;">
-            <h4>Cuisine</h4>
-          </div>
-          <div class="ui checked checkbox" style="margin-top: 10px;">
-            <input type="checkbox" name="filter_data" value="asian" />
-            <label>Asian</label
-            ><br />
-          </div>
-          <div class="ui checked checkbox" style="margin-top: -10px;">
-            <input type="checkbox" name="filter_data" value="french" />
-            <label>French</label
-            ><br />
-          </div>
-          <div class="ui checked checkbox" style="margin-top: -10px;">
-            <input type="checkbox" name="filter_data" value="italian" />
-            <label>Italian</label
-            ><br />
-          </div>
-          <div class="ui checked checkbox" style="margin-top: -10px;">
-            <input type="checkbox" name="filter_data" value="mexican" />
-            <label>Mexican</label
-            ><br />
-          </div>
-          <div style="margin-top: 5px; margin-top: 5px; margin-left: 21px; color: white;">
-            <h4>Flavor</h4>
-          </div>
-          <div class="ui checkbox" style="margin-top: 10px;">
-            <input type="checkbox" name="filter_data" value="savory" />
-            <label>Savory</label
-            ><br />
-          </div>
-          <div class="ui checked checkbox" style="margin-top: -10px; margin-right: 2px;">
-            <input type="checkbox" name="filter_data" value="spicy" />
-            <label>Spicy</label
-            ><br />
-          </div>
-          <div class="ui checked checkbox" style="margin-top: -10px;">
-            <input type="checkbox" name="filter_data" value="sweet" />
-            <label>Sweet</label
-            ><br />
-          </div>
-
-          <div style="color: white; margin-top: 5px; margin-left: 25px;">
-            <h4>Diet</h4>
-          </div>
-          <div class="ui checked checkbox" style="margin-top: 10px;">
-            <input type="checkbox" name="filter_data" value="dairyfree" />
-            <label>Dairy Free</label
-            ><br />
-          </div>
-          <div class="ui checked checkbox" style="margin-top: -10px;">
-            <input type="checkbox" name="filter_data" value="glutenfree" />
-            <label>Gluten Free</label
-            ><br />
-          </div>
-          <div class="ui checked checkbox" style="margin-top: -10px;">
-            <input type="checkbox" name="filter_data" value="vegan" />
-            <label>Vegan</label
-            ><br />
-          </div>
-          <div class="ui checked checkbox" style="margin-top: -10px;">
-            <input type="checkbox" name="filter_data" value="vegetarian" />
-            <label>Vegetarian</label
-            ><br />
-          </div>
-        </ul>
-        <div style="color: white; margin-top: -10px; text-align: center;">
-          <h5>Only Show</h5>
-        </div>
-        <div style="color: white; margin-top: 2px; text-align: center;">
-          <h5>Exact Matches</h5>
-        </div>
-        <div class="ui toggle checkbox" style="margin-top: 10px; margin-left: 58px;">
-          <input type="checkbox" name="filter_style" value="True">
-          <label></label>
-        </div>
-          <button 
-          class="ui vertical animated button"
-          type="submit"
-          id="apply"
-          style="margin-left: 14px; margin-top: 20px; margin-bottom: 10px; width: 136px; height: 35px;"
-          tabindex="0"
-          bis_skin_checked="1">
-            <div class="visible content" bis_skin_checked="1">Apply</div>
-            <div class="hidden content" bis_skin_checked="1">
-              <i class="arrow right icon"></i>
-            </div>
-          </button> 
-        </form>
-        {% if data.active_filters %}
-          <div style="margin-top: 20px; margin-top: 15px; margin-bottom: 20px; text-align: center; color: white;">
-            <h3>Applied Filters:</h3>
-          </div>
-          <form method="POST">
-          {% for filter in data.active_filters %}
-            <div style="margin-top: 2px;">
-              <div class="ui checked checkbox" style="margin-top: -10px; margin-left: 45px">
-                <input type="checkbox" name="remove_filter" value="{{filter}}" />
-                <label>{{filter}}</label
-                ><br />
-              </div>
-            </div>
-          {% endfor %}
-          <button 
-          class="ui button" 
-          type="submit" name="remove" 
-          style="margin-left: 14px; margin-top: 2px; width: 136px; height: 35px;">
-            Remove
-          </button>
-        
-        <button 
-        class="ui vertical animated button"
-        type="submit"
-        name="clear"
-        value="True"
-        style="margin-left: 14px; margin-top: 5px; margin-bottom: 10px; width: 136px; height: 35px;"
-        tabindex="0"
-        bis_skin_checked="1">
-          <div class="visible content" bis_skin_checked="1">Clear All</div>
-          <div class="hidden content" bis_skin_checked="1">
-            <i class="trash alternate outline icon"></i>
-          </div>
-        </button>
+        <button class="ui button white">Go</button>
       </form>
-    {% endif %}
     </div>
-      <script>
-        var m = document.getElementById("menu");
-        var filter_btn = document.getElementById("filter")
-        function filter_menu(){
-          m.setAttribute("class", "ui visible sidebar inverted vertical menu")
-          filter_btn.setAttribute("class", "ui labeled icon button")
-        }
-        function close_menu(){
-          m.setAttribute("class", "ui sidebar inverted vertical menu")
-          filter_btn.setAttribute("class", "ui labeled icon button sticky")
-        }
-      </script>
-    <!--End of Filtering-->
+    <!--End of search and filter ui-->
+    <div class="right menu">
+      <a id="fridge_btn" style="display: flex;" href="{% url 'fridge'%}" class="item">
+        My Fridge
+      </a>
+      <a href="{% url 'profile'%}" class="item">
+        {% if data.user %}
+        <img id="image_profile" class="ui avatar image mini" style="height: 35px; width: 35px;"
+          src="{{data.user.image}}" />
+        {% else %}
+        <img id="image_profile" class="ui avatar image mini" style="height: 35px; width: 35px;"
+          src="https://react.semantic-ui.com/images/wireframe/square-image.png" />
+        {% endif %}
+        <p id="hi_name">{{data.user.name}}</p>
+      </a>
+      <a id="login_btn" style="display: flex;"
+        href="{% url 'login'%}?activity={{data.activity}}&category={{data.category}}" class="item">
+        Login
+      </a>
+      <a id="logout_btn" style="display: none;" href="{% url 'logout'%}" class="item">
+        Logout
+      </a>
+    </div>
+  </div>
+  <!--End of Navigation Bar-->
 
-    {% if not data.recipe_lst %}
-      <div style="margin-top: 75px; margin-left: 190px;">
-        <h2><i>No Results Found! (0 Items)</i></h2>
+  <!--Filtering-->
+  <button class="ui labeled icon button sticky" id="filter" onclick="filter_menu()"
+    style="margin-top: -15px; margin-left: 1px; color: #642b73; position: fixed;">
+    <i class="filter icon"></i>
+    Filter Recipes
+  </button>
+
+  <div class="ui sidebar inverted vertical menu" id="menu" style="width: 166px; height: 300px;">
+    <button class="mini ui icon basic pink button" onclick="close_menu()" style="margin-left: 133px;">
+      <i class="window close outline icon"></i>
+    </button>
+    <form method="post">
+      <div style="margin-top: 2px; text-align: center; color: white;">
+        <h3>Filter Recipes By:</h3>
       </div>
+      <ul>
+        <div style="margin-top: 10px; margin-top: 5px; margin-left: 15px; color: white;">
+          <h4>Cuisine</h4>
+        </div>
+        <div class="ui checked checkbox" style="margin-top: 10px;">
+          <input type="checkbox" name="filter_data" value="asian" />
+          <label>Asian</label><br />
+        </div>
+        <div class="ui checked checkbox" style="margin-top: -10px;">
+          <input type="checkbox" name="filter_data" value="french" />
+          <label>French</label><br />
+        </div>
+        <div class="ui checked checkbox" style="margin-top: -10px;">
+          <input type="checkbox" name="filter_data" value="italian" />
+          <label>Italian</label><br />
+        </div>
+        <div class="ui checked checkbox" style="margin-top: -10px;">
+          <input type="checkbox" name="filter_data" value="mexican" />
+          <label>Mexican</label><br />
+        </div>
+        <div style="margin-top: 5px; margin-top: 5px; margin-left: 21px; color: white;">
+          <h4>Flavor</h4>
+        </div>
+        <div class="ui checkbox" style="margin-top: 10px;">
+          <input type="checkbox" name="filter_data" value="savory" />
+          <label>Savory</label><br />
+        </div>
+        <div class="ui checked checkbox" style="margin-top: -10px; margin-right: 2px;">
+          <input type="checkbox" name="filter_data" value="spicy" />
+          <label>Spicy</label><br />
+        </div>
+        <div class="ui checked checkbox" style="margin-top: -10px;">
+          <input type="checkbox" name="filter_data" value="sweet" />
+          <label>Sweet</label><br />
+        </div>
+
+        <div style="color: white; margin-top: 5px; margin-left: 25px;">
+          <h4>Diet</h4>
+        </div>
+        <div class="ui checked checkbox" style="margin-top: 10px;">
+          <input type="checkbox" name="filter_data" value="dairyfree" />
+          <label>Dairy Free</label><br />
+        </div>
+        <div class="ui checked checkbox" style="margin-top: -10px;">
+          <input type="checkbox" name="filter_data" value="glutenfree" />
+          <label>Gluten Free</label><br />
+        </div>
+        <div class="ui checked checkbox" style="margin-top: -10px;">
+          <input type="checkbox" name="filter_data" value="vegan" />
+          <label>Vegan</label><br />
+        </div>
+        <div class="ui checked checkbox" style="margin-top: -10px;">
+          <input type="checkbox" name="filter_data" value="vegetarian" />
+          <label>Vegetarian</label><br />
+        </div>
+      </ul>
+      <div style="color: white; margin-top: -10px; text-align: center;">
+        <h5>Only Show</h5>
+      </div>
+      <div style="color: white; margin-top: 2px; text-align: center;">
+        <h5>Exact Matches</h5>
+      </div>
+      <div class="ui toggle checkbox" style="margin-top: 10px; margin-left: 58px;">
+        <input type="checkbox" name="filter_style" value="True">
+        <label></label>
+      </div>
+      <button class="ui vertical animated button" type="submit" id="apply"
+        style="margin-left: 14px; margin-top: 20px; margin-bottom: 10px; width: 136px; height: 35px;" tabindex="0"
+        bis_skin_checked="1">
+        <div class="visible content" bis_skin_checked="1">Apply</div>
+        <div class="hidden content" bis_skin_checked="1">
+          <i class="arrow right icon"></i>
+        </div>
+      </button>
+    </form>
+    {% if data.active_filters %}
+    <div style="margin-top: 20px; margin-top: 15px; margin-bottom: 20px; text-align: center; color: white;">
+      <h3>Applied Filters:</h3>
+    </div>
+    <form method="POST">
+      {% for filter in data.active_filters %}
+      <div style="margin-top: 2px;">
+        <div class="ui checked checkbox" style="margin-top: -10px; margin-left: 45px">
+          <input type="checkbox" name="remove_filter" value="{{filter}}" />
+          <label>{{filter}}</label><br />
+        </div>
+      </div>
+      {% endfor %}
+      <button class="ui button" type="submit" name="remove"
+        style="margin-left: 14px; margin-top: 2px; width: 136px; height: 35px;">
+        Remove
+      </button>
+
+      <button class="ui vertical animated button" type="submit" name="clear" value="True"
+        style="margin-left: 14px; margin-top: 5px; margin-bottom: 10px; width: 136px; height: 35px;" tabindex="0"
+        bis_skin_checked="1">
+        <div class="visible content" bis_skin_checked="1">Clear All</div>
+        <div class="hidden content" bis_skin_checked="1">
+          <i class="trash alternate outline icon"></i>
+        </div>
+      </button>
+    </form>
+    {% endif %}
+  </div>
+  <script>
+    var m = document.getElementById("menu");
+    var filter_btn = document.getElementById("filter")
+    function filter_menu() {
+      m.setAttribute("class", "ui visible sidebar inverted vertical menu")
+      filter_btn.setAttribute("class", "ui labeled icon button")
+    }
+    function close_menu() {
+      m.setAttribute("class", "ui sidebar inverted vertical menu")
+      filter_btn.setAttribute("class", "ui labeled icon button sticky")
+    }
+  </script>
+  <!--End of Filtering-->
+
+  <!--Container-->
+  <div class="ui container center aligned" style="margin-top: 75px">
+    {% if not data.recipe_lst %}
+    <h2><i>No Results Found! (0 Items)</i></h2>
     {% endif %}
 
-    {% if data.isSearch %} 
+    {% if data.isSearch %}
     {% if data.found_results %}
-    <div style="margin-top: 75px; padding-left: 190px;">
-      <h2><i>Found Results ({{data.items}} Item(s))</i></h2>
-    </div>
+    <h2><i>Found Results ({{data.items}} Item(s))</i></h2>
     {% else %}
-    <div style="margin-top: 75px; padding-left: 190px;">
-      <h2><i>No Results Found! (0 Items)</i></h2>
-    </div>
+    <h2><i>No Results Found! (0 Items)</i></h2>
     {% endif %}
     {% endif %}
-    <div style= "margin-top: 75px; padding-left: 90px;">
-      <!-- Toggle fridge rceipes button-->
-      <form method = "post" style="padding-left: 95px;">
-        {%if data.fridge.0%}
-          <div class="ui toggle checkbox">
-          <input type="checkbox" name="fridge" type="submit" checked="checked" 
-          value="True"  onchange="form.submit()">
-          <label>Displaying recipes you can make with ingredients in your fridge</label>
-          {%if data.fridge.1%}
-            <div class="ui toggle checkbox">
-            <input type="checkbox" name="part" type="submit" checked="checked" 
-            value="False" onchange="form.submit()">
-            <label>Displaying recipes that are missing 1-3 ingredients in your fridge</label>
-            </div>
-          {%else%}
-          <div class="ui toggle checkbox">
-            <input type="checkbox" type="submit" name="part"
-            value="True"  onchange="form.submit()">
-            <label>Activate to display partial recipes</label>
-          </div>
-          {%endif%}
-          </div>
+    <!-- Toggle fridge rceipes button-->
+    <form method="post">
+      {%if data.fridge.0%}
+      <div class="ui toggle checkbox">
+        <input type="checkbox" name="fridge" type="submit" checked="checked" value="True" onchange="form.submit()">
+        <label>Displaying recipes you can make with ingredients in your fridge</label>
+        {%if data.fridge.1%}
+        <div class="ui toggle checkbox" style="margin-top: 2px;">
+          <input type="checkbox" name="part" type="submit" checked="checked" value="False" onchange="form.submit()">
+          <label>Displaying recipes that are missing 1-3 ingredients in your fridge</label>
+        </div>
         {%else%}
-        <div class="ui toggle checkbox">
-          <input type="checkbox" name="fridge" type="submit" 
-          value="True" name="part" onchange="form.submit()">
-          <label>Activate to display fridge recipes</label>
+        <div class="ui toggle checkbox" style="margin-top: 2px;">
+          <input type="checkbox" type="submit" name="part" value="True" onchange="form.submit()">
+          <label>Activate to display partial matches</label>
         </div>
         {%endif%}
+      </div>
+      {%else%}
+      <div class="ui toggle checkbox" style="margin-top: 4px;">
+        <input type="checkbox" name="fridge" type="submit" value="True" name="part" onchange="form.submit()">
+        <label>Activate to display fridge recipes</label>
+      </div>
+      {%endif%}
       <!-- Sorting dropdown-->
-        <div class="inline field" >
-          <select name="sorting">
+      <div class="inline field" style="text-align: right;">
+        <select name="sorting">
           {%if data.sorting_type == "name_A"%}
-            <option value="name_A" >Name ascending</option>
-            <option value="name_D" >Name descending</option>
-            <option value="fav_A" >Least Popular</option>
-            <option value="fav_D">Most Popular</option>
+          <option value="name_A">Name ascending</option>
+          <option value="name_D">Name descending</option>
+          <option value="fav_A">Least Popular</option>
+          <option value="fav_D">Most Popular</option>
           {%elif data.sorting_type == "name_D"%}
-            <option value="name_D" >Name descending</option>
-            <option value="name_A" >Name ascending</option>
-            <option value="fav_A" >Least Popular</option>
-            <option value="fav_D">Most Popular</option>
+          <option value="name_D">Name descending</option>
+          <option value="name_A">Name ascending</option>
+          <option value="fav_A">Least Popular</option>
+          <option value="fav_D">Most Popular</option>
           {%elif data.sorting_type == "fav_A"%}
-            <option value="fav_A" >Least Popular</option>
-            <option value="name_D" >Name descending</option>
-            <option value="name_A" >Name ascending</option>
-            <option value="fav_D">Most Popular</option>
+          <option value="fav_A">Least Popular</option>
+          <option value="name_D">Name descending</option>
+          <option value="name_A">Name ascending</option>
+          <option value="fav_D">Most Popular</option>
           {%elif data.sorting_type == "fav_D"%}
-            <option value="fav_D">Most Popular</option>
-            <option value="name_D" >Name descending</option>
-            <option value="name_A" >Name ascending</option>
-            <option value="fav_A" >Least Popular</option>
+          <option value="fav_D">Most Popular</option>
+          <option value="name_D">Name descending</option>
+          <option value="name_A">Name ascending</option>
+          <option value="fav_A">Least Popular</option>
           {%endif%}
-          </select>
-          <button type="submit">Sort</button>
-        </div>
-      </form>
-    </div>
+        </select>
+        <button type="submit">Sort</button>
+      </div>
+    </form>
 
-    <!--Container-->
-    <div class="ui container center aligned">
-      <!--Recipe Cards-->
-      {% if data.recipe_lst %}
-      <div class="ui grid" style="margin-top: 75px; margin-bottom: 75px;">
-        <!--column-->
-        {% for recipe in data.recipe_lst %}
-        <div class="four wide column">
-          <div class="tooltip">
-            {%if recipe.missing_ingredients and data.fridge.1%}              
-              <span class="tooltiptext">You are currently missing:
-                <ul>
-                    {%for mis in recipe.missing_ingredients%}
-                      <li>{{mis}}</li>
-                    {% endfor %}
-                </ul>
+    <!--Recipe Cards-->
+    {% if data.recipe_lst %}
+    <div class="ui grid" style="margin-top: 6px; margin-bottom: 75px;">
+      <!--column-->
+      {% for recipe in data.recipe_lst %}
+      <div class="four wide column">
+        <div class="tooltip">
+          {%if recipe.missing_ingredients and data.fridge.1%}
+          <span class="tooltiptext">You are currently missing:
+            <ul>
+              {%for mis in recipe.missing_ingredients%}
+              <li>{{mis}}</li>
+              {% endfor %}
+            </ul>
+          </span>
+          {%endif%}
+          <style>
+            .tooltip .tooltiptext {
+              visibility: hidden;
+              width: 45%;
+              background-color: white;
+              color: black;
+              text-align: center;
+              border-radius: 6px;
+              padding: 5px 0;
+              border: 2px solid red;
+
+              /* Position the tooltip */
+              position: absolute;
+              z-index: 20;
+              right: 5px;
+            }
+
+            .tooltip:hover .tooltiptext {
+              visibility: visible;
+            }
+          </style>
+          <div class="ui link card purple raised" style="margin: 10px; width: 300px; height: 340px;">
+            <a class="ui medium image" href="{{recipe.recipe_link}}">
+              <img style="height: 215px;" src="{{recipe.recipe_image}}" />
+            </a>
+            <div class="content" style="text-align: center;">
+              <a class="recipe_name" href="{{recipe.recipe_link}}">{{recipe.recipe_name}}</a>
+            </div>
+            <div class="extra content" bis_skin_checked="1">
+              <span class="left floated">
+                <div class="ui labeled button">
+                  <div class="ui blue button">
+                    <i class="heart icon"></i> Favorites
+                  </div>
+                  <a class="ui basic blue left pointing label">
+                    {{recipe.likes}}
+                  </a>
+                </div>
               </span>
-            {%endif%}
-            <style>
+              <form action="/empty_my_fridge/fav_recipe_onclick/" method="post" class="ui form">
+                <span class="right floated star">
+                  <input style="display: none;" name="recipe_id" value="{{recipe.recipe_id}}" />
+                  <input style="display: none;" name="navigate" value="/empty_my_fridge/{{data.activity}}/" />
+                  <input id="scrollY" style="display: none;" value="" name="scroll_y" />
+                  <input style="display: none;" value="{{isSearch}}" name="isSearch" />
+                  <input style="display: none;" value="{{data.activity}}" name="activity" />
+                  {% if data.user and recipe.user_saved %}
+                  <button id="like" class="ui icon button" data-tooltip="Remove this from your Favorite Recipes">
+                    <i class="star icon yellow"></i>
+                  </button>
 
-              .tooltip .tooltiptext {
-                visibility: hidden;
-                width: 45%;
-                background-color: white;
-                color: black;
-                text-align: center;
-                border-radius: 6px;
-                padding: 5px 0;
-                border: 2px solid red;
-
-                /* Position the tooltip */
-                position: absolute;
-                z-index: 20;
-                right: 5px;
-              }
-              
-              .tooltip:hover .tooltiptext {
-                visibility: visible;
-              }
-            </style>
-              <div
-                class="ui link card purple raised"
-                style="margin: 10px; width: 300px; height: 340px;"
-              >
-                <a class="ui medium image" href="{{recipe.recipe_link}}">
-                  <img style="height: 215px;" src="{{recipe.recipe_image}}" />
-                </a>
-                <div class="content" style="text-align: center;">
-                  <a class="recipe_name" href="{{recipe.recipe_link}}"
-                    >{{recipe.recipe_name}}</a
-                  >
-                </div>
-                <div class="extra content" bis_skin_checked="1">
-                  <span class="left floated">
-                    <div class="ui labeled button">
-                      <div class="ui blue button">
-                        <i class="heart icon"></i> Favorites
-                      </div>
-                      <a class="ui basic blue left pointing label">
-                        {{recipe.likes}}
-                      </a>
-                    </div>
-                  </span>
-                  <form
-                    action="/empty_my_fridge/fav_recipe_onclick/"
-                    method="post"
-                    class="ui form"
-                  >
-                    <span class="right floated star">
-                      <input
-                        style="display: none;"
-                        name="recipe_id"
-                        value="{{recipe.recipe_id}}"
-                      />
-                      <input
-                        style="display: none;"
-                        name="navigate"
-                        value="/empty_my_fridge/{{data.activity}}/"
-                      />
-                      <input
-                        id="scrollY"
-                        style="display: none;"
-                        value=""
-                        name="scroll_y"
-                      />
-                      <input
-                        style="display: none;"
-                        value="{{isSearch}}"
-                        name="isSearch"
-                      />
-                      <input
-                        style="display: none;"
-                        value="{{data.activity}}"
-                        name="activity"
-                      />
-                      {% if data.user and recipe.user_saved %}
-                      <button
-                        id="like"
-                        class="ui icon button"
-                        data-tooltip="Remove this from your Favorite Recipes"
-                      >
-                        <i class="star icon yellow"></i>
-                      </button>
-
-                      {% else %}
-                      <button
-                        id="like"
-                        class="ui icon button"
-                        data-tooltip="Add this to your Favorite Recipes"
-                      >
-                        <i class="star icon"></i>
-                      </button>
-                      {% endif %}
-                    </span>
-                  </form>
-                </div>
-              </div>
+                  {% else %}
+                  <button id="like" class="ui icon button" data-tooltip="Add this to your Favorite Recipes">
+                    <i class="star icon"></i>
+                  </button>
+                  {% endif %}
+                </span>
+              </form>
+            </div>
           </div>
         </div>
-        {% endfor %}
       </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    <!--End of Recipe Cards-->
+  </div>
+  <!--Pagination-->
+  {% if data.recipe_lst %}
+  <div class="pagination">
+    <span class="step-links">
+      {% if data.recipe_lst.has_previous %}
+      <a href="?category={{ data.category }}&page=1" title="First"
+        style="border: none; background-color: white; color: #031f3b;">
+        <<</a> <a href="?category={{ data.category }}&page={{ data.recipe_lst.previous_page_number }}"
+          style="border: none; background-color: white; color: #031f3b;">Previous
+      </a>
       {% endif %}
-      <!--End of Recipe Cards-->
-    </div>
-    <!--Pagination-->
-    {% if data.recipe_lst %}
-    <div class="pagination">
-      <span class="step-links">
-        {% if data.recipe_lst.has_previous %}
-        <a
-          href="?category={{ data.category }}&page=1"
-          title="First"
-          style="border: none; background-color: white; color: #031f3b;"
-          ><<</a
-        >
-        <a
-          href="?category={{ data.category }}&page={{ data.recipe_lst.previous_page_number }}"
-          style="border: none; background-color: white; color: #031f3b;"
-          >Previous</a
-        >
-        {% endif %}
 
-        <span class="current">
-          {% for num in data.recipe_lst.paginator.page_range %}
-          {% if data.recipe_lst.number == num %}
-          <a
-            href="?category={{ data.category }}&page={{ num }}"
-            style="background-color: #031f3b; color: white;"
-            >{{ num }}</a
-          >
-          {% else %}
-          <a href="?category={{ data.category }}&page={{ num }}">{{ num }}</a>
-          {% endif %} {% endfor %}
-        </span>
-        {% if data.recipe_lst.has_next %}
-        <a
-          href="?category={{ data.category }}&page={{ data.recipe_lst.next_page_number }}"
-          style="border: none; background-color: white; color: #031f3b;"
-          >Next</a
-        >
-        <a
-          href="?category={{ data.category }}&page={{ data.recipe_lst.paginator.num_pages }}"
-          title="Last"
-          style="border: none; background-color: white; color: #031f3b;"
-          >>></a
-        >
-        {% endif %}
+      <span class="current">
+        {% for num in data.recipe_lst.paginator.page_range %}
+        {% if data.recipe_lst.number == num %}
+        <a href="?category={{ data.category }}&page={{ num }}"
+          style="background-color: #031f3b; color: white;">{{ num }}</a>
+        {% else %}
+        <a href="?category={{ data.category }}&page={{ num }}">{{ num }}</a>
+        {% endif %} {% endfor %}
       </span>
-    </div>
-    {% endif %}
-    
-    <!--End of Pagination-->
-    {% if data.keep_scroll_pos %}
-    <script>
-      var scrollTop = {{data.scrollTop}};
-      window.scrollTo(0, scrollTop);
-    </script>
-    {% endif %} {% if data.recipe_lst %}
-    <script>
-      window.addEventListener("scroll", function (event) {
-        var scrollY = this.scrollY;
-        if (scrollY) {
-          var elements = document.querySelectorAll("#scrollY");
-          for (var i = 0; i < elements.length; i++) elements[i].value = scrollY;
-        }
-      });
-    </script>
-    {% endif %} {% if data.user %}
-    <script>
-      document.getElementById("logout_btn").style.display = "flex";
-      document.getElementById("login_btn").style.display = "none";
-    </script>
-    {% endif %}
-  </body>
+      {% if data.recipe_lst.has_next %}
+      <a href="?category={{ data.category }}&page={{ data.recipe_lst.next_page_number }}"
+        style="border: none; background-color: white; color: #031f3b;">Next</a>
+      <a href="?category={{ data.category }}&page={{ data.recipe_lst.paginator.num_pages }}" title="Last"
+        style="border: none; background-color: white; color: #031f3b;">>></a>
+      {% endif %}
+    </span>
+  </div>
+  {% endif %}
+
+  <!--End of Pagination-->
+  {% if data.keep_scroll_pos %}
+  <script>
+    var scrollTop = {{ data.scrollTop }};
+    window.scrollTo(0, scrollTop);
+  </script>
+  {% endif %} {% if data.recipe_lst %}
+  <script>
+    window.addEventListener("scroll", function (event) {
+      var scrollY = this.scrollY;
+      if (scrollY) {
+        var elements = document.querySelectorAll("#scrollY");
+        for (var i = 0; i < elements.length; i++) elements[i].value = scrollY;
+      }
+    });
+  </script>
+  {% endif %} {% if data.user %}
+  <script>
+    document.getElementById("logout_btn").style.display = "flex";
+    document.getElementById("login_btn").style.display = "none";
+  </script>
+  {% endif %}
+</body>
+
 </html>

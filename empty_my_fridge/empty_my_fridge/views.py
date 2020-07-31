@@ -78,18 +78,25 @@ def Fridge_matches(all_recipes):
     return({"exact":possible_recipes,"partial":partial_recipes})
 
 def sort_recipes(recipe_list, type):
-    result = None
-    if type == "name_A":
-        result = sorted(
-            recipe_list, key=lambda x: x["recipe_name"], reverse=False)
-    elif type == "name_D":
-        result = sorted(
-            recipe_list, key=lambda x: x["recipe_name"], reverse=True)
-    elif type == "fav_A":
-        result = sorted(recipe_list, key=lambda x: x["likes"], reverse=False)
-    elif type == "fav_D":
-        result = sorted(recipe_list, key=lambda x: x["likes"], reverse=True)
-    return result
+    try:
+        result = None
+        if type == "name_A":
+            result = sorted(recipe_list, key=lambda x: x["recipe_name"], reverse=False)
+        elif type == "name_D":
+            result = sorted(recipe_list, key=lambda x: x["recipe_name"], reverse=True)
+        elif type == "fav_A":
+            result = sorted(recipe_list, key=lambda x: x["likes"], reverse=False)
+        elif type == "fav_D":
+            result = sorted(recipe_list, key=lambda x: x["likes"], reverse=True)
+        return result
+    except:
+        for recipe in recipe_list:
+            try:
+                name = recipe["recipe_name"]
+            except KeyError:
+                key = str(recipe.key())
+                db.child("recipe").child(key).remove()
+                return(sort_recipes(recipe_list, type))
 
 
 @csrf_exempt
@@ -132,7 +139,6 @@ def scrape_page(request):
 
 # get all filtered recipes
 
-
 def get_all_filtered_recipes():
     recipe_list = []
     uid = m_user._getUser_Id_()
@@ -140,15 +146,18 @@ def get_all_filtered_recipes():
     all_recipes = db.child("recipe").get()
     if all_recipes.each() != None:
         for recipe in all_recipes.each():
-            if recipe.val()["recipe_name"].lower().find(word.lower()) != -1:
+            try:
+                if recipe.val()["recipe_name"].lower().find(word.lower()) != -1:
+                    key = str(recipe.key())
+                    _recipe_ = recipes.get_recipe(dict(recipe.val()), key, uid)
+                    recipe_list.append(_recipe_)
+            except KeyError:
                 key = str(recipe.key())
-                _recipe_ = recipes.get_recipe(dict(recipe.val()), key, uid)
-                recipe_list.append(_recipe_)
+                db.child("recipe").child(key).remove()
+                continue
     return recipe_list
 
 # Recipe Page
-
-
 @csrf_exempt
 def recipe_page(request):
     if recipes.get_scraped():
@@ -1676,6 +1685,11 @@ def fridge_recipes(request):
             disp_partial = False
         recipes.set_fridge_recipes(None)
 
+    if(sorting_type:=request.POST.get('sorting')):
+            recipes.set_sorting_type(sorting_type)
+
+    possible_recipes = sort_recipes(possible_recipes, recipes.get_sorting_type())
+
     scrollTop = 0
     keep_scroll_pos = False
     found_results = False
@@ -1709,6 +1723,7 @@ def fridge_recipes(request):
         "items": len(curr_recipes),
         "isSearch": True,
         "fridge_recipes" : fridge_recipes,
+        "sorting_type": recipes.get_sorting_type(),
     }
 
     return render(request, 'fridge_recipes.html', {"data": data})
