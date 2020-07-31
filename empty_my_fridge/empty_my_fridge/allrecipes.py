@@ -29,19 +29,20 @@ descriptions = ['baked', 'beaten', 'blanched', 'boiled', 'boiling', 'boned', 'br
 		'toasted', 'torn', 'trimmed', 'wrapped', 'vained', 'warm', 'washed', 'weak', 'zested', 'wedged',
 		'skinned', 'gutted', 'browned', 'patted', 'raw', 'flaked', 'deveined', 'shelled', 'shucked', 'crumbs',
 		'halves', 'squares', 'zest', 'peel', 'uncooked', 'butterflied', 'unwrapped', 'unbaked', 'warmed', 'cracked','good','store', 
-		'bought', 'fajita-sized', 'finely', 'freshly','slow', 'quality', 'sodium', 'mixed', 'wild', 'Asian', 'Italian', 'Chinese', 'American', 
-		'garnished', 'seedless','coarsely', 'natural', 'organic', 'solid','solid', 'heaping','stoned', 'homemade']
+		'bought', 'fajita-sized', 'finely', 'freshly','slow', 'quality', 'sodium', 'mixed', 'wild', 'French', 'African' ,'Mexican','Asian', 'Italian', 'Chinese', 'American', 
+		'garnished', 'seedless','coarsely', 'natural', 'organic', 'solid','solid', 'heaping','stoned', 'homemade', 'canned', 'unsweetened', 'instant']
 
 # list of common ingredients that accidentally get filtered out due to similarities in description list
 description_exceptions = ['butter', 'oil', 'cream', 'bread','all', 'salt']
 
+nonplurals = ['eggs', 'sugars']
 # list of numbers as words
 numbers = ['one', 'two','three','four','five','six','seven','eight','nine','ten', 'elevin','twelve','dozen']
 
 brands = ['bertolli®', 'cook\'s', 'hothouse', 'NESTLÉ®', 'TOLL HOUSE®']
 
 # misc modifiers (Will sort later)
-modifier = ['plus', 'silvered', 'virgin', 'seasoning']
+modifier = ['plus', 'silvered', 'virgin', 'seasoning', 'taste', 'yolk', 'meat', 'frying']
 
 # list of adverbs used before or after description
 precedingAdverbs = ['well', 'very', 'super']
@@ -54,7 +55,7 @@ prepositions = ['as', 'such', 'for', 'with', 'without', 'if', 'about', 'e.g.', '
 descriptionsWithPredecessor = ['removed', 'discarded', 'reserved', 'included', 'inch', 'inches', 'old', 'temperature', 'up']
 
 # descriptions that can be removed from ingredient, i.e. candied pineapple chunks
-unnecessaryDescriptions = ['chunks', 'pieces', 'rings', 'spears']
+unnecessaryDescriptions = ['chunks', 'pieces', 'rings', 'spears', 'style', 'desserts']
 
 # list of prefixes and suffixes that should be hyphenated
 hypenatedPrefixes = ['non', 'reduced', 'semi', 'low']
@@ -62,6 +63,7 @@ hypenatedSuffixes = ['coated', 'free', 'flavored']
 
 vulgarFractions = ['¼','½','¾','⅐','⅑','⅒','⅓','⅔','⅕','⅖','⅗','⅘','⅙','⅚','⅛','⅜','⅝','⅞','⅟']
 
+nonplurals = ['eggs', 'sugars', 'onions']
 def parser(ingredient, food_array):
 	if type(ingredient) != str:
 	   return 	
@@ -81,6 +83,7 @@ def parser(ingredient, food_array):
 	ingredient = ingredient.replace('&', ' ')
 	ingredient = ingredient.replace('[', ' ')
 	ingredient = ingredient.replace(']', ' ')
+	ingredient = ingredient.replace('®', '')
 	ingredient = ingredient.replace('\u2009',' ')
 	# Breaks each word into a string array
 	split_item = ingredient.split(" ")
@@ -93,8 +96,14 @@ def parser(ingredient, food_array):
 		elif b_any(word in x for x in description_exceptions):
 			parsed_word = word + ' '
 			continue
+		elif word in nonplurals:
+			word = word[:-1]
+			parsed_word = parsed_word + word + ' '
+			continue	
 		elif ',' in word:
 			last_word = word.replace(',','')
+			if last_word in nonplurals:
+				last_word = last_word[:-1]
 			parsed_word = parsed_word + last_word
 			break
 		elif word == 'or':
@@ -149,7 +158,6 @@ def parser(ingredient, food_array):
 	
 	
 def allrecipes(db):
-	page_num = len(numbers) + 1
 	menu = "Stop scraping after...page numbers completed.\n1. 3 pages\n2. 5 pages\n3. All pages\n4. Custom\nOption: "
 	option = input(menu)
 	if option == "1":
@@ -163,6 +171,7 @@ def allrecipes(db):
 		page_num = int(page_num)
 
 	print('Getting all ingredients in database. Please wait....')
+	
 	_all_ingredients_ = db.child("all_ingredients").get().val()
 	print('Done!')
 	print('\n')	
@@ -270,7 +279,6 @@ def allrecipes(db):
 							category = category.strip()
 							category_list.append(category.lower())
 					except IndexError:
-						category_list.append("None")
 						pass
 				else:	
 					for category in recipe_cat:
@@ -292,7 +300,7 @@ def allrecipes(db):
 		res = '{0} recipes have been scraped.\nStopping...Please wait...'.format((num - 1) * 21)
 		if page_num == num - 1:
 			print(res)
-			break;
+			break
 			
 
 
@@ -321,7 +329,6 @@ def allrecipes(db):
 		#if ingredients not in _all_ingredients_:
 		_all_ingredients_ = list(dict.fromkeys(_all_ingredients_ + ingredients))
 		all_recipes = db.child('recipe').get().each()
-
 		if all_recipes != None:
 			for m_recipe in all_recipes:
 				_recipe_ = m_recipe.val()
