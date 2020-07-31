@@ -205,10 +205,10 @@
         <div class="four wide column">
           <div
             class="ui link card"
-            style="margin: 10px; width: 300px; height: 335px;"
+            style="margin: 10px; width: 300px; height: 340px;"
           >
-            <a  href="{{recipe.recipe_link}}"class="ui medium image">
-              <img style="height: 215px;" src="{{recipe.recipe_image}}" />
+            <a href="{{recipe.recipe_link}}"class="ui medium image">
+              <img style="height: 215px; object-fit: cover;" src="{{recipe.recipe_image}}" />
             </a>
             <div class="content" style="text-align: center;" >
               <a class="recipe_name" href="{{recipe.recipe_link}}"
@@ -281,10 +281,10 @@
         <div class="four wide column">
           <div
             class="ui link red card"
-            style="margin: 10px; width: 300px; height: 335px;"
+            style="margin: 10px; width: 300px; height: 340px;"
           >
           <a  href="{{recipe.recipe_link}}" class="ui medium image">
-            <img style="height: 215px;" src="{{recipe.recipe_image}}" />
+            <img style="height: 215px; object-fit: cover;" src="{{recipe.recipe_image}}" />
           </a>
             </a>
             <div class="content" style="text-align: center;">
@@ -320,6 +320,11 @@
                     style="display: none;"
                     value=""
                     name="scroll_y"
+                  />
+                  <input
+                    style="display: none;"
+                    value="{{data.fridge_recipes}}"
+                    name="fridge_recipes"
                   />
                   <input
                     style="display: none;"
@@ -360,8 +365,9 @@
       {% endif %}
       <!--End of Recipe Cards-->
     </div>
-
+    
     <!--Pagination-->
+    {% if data.recipes %}
     <div class="pagination">
       <span class="step-links">
         {% if data.recipes.has_previous %}
@@ -404,6 +410,9 @@
         {% endif %}
       </span>
     </div>
+    {% endif %}
+
+   
     <!--End of Pagination-->
 
     {% if data.keep_scroll_pos %}

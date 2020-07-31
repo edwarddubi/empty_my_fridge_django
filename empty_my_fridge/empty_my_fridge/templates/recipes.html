@@ -409,15 +409,28 @@
             class="ui link card purple raised"
             style="margin: 10px; width: 300px; height: 340px;"
           >
-            <a class="ui medium image" href="{{recipe.recipe_link}}">
-              <img style="height: 215px; object-fit: cover;" src="{{recipe.recipe_image}}" />
-            </a>
+          {% if recipe.recipe_link %}
+          <a class="ui medium image" href="{{recipe.recipe_link}}">
+            <img style="height: 215px; object-fit: cover;" src="{{recipe.recipe_image}}" />
+          </a>
+          {% else %}
+          <a class="ui medium image" href="{% url 'recipe_format'%}?id={{recipe.recipe_id}}">
+            <img style="height: 215px; object-fit: cover;" src="{{recipe.recipe_image}}" />
+          </a>
+          {% endif %}
+           
             <div class="content" style="text-align: center;">
+              {% if recipe.recipe_link %}
               <a
                 class="recipe_name"
                 href="{{recipe.recipe_link}}"
                 >{{recipe.recipe_name}}</a
               >
+              {% else %}
+              <a class="recipe_name"
+              href="{% url 'recipe_format'%}?id={{recipe.recipe_id}}">{{recipe.recipe_name}}</a>
+              {% endif %}
+              
             </div>
             <div class="extra content" bis_skin_checked="1">
               <span class="left floated">
@@ -455,6 +468,11 @@
                   />
                   <input
                     style="display: none;"
+                    value="{{data.fridge_recipes}}"
+                    name="fridge_recipes"
+                  />
+                  <input
+                    style="display: none;"
                     value="{{data.isSearch}}"
                     name="isSearch"
                   />
@@ -488,6 +506,7 @@
     </div>
 
     <!--Pagination-->
+    {% if data.recipes %}
     <div class="pagination">
       <span class="step-links">
         {% if data.recipes.has_previous %}
@@ -530,6 +549,8 @@
         {% endif %}
       </span>
     </div>
+    {% endif %}
+   
     <!--End of Pagination-->
 
     {% if data.keep_scroll_pos %}

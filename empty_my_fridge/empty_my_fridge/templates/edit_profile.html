@@ -119,9 +119,15 @@
         <a href="{% url 'profile'%}" class="item">
           About Me
         </a>
-        <a class="item">
+        <a href="{% url 'friends'%}" class="item">
           Friends
         </a>
+        <a
+        href="{% url 'friend_requests'%}"
+        class="item"
+      >
+        Friend Requests
+      </a>
         <a href="{% url 'favorite_recipes'%}" class="item">
           My Favorite Recipes
         </a>

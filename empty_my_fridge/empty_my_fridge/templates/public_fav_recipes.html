@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Profile Page</title>
+    <title>{{data.pUser.name}}'s Profile</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css"
@@ -71,14 +71,14 @@
       <a href="{% url 'recipe_page'%}" class="item">
         Recipes
       </a>
-      <div class="ui link simple dropdown item">
+      <div class="ui link dropdown simple item">
         <span class="text">Browse</span>
         <i class="dropdown icon"></i>
-        <div class="menu inverted" style="margin-top: -1px;">
-          <a class="item" href="{% url 'category' %}?category=breakfast">Breakfast</a>
-          <a class="item" href="{% url 'category' %}?category=lunch">Lunch</a>
-          <a class="item" href="{% url 'category' %}?category=dinner">Dinner</a>
-          <a class="item" href="{% url 'category' %}?category=dessert">Dessert</a>
+        <div class="menu inverted">
+          <a class="item" href="{% url 'category' %}?category=pastry">Pastries</a>
+        <a class="item" href="{% url 'category' %}?category=main dish">Meals</a>
+        <a class="item" href="{% url 'category' %}?category=appetizer">Appetizers</a>
+        <a class="item" href="{% url 'category' %}?category=dessert">Dessert</a>
         </div>
       </div>
 
@@ -109,7 +109,6 @@
           <img
             id="image_profile"
             class="ui avatar image mini"
-            style="height: 35px; width: 35px;"
             src="{{data.user.image}}"
           />
           <p id="hi_name">{{data.user.name}}</p>
@@ -128,10 +127,10 @@
         <img
          id="user_image" style="height: 180px; width: 180px;" 
           class="ui avatar image small"
-          src="{{data.user.image}}"
+          src="{{data.pUser.image}}"
         />
-        <div style="margin-left: 5px; margin-top: 75px;">
-          <h2 style="color: bisque;">{{data.user.name}}</h2>
+        <div style="margin-left: 5px; margin-top: 15%;">
+          <h2 style="color: bisque;">{{data.pUser.name}}</h2>
         </div>
       </div>
     </div>
@@ -140,36 +139,21 @@
 
     <div class="ui container" style="margin-top: 20px; margin-bottom: 250px;">
       <div class="ui pointing menu">
-        <a href="{% url 'profile'%}" class="item">
-          About Me
+        <a href="{% url 'public_profile'%}?id={{data.pUser.userID}}" class="item">
+          About {{data.pUser.name}}
         </a>
-        <a href="{% url 'friends'%}" class="item">
+        <a href="{% url 'public_friends'%}?id={{data.pUser.userID}}" class="item">
           Friends
         </a>
         <a
-        href="{% url 'friend_requests'%}"
-        class="item"
-      >
-        Friend Requests
-      </a>
-        <a
-          href="{% url 'favorite_recipes'%}"
+          href="{% url 'public_fav_recipes'%}?id={{data.pUser.userID}}"
           class="item active"
         >
-          My Favorite Recipes
+          Favorite Recipes
         </a>
-        <a href="{% url 'personal_recipes'%}" class="item">
+        <a href="{% url 'public_personal_recipes'%}?id={{data.pUser.userID}}" class="item">
           Personal Recipes
         </a>
-
-        <div class="right menu">
-          <a href="{% url 'edit_profile'%}" class="item">
-            Edit Profile
-          </a>
-          <a href="{% url 'account_settings'%}" class="item">
-            Account Settings
-          </a>
-        </div>
       </div>
 
       <!--favorite list card-->
@@ -192,10 +176,10 @@
             <div class="four wide column">
               <div
                 class="ui link card"
-                style="width: 300px; height: 340px;"
+                style="width: 300px; height: 325px;"
               >
-                <a class="ui medium image" href="{{recipe.recipe_link}}">
-                  <img style="height: 215px; object-fit: cover;" src="{{recipe.recipe_image}}" />
+                <a class="ui medium image">
+                  <img src="{{recipe.recipe_image}}" />
                 </a>
                 <div class="content" style="text-align: center;">
                   <a class="recipe_name" href="{{recipe.recipe_link}}"
@@ -203,7 +187,7 @@
                   >
                 </div>
                 <div class="extra content" bis_skin_checked="1">
-                  <form
+                  <!-- <form
                     action="/empty_my_fridge/fav_recipe_onclick/"
                     method="post"
                     class="ui form"
@@ -236,7 +220,7 @@
                       </button>
                       {% endif %}
                     </span>
-                  </form>
+                  </form> -->
                 </div>
               </div>
             </div>
@@ -244,13 +228,12 @@
           </div>
           {% else %}
           <h2 style="padding: 100px;">
-            Your favorite recipe list is empty. Try adding a few.
+            Your Favorite Recipe List is Empty. Try adding a few.
           </h2>
           {% endif %}
         </div>
       </div>
       <!--end of favorite list card-->
     </div>
-    
   </body>
 </html>

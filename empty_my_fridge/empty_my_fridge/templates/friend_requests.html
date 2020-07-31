@@ -71,7 +71,7 @@
       <a href="{% url 'recipe_page'%}" class="item">
         Recipes
       </a>
-      <div class="ui link simple dropdown item">
+      <div class="ui link dropdown simple item">
         <span class="text">Browse</span>
         <i class="dropdown icon"></i>
         <div class="menu inverted" style="margin-top: -1px;">
@@ -143,18 +143,19 @@
         <a href="{% url 'profile'%}" class="item">
           About Me
         </a>
-        <a href="{% url 'friends'%}" class="item">
+        <a 
+          href="{% url 'friends'%}"
+          class="item"
+          >
           Friends
         </a>
         <a
-        href="{% url 'friend_requests'%}"
-        class="item"
-      >
-        Friend Requests
-      </a>
+          class="item active">
+          Friend Requests
+        </a>
         <a
           href="{% url 'favorite_recipes'%}"
-          class="item active"
+          class="item"
         >
           My Favorite Recipes
         </a>
@@ -171,47 +172,98 @@
           </a>
         </div>
       </div>
-
+      <div
+        style="margin-bottom: 50px; padding: 20px;"
+        class="ui raised segment"
+      >
+      <h2>Send a Friend Request</h2>
+      <h3>Submit either an email or ID to send a friend request</h3>
+      <form method="post" class="ui form success error">        
+        <div style="width: 30%;" class="field">
+          <label>User Email:</label>
+          <input
+          value="{{data.email}}"
+          type="email"
+          name="email"/>
+        </div>
+        <div class="field">
+          <label>User Name:</label>
+          <input
+          value="{{data.username}}"
+          type="id"
+          name="username"/>
+        </div>
+        <button class="ui blue submit button" type="submit">Send</button>
+      </form>
+      
+      {% if data.isSent and not data.isSub %}
+      {% if data.found %}
+        <div class="ui success message">
+          <div class="header">Request Sent!</div>
+          <p>Once they accept the request, you will see them in your Friends List :)</p>
+        </div>
+        {% else %}
+        <div class="ui error message">
+          <div class="header">Uh Oh!</div>
+          <p>Sorry, user was not found :( Check your input, or try again later</p>
+        </div>
+        {% endif %}
+        {% endif %}
+      
+      </div>
+      <!-- </div> -->
       <!--favorite list card-->
       <div
         style="margin-bottom: 50px; padding: 20px;"
         class="ui raised segment"
       >
-        {% if data.fav_recipes %} {% if data.num_of_fav_recipes == 1 %}
-        <p>
-          List of all Your Favorite Recipes ({{data.num_of_fav_recipes}} Item)
-        </p>
+        {% if data.friends %} {% if data.num_of_friends == 1 %}
+        <h2>
+          Pending Request: ({{data.num_of_friends}} Request)
+        </h2>
         {% else %}
         <p>
-          List of all Your Favorite Recipes ({{data.num_of_fav_recipes}} Items)
+          Pending Requests: ({{data.num_of_friends}} Request)
         </p>
         {% endif %}
         <div class="ui container center aligned">
           <div class="ui grid" style="margin-top: 15px; margin-bottom: 75px;">
-            {% for recipe in data.fav_recipes %}
+            {% for friend in data.friends %}
             <div class="four wide column">
               <div
                 class="ui link card"
-                style="width: 300px; height: 340px;"
+                style="width: 300px; height: 325px;"
               >
-                <a class="ui medium image" href="{{recipe.recipe_link}}">
-                  <img style="height: 215px; object-fit: cover;" src="{{recipe.recipe_image}}" />
+                <a class="ui medium image">
+                  <img src="{{friend.image}}" />
                 </a>
                 <div class="content" style="text-align: center;">
-                  <a class="recipe_name" href="{{recipe.recipe_link}}"
-                    >{{recipe.recipe_name}}</a
+                  <a class="friend_name"
+                    >{{friend.name}}</a
                   >
+                  
+                  
+                    <div class="ui buttons">
+                        <form action="/empty_my_fridge/friend_requests/" method="post" class="ui form"> 
+                          <button class="ui green button" value="{{friend.userID}}" name="accept">Accept</button>
+                        </form>
+                      <div class="or"></div>
+                        <form action="" method="post" class="ui form"> 
+                          <button class="ui button" value="{{friend.userID}}" name="deny">Deny</button>
+                        </form>
+                    </div>
+                  
                 </div>
                 <div class="extra content" bis_skin_checked="1">
                   <form
-                    action="/empty_my_fridge/fav_recipe_onclick/"
+                    action="/empty_my_fridge/friend_requests"
                     method="post"
                     class="ui form"
                   >
-                    <span class="right floated star">
+                    <span class="right floated heart">
                       <input
                         style="display: none;"
-                        name="recipe_id"
+                        name="add_friend"
                         value="{{recipe.recipe_id}}"
                       />
                       <input
@@ -219,22 +271,27 @@
                         name="navigate"
                         value="/empty_my_fridge/favorite_recipes/"
                       />
-                      {% if recipe.user_saved %}
+
+                      <!-- <button
+                        class="ui icon button"
+                        data-tooltip="Remove this person from your Friends"
+                      >
+                        <i class="star icon green"></i>
+                      </button>
                       <button
                         class="ui icon button"
-                        data-tooltip="Remove this from your Favorite Recipes"
+                        data-tooltip="Approve this person as your Friend"
                       >
-                        <i class="star icon yellow"></i>
-                      </button>
-
-                      {% else %}
+                        <i class="star icon red"></i>
+                      </button> -->
+                      <!-- 
                       <button
                         class="ui icon button"
                         data-tooltip="Add this to your Favorite Recipes"
                       >
                         <i class="star icon"></i>
                       </button>
-                      {% endif %}
+                      -->
                     </span>
                   </form>
                 </div>
@@ -244,13 +301,12 @@
           </div>
           {% else %}
           <h2 style="padding: 100px;">
-            Your favorite recipe list is empty. Try adding a few.
+            Your Friends List is Empty. Try adding a few!
           </h2>
           {% endif %}
         </div>
       </div>
       <!--end of favorite list card-->
     </div>
-    
   </body>
 </html>

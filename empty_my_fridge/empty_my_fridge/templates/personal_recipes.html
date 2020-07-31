@@ -134,9 +134,15 @@
         <a href="{% url 'profile'%}" class="item">
           About Me
         </a>
-        <a class="item">
+        <a href="{% url 'friends'%}" class="item">
           Friends
         </a>
+        <a
+        href="{% url 'friend_requests'%}"
+        class="item"
+      >
+        Friend Requests
+      </a>
         <a href="{% url 'favorite_recipes'%}" class="item">
           My Favorite Recipes
         </a>
@@ -173,6 +179,16 @@
               </div>
 
               <div style="width: 80%;" class="field">
+                <label>Categories: Separate each category by a comma</label>
+                <input
+
+                  placeholder="category1, category2, ..."
+                  type="text"
+                  name="recipe_categories"
+                />
+              </div>
+
+              <div style="width: 80%;" class="field">
                 <label>Description</label>
                 <input
                   rows="3"
@@ -192,22 +208,34 @@
 
               <span class="myfridge_list_holder">
                 <div style="width: 80%;" class="field">
-                  <label>Ingredients You Want</label>
+                  <label>List of Ingredients Needed</label>
                   <input
                     type="text"
                     placeholder="food1,food2,food3,..."
-                    name="search_ingredients"
-                    id="search"
+                    name="ingredients"
+                    id="ing"
+                    required
+                  />
+                </div>
+                <div style="width: 80%;" class="field">
+                  <label>List of Respective Measurements Needed (In the same order)</label>
+                  <input
+                    type="text"
+                    placeholder="1/4 cup, 3 tbsp, 1 dollop,..."
+                    name="measurements"
+                    id="measure"
+                    required
                   />
                 </div>
               </span>
+
 
               <!--dropdown w/out javascript-->
               <div class="ui form">
                 <div class="seven wide field">
                   <label>Level of Privacy</label>
                   <select name="privacy">
-                    <option value="">Privacy</option>
+                    <option value="0">Privacy</option>
                     <option value="2">Public</option>
                     <option value="1">Friends Only</option>
                     <option value="0">Private</option>
@@ -225,7 +253,7 @@
             <div
               style="display: none;"
               id="message"
-              class="ui {{msg_type}} message"
+              class="ui {{data.msg_type}} message"
             >
               <div class="header">
                 {{data.msg_type}}
@@ -242,12 +270,43 @@
             <div class="ui list">
               {%if not my_recipes%}
               <label>{{no_rec}}</label>
-              {%endif%} {% for each in my_recipes %}
+              {%endif%} 
+              {% for each in my_recipes %}
               <div class="item">
                 <i class="right triangle icon"></i>
                 <div class="content">
-                  <a class="header">{{each.title}}</a>
+                  <a class="header" href="{% url 'recipe_format'%}?id={{each.recipe_id}}" id="rec_link"
+                  name="rec_link" value="True">{{each.recipe_name}}</a>
                   <div class="description">{{each.description}}</div>
+                  <form
+                    action="/empty_my_fridge/recipe_format/"
+                    method="post"
+                    class="ui form"
+                  >
+                     <span class="right floated star">
+
+                      <input
+                        style="display: none;"
+                        name="go_public"
+                        value="{{each}}"
+                      />
+
+                  </form>
+                  <form action="/empty_my_fridge/personal_recipes/" method="post" class="ui form"> 
+                    <input
+                        style="display: none;"
+                        name="delete_recipe"
+                        value="{{each.recipe_id}}"
+                      />
+                    <button
+                      style="margin-top: -80px;"
+
+                      class="ui icon button"
+                      data-tooltip="Delete this Recipe"
+                    >
+                      <i class="trash alternate outline icon"></i>
+                    </button>
+                  </form>
                 </div>
               </div>
               {%endfor%}
@@ -261,12 +320,8 @@
     <script>
       document.getElementById("message").style.display = "block";
     </script>
-    {% endif %} {% if data.user %}
-    <script>
-      document.getElementById("image_profile").src =
-        "https://react.semantic-ui.com/images/avatar/large/matthew.png";
-    </script>
-    {% endif %}
+    {% endif %} 
+    
 
     <!-- add code to list available personal recipes from database-->
   </body>

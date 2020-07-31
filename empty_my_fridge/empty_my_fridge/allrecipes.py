@@ -149,6 +149,7 @@ def parser(ingredient, food_array):
 	
 	
 def allrecipes(db):
+	page_num = len(numbers) + 1
 	menu = "Stop scraping after...page numbers completed.\n1. 3 pages\n2. 5 pages\n3. All pages\n4. Custom\nOption: "
 	option = input(menu)
 	if option == "1":
@@ -161,8 +162,7 @@ def allrecipes(db):
 		page_num = input("Custom: ")
 		page_num = int(page_num)
 
-	print('Getting all recipes in database. Please wait....')
-	all_recipes = db.child('recipe').get().each()
+	print('Getting all ingredients in database. Please wait....')
 	_all_ingredients_ = db.child("all_ingredients").get().val()
 	print('Done!')
 	print('\n')	
@@ -270,6 +270,7 @@ def allrecipes(db):
 							category = category.strip()
 							category_list.append(category.lower())
 					except IndexError:
+						category_list.append("None")
 						pass
 				else:	
 					for category in recipe_cat:
@@ -319,6 +320,7 @@ def allrecipes(db):
 
 		#if ingredients not in _all_ingredients_:
 		_all_ingredients_ = list(dict.fromkeys(_all_ingredients_ + ingredients))
+		all_recipes = db.child('recipe').get().each()
 
 		if all_recipes != None:
 			for m_recipe in all_recipes:
