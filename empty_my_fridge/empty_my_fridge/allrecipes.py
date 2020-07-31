@@ -279,6 +279,7 @@ def allrecipes(db):
 							category = category.strip()
 							category_list.append(category.lower())
 					except IndexError:
+						category_list.append("None")
 						pass
 				else:	
 					for category in recipe_cat:
