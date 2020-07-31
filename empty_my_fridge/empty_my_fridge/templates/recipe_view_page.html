@@ -129,7 +129,7 @@
           <img style="height: 300px;" src="{{data.recipe.recipe_image}}" />
           {% if data.recipe.belongsToUser %}
           <form
-            action="/empty_my_fridge/recipe_format/?id={{data.recipe_id}}"
+            action="/empty_my_fridge/recipe_view_page/?id={{data.recipe_id}}"
             method="post"
             enctype="multipart/form-data"
             class="ui form"

@@ -10,7 +10,7 @@
   </head>
 
   <style>
-    .recipe_name {
+    .user_name {
         overflow: hidden;
         text-overflow: ellipsis;
         font-size: large;
@@ -18,10 +18,10 @@
         font-weight: bolder;
         display: -webkit-box;
         -webkit-box-orient: vertical;
-        -webkit-line-clamp: 2;
+        -webkit-line-clamp: 1;
       }
 
-      .recipe_name:hover{
+      .user_name:hover{
         color: #3460e2;
         text-decoration: underline;
       }
@@ -74,11 +74,11 @@
       <div class="ui link dropdown simple item">
         <span class="text">Browse</span>
         <i class="dropdown icon"></i>
-        <div class="menu inverted">
-          <a class="item" href="{% url 'category' %}?category=pastry">Pastries</a>
-        <a class="item" href="{% url 'category' %}?category=main dish">Meals</a>
-        <a class="item" href="{% url 'category' %}?category=appetizer">Appetizers</a>
-        <a class="item" href="{% url 'category' %}?category=dessert">Dessert</a>
+        <div class="menu inverted" style="margin-top: -1px;">
+          <a class="item" href="{% url 'category' %}?category=breakfast">Breakfast</a>
+          <a class="item" href="{% url 'category' %}?category=lunch">Lunch</a>
+          <a class="item" href="{% url 'category' %}?category=dinner">Dinner</a>
+          <a class="item" href="{% url 'category' %}?category=dessert">Dessert</a>
         </div>
       </div>
 
@@ -129,7 +129,7 @@
           class="ui avatar image small"
           src="{{data.pUser.image}}"
         />
-        <div style="margin-left: 5px; margin-top: 15%;">
+        <div style="margin-left: 5px; margin-top: 75px;">
           <h2 style="color: bisque;">{{data.pUser.name}}</h2>
         </div>
       </div>
@@ -140,7 +140,7 @@
     <div class="ui container" style="margin-top: 20px; margin-bottom: 250px;">
       <div class="ui pointing menu">
         <a href="{% url 'public_profile'%}?id={{data.pUser.userID}}" class="item">
-          About {{data.pUser.name}}
+          About
         </a>
         <a class="item active">
           Friends
@@ -178,13 +178,13 @@
             <div class="four wide column">
               <div
                 class="ui link card"
-                style="width: 300px; height: 250px;"
+                style="width: 300px; height: 260px;"
               >
                 <a class="ui medium image">
-                  <img src="{{friend.image}}" />
+                  <img style="height: 210px; object-fit: cover;" src="{{friend.image}}" />
                 </a>
                 <div class="content" style="text-align: center;">
-                  <a href="/empty_my_fridge/public_profile/"
+                  <a style="margin-bottom: 10px" class="user_name" href="/empty_my_fridge/public_profile/"
                     >{{friend.name}}</a
                   >
                 </div>

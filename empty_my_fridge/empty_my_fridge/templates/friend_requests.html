@@ -10,19 +10,19 @@
   </head>
 
   <style>
-    .recipe_name {
+    .user_name {
         overflow: hidden;
         text-overflow: ellipsis;
-        font-size: large;
+        font-size: medium;
         color:black;
         font-weight: bolder;
         display: -webkit-box;
         -webkit-box-orient: vertical;
-        -webkit-line-clamp: 2;
+        -webkit-line-clamp: 1;
       }
 
-      .recipe_name:hover{
-        color: #3460e2;
+      .user_name:hover{
+        color: #642b73;
         text-decoration: underline;
       }
     .ui.inverted.menu {
@@ -217,7 +217,8 @@
         style="margin-bottom: 50px; padding: 20px;"
         class="ui raised segment"
       >
-        {% if data.friends %} {% if data.num_of_friends == 1 %}
+        {% if data.friends %} 
+        {% if data.num_of_friends == 1 %}
         <h2>
           Pending Request: ({{data.num_of_friends}} Request)
         </h2>
@@ -235,10 +236,10 @@
                 style="width: 300px; height: 325px;"
               >
                 <a class="ui medium image">
-                  <img src="{{friend.image}}" />
+                  <img style="height: 230px; object-fit: cover;" src="{{friend.image}}" />
                 </a>
                 <div class="content" style="text-align: center;">
-                  <a class="friend_name"
+                  <a style="margin-bottom: 10px" class="user_name"
                     >{{friend.name}}</a
                   >
                   

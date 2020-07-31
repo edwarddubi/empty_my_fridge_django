@@ -55,10 +55,10 @@
       <div class="ui link dropdown simple item">
         <span class="text">Browse</span>
         <i class="dropdown icon"></i>
-        <div class="menu inverted">
-          <a class="item" href="{% url 'category' %}?category=pastry">Pastries</a>
-          <a class="item" href="{% url 'category' %}?category=main dish">Meals</a>
-          <a class="item" href="{% url 'category' %}?category=appetizer">Appetizers</a>
+        <div class="menu inverted" style="margin-top: -1px;">
+          <a class="item" href="{% url 'category' %}?category=breakfast">Breakfast</a>
+          <a class="item" href="{% url 'category' %}?category=lunch">Lunch</a>
+          <a class="item" href="{% url 'category' %}?category=dinner">Dinner</a>
           <a class="item" href="{% url 'category' %}?category=dessert">Dessert</a>
         </div>
       </div>
@@ -110,7 +110,7 @@
           class="ui avatar image small"
           src="{{data.pUser.image}}"
         />
-        <div style="margin-left: 5px; margin-top: 15%;">
+        <div style="margin-left: 5px; margin-top: 75px;">
           <h2 style="color: bisque;">{{data.pUser.name}}</h2>
         </div>
       </div>
@@ -121,7 +121,7 @@
     <div class="ui container" style="margin-top: 20px; margin-bottom: 250px;">
       <div class="ui pointing menu">
         <a class="active item">
-          About {{data.pUser.name}}
+          About
         </a>
         <a href="{% url 'public_friends'%}?id={{data.pUser.userID}}" class="item">
           Friends

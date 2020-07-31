@@ -64,19 +64,11 @@
       <div class="ui link dropdown simple item">
         <span class="text">Browse</span>
         <i class="dropdown icon"></i>
-        <div class="menu inverted">
-          <a class="item" href="{% url 'category' %}?category=pastry"
-            >Pastries</a
-          >
-          <a class="item" href="{% url 'category' %}?category=main dish"
-            >Meals</a
-          >
-          <a class="item" href="{% url 'category' %}?category=appetizer"
-            >Appetizers</a
-          >
-          <a class="item" href="{% url 'category' %}?category=dessert"
-            >Dessert</a
-          >
+        <div class="menu inverted" style="margin-top: -1px;">
+          <a class="item" href="{% url 'category' %}?category=breakfast">Breakfast</a>
+          <a class="item" href="{% url 'category' %}?category=lunch">Lunch</a>
+          <a class="item" href="{% url 'category' %}?category=dinner">Dinner</a>
+          <a class="item" href="{% url 'category' %}?category=dessert">Dessert</a>
         </div>
       </div>
 
@@ -128,7 +120,7 @@
           class="ui avatar image small"
           src="{{data.pUser.image}}"
         />
-        <div style="margin-left: 5px; margin-top: 15%;">
+        <div style="margin-left: 5px; margin-top: 75px;">
           <h2 style="color: bisque;">{{data.pUser.name}}</h2>
         </div>
       </div>
@@ -139,7 +131,7 @@
     <div class="ui container" style="margin-top: 20px; margin-bottom: 250px;">
       <div class="ui pointing menu">
         <a href="{% url 'public_profile'%}?id={{data.pUser.userID}}" class="item">
-          About {{data.pUser.name}}
+          About
         </a>
         <a href="{% url 'public_friends'%}?id={{data.pUser.userID}}" class="item">
           Friends
@@ -162,20 +154,21 @@
           <div style="margin-bottom: 50px;" class="ui raised segment">
             <h3>{{data.pUser.name}}'s Current Recipes</h3>
             <div class="ui list">
-              {%if not my_recipes%}
+              {%if not data.my_recipes %}
               <label>{{no_rec}}</label>
-              {%endif%} {% for each in my_recipes %}
+              {%endif%} 
+              {% for recipe in data.my_recipes %}
               <div class="item">
                 <i class="right triangle icon"></i>
                 <div class="content">
-                  <a class="header" href="{% url 'recipe_format'%}" id="rec_link" name="rec_link" value="True">{{each.title}}</a>
-                  <div class="description">{{each.description}}</div>
+                  <a class="header" href="{% url 'recipe_view_page'%}?id={{recipe.recipe_id}}" id="rec_link" name="rec_link" value="True">{{recipe.recipe_name}}</a>
+                  <div class="description">{{recipe.description}}</div>
                   <form
-                    action="/empty_my_fridge/recipe_format/"
+                    action="/empty_my_fridge/recipe_view_page/"
                     method="post"
                     class="ui form"
                   >
-                     <span class="right floated star">
+                     <span class="right floated star"/>
 
                       <input
                         style="display: none;"

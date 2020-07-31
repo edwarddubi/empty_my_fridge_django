@@ -675,9 +675,10 @@ def fav_recipe_onClick(request):
                     "stars").child(uid).set(time_liked)
             if navigate == "/empty_my_fridge/recipe_list/":
                 navigate += "?page=" + recipes.get_recipes_current_page()
-            if navigate == "/empty_my_fridge/categories/" or navigate == "/empty_my_fridge/search/":
-                navigate += "?category=" + m_category.get_category() + "&page=" + \
-                    m_category.get_category_page()
+            elif navigate == "/empty_my_fridge/categories/" or navigate == "/empty_my_fridge/search/":
+                navigate += "?category=" + m_category.get_category() + "&page=" + m_category.get_category_page()
+            elif navigate == "/empty_my_fridge/public_fav_recipes/":
+                navigate += "?id=" + m_user.get_friend_id()
 
             return HttpResponseRedirect(navigate)
 
@@ -875,20 +876,12 @@ def public_profile(request):
         user = db.child("users").child(uid).get().val()
         user_details = dict(user)
         m_user._setUser_(user_details)
-
-
         #if a user was posted (which is the only way to get to this page),
         #   then, grab that user's ID and return an object with that user's info
-        print("request.method: ")
-        print(request.method)
         friend_id = request.GET.get("id")
-        print(friend_id)
-        m_user.set_myFriend_id(friend_id)
-
+        m_user.set_friend_id(friend_id)
         if friend_id:
             pUser = db.child("users").child(friend_id).get().val()
-            print("pUser: ")
-            print(pUser)
             pUser_details = dict(pUser)
             #pUser._setUser_(user_details)
     data = {
@@ -898,7 +891,7 @@ def public_profile(request):
     return render(request, "public_profile.html", {"data": data})
 
 @csrf_exempt
-def recipe_format(request):
+def recipe_view_page(request):
     user = m_user._getUser_()
     uid = m_user._getUser_Id_()
     print_list = []
@@ -953,7 +946,7 @@ def recipe_format(request):
         "recipe_id": recipe_id,
         "user" : user,
     }
-    return render(request, 'recipe_format.html', {"data": data})
+    return render(request, 'recipe_view_page.html', {"data": data})
 
 
 @csrf_exempt
@@ -1051,24 +1044,23 @@ def public_fav_recipes(request):
     else:
         user = m_user._getUser_()
         uid = m_user._getUser_Id_()
-        friend_id = m_user.get_myFriend_id()
-        pUser = db.child("users").child(friend_id).get().val()
-        
+        friend_id = m_user.get_friend_id()
         fav_recipes_list = []
-
-        fav_recipes = db.child("user_fav_recipes").child(friend_id).get()
         num_of_fav_recipes = 0
-        if fav_recipes.each():
-            for recipe in fav_recipes.each():
-                _key_ = str(recipe.key())
-                user_fav_recipe = db.child("recipe").child(_key_).get().val()
-                if user_fav_recipe:
-                    recipe_details = dict(user_fav_recipe)
-                    recipe_details["user_saved"] = True
-                    recipe_details["recipe_id"] = _key_
-                    fav_recipes_list.append(recipe_details)
+        pUser = None
+        if friend_id:
+            pUser = db.child("users").child(friend_id).get().val()
+            fav_recipes = db.child("user_fav_recipes").child(friend_id).get()
+            if fav_recipes.each():
+                for recipe in fav_recipes.each():
+                    _key_ = str(recipe.key())
+                    user_fav_recipe = db.child("recipe").child(_key_).get().val()
+                    if user_fav_recipe:
+                        recipe_details = dict(user_fav_recipe)
+                        recipe_details = recipes.get_recipe(recipe_details, _key_, uid)
+                        fav_recipes_list.append(recipe_details)
 
-        num_of_fav_recipes = len(fav_recipes_list)
+            num_of_fav_recipes = len(fav_recipes_list)
         data = {
             "user": user,
             "pUser": pUser,
@@ -1085,25 +1077,43 @@ def public_personal_recipes(request):
     msg_type = None
     userRecipe = None
     no_rec = None
+    friend_recipe_list = []
 
     if m_user._isNone_():
         return HttpResponseRedirect("/empty_my_fridge/login/") 
     else:
         user = m_user._getUser_()
         uid = m_user._getUser_Id_()
-        friend_id = m_user.get_myFriend_id()
-        pUser = db.child("users").child(friend_id).get().val()
+        friend_id = m_user.get_friend_id()
+        pUser = None
+        if friend_id:
+            pUser = db.child("users").child(friend_id).get().val()
 
-        my_recipes = db.child("users").child(friend_id).child("recipes").get().val()
-        if not my_recipes:
-            no_rec = "Looks like they don't have any personal recipes at the moment..."
+            my_recipes = db.child("users").child(friend_id).child("recipes").get().each()
+            if my_recipes:
+                for recipe in my_recipes:
+                    recipe_details = recipe.val()
+                    if recipe_details["privacy"] != "0":
+                        friend_recipe_list.append(recipe_details)   
+            else:
+                no_rec = "Looks like they don't have any personal recipes at the moment..."
     data = {
         "user": user,
         "pUser": pUser,
         "message": msg,
         "msg_type": msg_type,
+        "my_recipes": friend_recipe_list,
+        "no_rec": no_rec,
     }
-    return render(request, 'public_personal_recipes.html', {"data": data, "my_recipes": my_recipes, "no_rec": no_rec})
+    return render(request, 'public_personal_recipes.html', {"data": data, })
+
+
+def remove_white_spaces(items):
+    new_items = []
+    for item in items:
+        new_items.append(item.strip())
+    return new_items
+
 
 @csrf_exempt
 def friend_requests(request):
@@ -1212,11 +1222,11 @@ def friend_requests(request):
                 thisFren = db.child("users").child(key).get().val()
  
                 #once you find the right person...
-                if value["added_back"] == "False":
+                if not value["added_back"]:
                     friends_list.append(dict(thisFren))
         num_of_friends = len(friends_list)
         
-        #print(found)
+        print(friends_list)
         data = {
             "user": user,
             "found": found,
@@ -1350,12 +1360,15 @@ def personal_recipes(request):
                 db.child("recipe").child(recipe_id).remove()
             else:
                 ingredients = request.POST.get("ingredients").split(",")
+                ingredients = remove_white_spaces(ingredients)
                 measurements = request.POST.get("measurements").split(",")
+                measurements = remove_white_spaces(measurements)
                 
                 if len(ingredients) == len(measurements):
                     r_key = db.generate_key()
                     description = request.POST.get("description")
                     recipe_categories = request.POST.get("recipe_categories").split(",")
+                    recipe_categories = remove_white_spaces(recipe_categories)
                     steps = request.POST.get("steps").splitlines()
                     privacy = request.POST.get("privacy")
                     clicked = request.POST.get("rec_link")
