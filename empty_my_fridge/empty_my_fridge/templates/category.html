@@ -414,13 +414,26 @@
             class="ui link card purple raised"
             style="margin: 10px; width: 300px; height: 340px;"
           >
-            <a class="ui medium image" href="{{recipe.recipe_link}}">
-              <img style="height: 215px; object-fit: cover;" src="{{recipe.recipe_image}}" />
-            </a>
+          {% if recipe.recipe_link %}
+          <a class="ui medium image" href="{{recipe.recipe_link}}">
+            <img style="height: 215px; object-fit: cover;" src="{{recipe.recipe_image}}" />
+          </a>
+          {% else %}
+          <a class="ui medium image" href="{% url 'recipe_view_page'%}?id={{recipe.recipe_id}}">
+            <img style="height: 215px; object-fit: cover;" src="{{recipe.recipe_image}}" />
+          </a>
+          {% endif %}
             <div class="content" style="text-align: center;">
-              <a class="recipe_name" href="{{recipe.recipe_link}}"
+              {% if recipe.recipe_link %}
+              <a
+                class="recipe_name"
+                href="{{recipe.recipe_link}}"
                 >{{recipe.recipe_name}}</a
               >
+              {% else %}
+              <a class="recipe_name"
+              href="{% url 'recipe_view_page'%}?id={{recipe.recipe_id}}">{{recipe.recipe_name}}</a>
+              {% endif %}
             </div>
             <div class="extra content" bis_skin_checked="1">
               <span class="left floated">

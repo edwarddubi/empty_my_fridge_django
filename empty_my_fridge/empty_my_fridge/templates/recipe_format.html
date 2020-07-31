@@ -8,7 +8,7 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css"
     />
   </head>
-  
+
   <style>
     .ui.inverted.menu {
       background: #642b73; /* fallback for old browsers */
@@ -28,7 +28,9 @@
     <!--Navigation Bar-->
     <div class="ui top inverted secondary fixed menu">
       <div class="item">
-        <p style="color: white; font-weight: bold; font-size: large;">Empty My Fridge</p>
+        <p style="color: white; font-weight: bold; font-size: large;">
+          Empty My Fridge
+        </p>
       </div>
 
       <a href="{% url 'home'%}" class="item">
@@ -42,16 +44,24 @@
         <span class="text">Browse</span>
         <i class="dropdown icon"></i>
         <div class="menu inverted" style="margin-top: -1px;">
-          <a class="item" href="{% url 'category' %}?category=breakfast">Breakfast</a>
+          <a class="item" href="{% url 'category' %}?category=breakfast"
+            >Breakfast</a
+          >
           <a class="item" href="{% url 'category' %}?category=lunch">Lunch</a>
           <a class="item" href="{% url 'category' %}?category=dinner">Dinner</a>
-          <a class="item" href="{% url 'category' %}?category=dessert">Dessert</a>
+          <a class="item" href="{% url 'category' %}?category=dessert"
+            >Dessert</a
+          >
         </div>
       </div>
 
       <!--search and filter-->
       <div class="item">
-        <form action="/empty_my_fridge/search_and_filter/" method="get" class="ui form">
+        <form
+          action="/empty_my_fridge/search_and_filter/"
+          method="get"
+          class="ui form"
+        >
           <div class="ui icon input">
             <input
               id="filter"
@@ -66,10 +76,7 @@
       </div>
       <!--End of search and filter ui-->
       <div class="right menu">
-        <a
-          href="{% url 'fridge'%}"
-          class="item active"
-        >
+        <a href="{% url 'fridge'%}" class="item active">
           My Fridge
         </a>
         <a href="{% url 'profile'%}" class="item">
@@ -93,7 +100,7 @@
         <a
           id="login_btn"
           style="display: flex;"
-          href="{% url 'login'%}?activity=recipe_list"
+          href="{% url 'login'%}?activity=recipe_view_page&id={{data.recipe_id}}"
           class="item"
         >
           Login
@@ -111,45 +118,60 @@
     <!--End of Navigation Bar-->
 
     <section style="margin-top: 80px;" id="main" role="main">
-        <div class="eight wide column">
-          <div style="margin-bottom: 50px;" class="ui raised segment">
-            <h1>{{data.recipe.recipe_name}}</h1>
-            <p class="description">
-              {{data.recipe.description}}
-            </p>
-      
-            <img style="height: 300px;" src="{{data.recipe.recipe_image}}"/>
-            {% if data.recipe.belongsToUser %}
-            <form action="/empty_my_fridge/recipe_format/?id={{data.recipe_id}}" method="post" enctype="multipart/form-data" class="ui form">
-              <div style="width: 40%;" class="field">
+      <div class="eight wide column">
+        <div style="margin-bottom: 50px;" class="ui raised segment">
+          {% if data.recipe %}
+          <h1>{{data.recipe.recipe_name}}</h1>
+          <p class="description">
+            {{data.recipe.description}}
+          </p>
+
+          <img style="height: 300px;" src="{{data.recipe.recipe_image}}" />
+          {% if data.recipe.belongsToUser %}
+          <form
+            action="/empty_my_fridge/recipe_format/?id={{data.recipe_id}}"
+            method="post"
+            enctype="multipart/form-data"
+            class="ui form"
+          >
+            <div style="width: 40%;" class="field">
               <label class="field">Update Recipe Picture: </label>
-            <input style="width: 80%;" type="file" id="img" name="img" accept="image/*">
-            <input
+              <input
+                style="width: 80%;"
+                type="file"
+                id="img"
+                name="img"
+                accept="image/*"
+              />
+              <input
                 style="display: none;"
                 name="recipe_id"
                 value="{{data.recipe.recipe_id}}"
               />
-            <button class="ui button" type="submit">Update</button> 
-          </div>
-            </form>
-            {% endif %}
-            <h2>You Will Need:</h2>
-            <div class="ui middle aligned animated list">
-              {%for line in data.ingredients%}
-              <div class="item">
-                <div class="content">
-                  <div class="header">{{line}}</div>
-                </div>
+              <button class="ui button" type="submit">Update</button>
+            </div>
+          </form>
+          {% endif %}
+          <h2>You Will Need:</h2>
+          <div class="ui middle aligned animated list">
+            {%for line in data.ingredients%}
+            <div class="item">
+              <div class="content">
+                <div class="header">{{line}}</div>
               </div>
-              {%endfor%}
             </div>
+            {%endfor%}
+          </div>
 
-            <h2>How to Make It:</h2>
-            {% for step in data.recipe.steps %}
-            <p>{{step}}</p>
-            {% endfor %}
-            </div>
-            </div>
+          <h2>How to Make It:</h2>
+          {% for step in data.recipe.steps %}
+          <p>{{step}}</p>
+          {% endfor %} 
+          {% else %}
+          <h2 style="margin-bottom: 200px;">Nothing to show or an error occurred</h2>
+          {% endif %}
+        </div>
+      </div>
 
       <style>
         #main {
@@ -175,8 +197,8 @@
           width: 100%;
           display: flex;
         }
-        #title{
-          color: white
+        #title {
+          color: white;
         }
         .myfridge_instructions ol li {
           list-style: none;
@@ -229,7 +251,7 @@
           border-top-right-radius: 4px;
           border-top-left-radius: 4px;
         }
-        ul{
+        ul {
           display: block;
           list-style-type: disc;
           margin-block-start: 1em;
@@ -248,17 +270,22 @@
           border-radius: 4px;
           min-width: 100%;
           display: block;
-          color: whitesmoke!important;
+          color: whitesmoke !important;
           line-height: 1em;
           padding: 20px;
           font-size: 2rem;
           font-weight: 400;
           position: relative;
         }
-        a.fw_button span+.icon path {
+        a.fw_button span + .icon path {
           stroke: #642b73;
         }
-        h1, h2, h3, h4, h5, h6 {
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
           font-weight: inherit;
           color: #344c72;
           margin: 5px 0;
@@ -267,7 +294,8 @@
         }
         h1 {
           font-size: 3rem;
-          font-family: rockwell-nova,Rockwell,"Hoefler Text",Garamond,Georgia;
+          font-family: rockwell-nova, Rockwell, "Hoefler Text", Garamond,
+            Georgia;
           font-weight: 200;
         }
         h3 {
@@ -281,12 +309,10 @@
           margin-inline-end: 0px;
           font-weight: bold;
           font-size: 1.6rem;
-      }
+        }
       </style>
-
-      
     </section>
-   
+
     {% if data.user %}
     <script>
       document.getElementById("logout_btn").style.display = "flex";

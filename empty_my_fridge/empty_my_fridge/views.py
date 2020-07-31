@@ -706,6 +706,7 @@ def login(request):
     if request.method == 'GET':
         activity_page = request.GET.get("activity")
         cat = request.GET.get("category")
+        id = request.GET.get("id")
         if not cat:
             cat = m_category.get_category()
     if not activity_page:
@@ -716,6 +717,7 @@ def login(request):
     data = {
         "activity": activity_page,
         "category": cat,
+        "id" : id,
     }
     m_activity.set_activity_page(None)
     return render(request, 'login.html', {"data": data})
@@ -729,6 +731,7 @@ def _login_(request):
         password = request.GET.get('pass')
         activity_page = request.GET.get("activity")
         cat = request.GET.get("category")
+        id = request.GET.get("id")
         if activity_page == "recipe_list":
             page = recipes.get_recipes_current_page()
             activity_page = "/empty_my_fridge/{0}/?page={1}".format(
@@ -737,6 +740,8 @@ def _login_(request):
             page = m_category.get_category_page()
             activity_page = "/empty_my_fridge/{0}/?category={1}&page={2}".format(
                 activity_page, cat, page)
+        elif activity_page == "recipe_view_page":
+            activity_page = "/empty_my_fridge/{0}/?id={1}".format(activity_page, id)
         elif not activity_page:
             activity_page = "/empty_my_fridge/home/"
         else:
@@ -892,6 +897,7 @@ def recipe_format(request):
     recipe_id = request.GET.get("id")
     print(recipe_id)
     link = None
+    this_recipe = None
     #"https://firebasestorage.googleapis.com/v0/b/empty-my-fridge-ff73c.appspot.com/o/cutePlate.jpg?alt=media&token=229f016f-e151-4bf7-b569-d6a07a6a2c18"
 
     if request.method == "POST":
@@ -899,44 +905,39 @@ def recipe_format(request):
         # print(recipe_id)
         try:
             file = request.FILES['img']
-            print("file: ")
-            print(file.name)
-            
             _dir_ = "recipe_images/{0}/{1}".format(uid, file.name)
             img_details = fb_storage.child(_dir_).put(file, request.session['token_id'])
             link = fb_storage.child(_dir_).get_url(img_details["downloadTokens"])
         except Exception:
             pass
-
-    recipe_image_update = {
+    if recipe_id:
+        recipe_image_update = {
             "recipe_image": link
         }
-    this_recipe = db.child("recipe").child(recipe_id).get().val()
-    print(this_recipe)
-    print(link)
-    if this_recipe and link:
-         db.child("recipe").child(recipe_id).update(recipe_image_update)
-         db.child("users").child(uid).child("recipes").child(recipe_id).update(recipe_image_update)
-         this_recipe["recipe_image"] = link
+        this_recipe = db.child("recipe").child(recipe_id).get().val()
+        print(this_recipe)
+        if this_recipe and link:
+            db.child("recipe").child(recipe_id).update(recipe_image_update)
+            db.child("users").child(uid).child("recipes").child(recipe_id).update(recipe_image_update)
+            this_recipe["recipe_image"] = link
 
-    elif not this_recipe and link:
-    
-        db.child("users").child(uid).child("recipes").child(recipe_id).update(recipe_image_update)
+        elif not this_recipe and link:
+        
+            db.child("users").child(uid).child("recipes").child(recipe_id).update(recipe_image_update)
 
-    if not this_recipe:
-        this_recipe = db.child("users").child(uid).child("recipes").child(recipe_id).get().val()
+        if not this_recipe:
+            this_recipe = db.child("users").child(uid).child("recipes").child(recipe_id).get().val()
 
-    try:
-        if uid:
-            if this_recipe["uid"] == uid:
-                this_recipe["belongsToUser"] = True
-    except KeyError:
-        pass
-    for (measurement, ingredient) in zip(this_recipe["measurements"], this_recipe["recipe_ingredients"]):
-        combo = measurement + ": " + ingredient
-        print_list.append(combo)
-    
-    print("Recipe")
+        try:
+            if uid:
+                if this_recipe["uid"] == uid:
+                    this_recipe["belongsToUser"] = True
+        except KeyError:
+            pass
+        for (measurement, ingredient) in zip(this_recipe["measurements"], this_recipe["recipe_ingredients"]):
+            combo = measurement + ": " + ingredient
+            print_list.append(combo)
+        
     
     data = {
         "recipe": this_recipe,
