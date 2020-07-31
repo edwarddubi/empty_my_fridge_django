@@ -96,7 +96,7 @@ def sort_recipes(recipe_list, type):
             except KeyError:
                 key = str(recipe.key())
                 db.child("recipe").child(key).remove()
-                return(sort_recipes(recipe_list, type))
+                return(None)
 
 
 @csrf_exempt
@@ -322,7 +322,7 @@ def recipe_list(request):
         if(sorting_type:=request.POST.get('sorting')):
             recipes.set_sorting_type(sorting_type)
 
-    all_recipes = sort_recipes(all_recipes, recipes.get_sorting_type())
+    all_recipes = sort_recipes(all_recipes, recipes.get_sorting_type()) or all_recipes
     if recipes.get_is_recipe_liked():
         scrollTop = recipes.get_recipe_list_position()
         recipes.set_is_recipe_liked(False)
@@ -458,7 +458,7 @@ def category(request):
             recipes.set_sorting_type(sorting_type)
 
     
-    recipe_lst = sort_recipes(recipe_lst, recipes.get_sorting_type())
+    recipe_lst = sort_recipes(recipe_lst, recipes.get_sorting_type()) or recipe_lst
 
     paginator = Paginator(recipe_lst, 48)
     page = request.GET.get('page')
@@ -587,7 +587,7 @@ def get_recipes_by_category_ingredients(request):
         if(sorting_type:=request.POST.get('sorting')):
             recipes.set_sorting_type(sorting_type)
 
-    result_list = sort_recipes(result_list, recipes.get_sorting_type())
+    result_list = sort_recipes(result_list, recipes.get_sorting_type()) or result_list
     paginator = Paginator(result_list, 48)
     page = request.GET.get('page')
     if not page:
@@ -1688,7 +1688,7 @@ def fridge_recipes(request):
     if(sorting_type:=request.POST.get('sorting')):
             recipes.set_sorting_type(sorting_type)
 
-    possible_recipes = sort_recipes(possible_recipes, recipes.get_sorting_type())
+    possible_recipes = sort_recipes(possible_recipes, recipes.get_sorting_type()) or possible_recipes
 
     scrollTop = 0
     keep_scroll_pos = False
