@@ -302,6 +302,8 @@ def recipe_list(request):
         != recipes.get_sorting_type() and sorting_type):
             recipes.set_sorting_type(sorting_type)
             recipes.set_fridge_recipes(fridge_recipes)
+        elif (request.method == "GET"):
+            pass
         else:
             recipes.set_fridge_recipes(None)
         fridge_recipes = recipes.get_fridge_recipes()
@@ -466,6 +468,8 @@ def category(request):
         if(( sorting_type:=request.POST.get('sorting') )!= m_category.get_sorting_type() and sorting_type):
             m_category.set_sorting_type(sorting_type)
             recipes.set_fridge_recipes(fridge_recipes)
+        elif (request.method == "GET"):
+            pass
         else:
             recipes.set_fridge_recipes(None)
         fridge_recipes = recipes.get_fridge_recipes()
@@ -630,6 +634,8 @@ def get_recipes_by_category_ingredients(request):
         if(( sorting_type:=request.POST.get('sorting') )!= m_category.get_sorting_type() and sorting_type):
             m_category.set_sorting_type(sorting_type)
             recipes.set_fridge_recipes(fridge_recipes)
+        elif (request.method == "GET"):
+            pass
         else:
             recipes.set_fridge_recipes(None)
         fridge_recipes = recipes.get_fridge_recipes()
@@ -1693,7 +1699,6 @@ def fridge(request):
     if(request.POST.get('remove_all')):
         db.child("users").child(uid).child("Fridge").remove()
         popup={"all":["Everything"]}
-    #all_ingredients = all_ingredients[:50]
 
     if del_food:
         popup={"del":del_food}
@@ -1768,6 +1773,8 @@ def fridge_recipes(request):
         if(( sorting_type:=request.POST.get('sorting') )!= recipes.get_fridge_sorting_type() and sorting_type):
             recipes.set_fridge_sorting_type(sorting_type)
             recipes.set_fridge_recipes(fridge_recipes)
+        elif (request.method == "GET"):
+            pass
         else:
             recipes.set_fridge_recipes(None)
         
