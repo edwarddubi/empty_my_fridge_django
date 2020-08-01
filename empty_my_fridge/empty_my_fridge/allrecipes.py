@@ -52,7 +52,7 @@ succeedingAdverbs = ['diagonally', 'lengthwise', 'overnight']
 prepositions = ['as', 'such', 'for', 'with', 'without', 'if', 'about', 'e.g.', 'in', 'into', 'at', 'until', 'won\'t']
 
 # only used as <something> removed, <something> reserved, <x> inches, <x> old, <some> temperature
-descriptionsWithPredecessor = ['removed', 'discarded', 'reserved', 'included', 'inch', 'inches', 'old', 'temperature', 'up', 'decoration']
+descriptionsWithPredecessor = ['removed', 'discarded', 'reserved', 'included', 'inch', 'inches', 'old', 'temperature', 'up', ]
 
 # descriptions that can be removed from ingredient, i.e. candied pineapple chunks
 unnecessaryDescriptions = ['chunks', 'pieces', 'rings', 'spears', 'style', 'desserts']
