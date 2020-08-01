@@ -403,7 +403,7 @@ def recipe_list(request):
         isFilter = True
         all_recipes = filter(all_recipes, filters, isComplete)
 
-    paginator = Paginator(all_recipes, 48)
+    paginator = Paginator(all_recipes, 76)
     page = request.GET.get('page')
     recipes.set_recipes_current_page(page)
 
@@ -569,7 +569,7 @@ def category(request):
         m_category.set_sorting_type("name_A")
     recipe_lst = sort_recipes(recipe_lst, m_category.get_sorting_type()) or recipe_lst
 
-    paginator = Paginator(recipe_lst, 48)
+    paginator = Paginator(recipe_lst, 76)
     page = request.GET.get('page')
     if not page:
         page = "1"
@@ -736,7 +736,7 @@ def get_recipes_by_category_ingredients(request):
         m_category.set_sorting_type("name_A")
     result_list = sort_recipes(result_list, m_category.get_sorting_type()) or result_list
     result_list = unique_filtered_recipes(result_list)
-    paginator = Paginator(result_list, 48)
+    paginator = Paginator(result_list, 76)
     page = request.GET.get('page')
     if not page:
         page = "1"
@@ -1745,7 +1745,6 @@ def fridge(request):
     chk_food = request.POST.getlist('sav_ing')
     del_food = request.POST.getlist('del_ing')
     popup={}
-    
 
     if(request.POST.get('remove_all')):
         db.child("users").child(uid).child("Fridge").remove()
@@ -1776,8 +1775,11 @@ def fridge(request):
                 "Fridge").update(new_ingredients)
 
         else:
+            disj=[]
             for x in chk_food:
+                disj.append(x)
                 new_ingredients[x] = x
+            popup={"add":disj}
             db.child("users").child(uid).child("Fridge").set(new_ingredients)
 
     if fridge_ingredients:
@@ -1869,7 +1871,7 @@ def fridge_recipes(request):
 
     if len(possible_recipes) > 0:
         found_results = True
-    paginator = Paginator(possible_recipes, 48)
+    paginator = Paginator(possible_recipes, 76)
     page = request.GET.get('page')
     if not page:
         page = "1"
