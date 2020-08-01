@@ -54,16 +54,14 @@ Semantic Ui or fomantic Ui css (currently, Semantic Ui)
     - Ability to add a recipe to user's favorites
    
 ### Cyan Perez
-1. **User Custom Recipes** ***June 22 - June 24 ***
+1. **User Custom Recipes** ***June 22 - June 24***
     - Users can add a custom recipe with an image to our database, and set the privacy to private (only they can see it) 
     - friends (their friends can see their personal recipes), or public (anyone can see it)
     - Users can also opt to change the picture of their recipe, or even delete the entire thing if they so wish
-  
 2. **Formatted User Recipe Page** ***July 18 - July 25***
     - Design and implementation of custom recipe pages
     - Customization of personal recipes' images 
     - Public access to custom recipe pages 
-
 3. **Friends** ***July 18 - July 30***
     - Users have the abilty to send/receive friend requests by id or email
     - Accept/ deny friend requests
@@ -99,6 +97,7 @@ Semantic Ui or fomantic Ui css (currently, Semantic Ui)
       - Parsed the obtained ingredient data to be utilized for the "My Fridge" Page
       - Originally used a C++ library to parse recipe data for speed     (Discontinued from spring 1)
       - Uses python to parse recipe data with increased accuracy and reliability 
+
  ### Randolph Maynes
   1. **My Fridge** ***June 17 - July 25***
       - Add/ Remove recipes to user fridge 
