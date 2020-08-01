@@ -1684,12 +1684,12 @@ def fridge(request):
     
     if len(all_ingredients) > 0:
         all_ingredients = sorted(all_ingredients)
-    fridge_ingredients = db.child("users").child(uid).child(
-        "Fridge").get().val()  # database is cleared of null values
+    fridge_ingredients = db.child("users").child(uid).child("Fridge").get().val()  # database is cleared of null values
     if fridge_ingredients:
         fridge_ingredients = sorted(fridge_ingredients)
 
-    search_ing = request.GET.get('search_ingredients')
+    search_aing = request.GET.get('search_all_ingredients')
+    search_fing = request.GET.get('search_personal_ingredients')
 
     chk_food = request.POST.getlist('sav_ing')
     del_food = request.POST.getlist('del_ing')
@@ -1705,10 +1705,14 @@ def fridge(request):
         for food in del_food:
             db.child("users").child(uid).child("Fridge").child(food).remove()
 
-    if search_ing:
-        all_ingredients = [i for i in all_ingredients if search_ing in i]
+    if search_aing:
+        all_ingredients = [i for i in all_ingredients if search_aing in i]
         if not all_ingredients:
             all_ingredients = []
+    if search_fing:
+        fridge_ingredients = [i for i in fridge_ingredients if search_fing in i]
+        if not fridge_ingredients:
+            fridge_ingredients = []
    
     if chk_food and uid:
         new_ingredients = {}
@@ -1725,8 +1729,6 @@ def fridge(request):
                 new_ingredients[x] = x
             db.child("users").child(uid).child("Fridge").set(new_ingredients)
 
-    fridge_ingredients = db.child("users").child(
-        uid).child("Fridge").get().val()
     if fridge_ingredients:
         fing_len = len(fridge_ingredients)
     else:
@@ -1743,7 +1745,7 @@ def fridge(request):
         "user": m_user._getUser_(),
         'fing_amount' : fing_len,
         "popup":popup
-         }
+        }
     return render(request, 'fridge.html', context )
 
 @csrf_exempt
