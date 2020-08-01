@@ -116,8 +116,61 @@
       </div>
     </div>
     <!--End of Navigation Bar-->
+    
 
     <section style="margin-top: 80px;" id="main" role="main">
+    {% if data.recipe.belongsToUser %}
+      <div class="ui pointing menu">
+          <a href="{% url 'profile'%}" class="item">
+            About Me
+          </a>
+          <a href="{% url 'friends'%}" class="item">
+            Friends
+          </a>
+          <a
+          href="{% url 'friend_requests'%}"
+          class="item"
+        >
+          Friend Requests
+        </a>
+          <a href="{% url 'favorite_recipes'%}" class="item">
+            My Favorite Recipes
+          </a>
+          <a
+            href="{% url 'personal_recipes'%}"
+            class="active item"
+          >
+            Personal Recipes
+          </a>
+
+          <div class="right menu">
+            <a href="{% url 'edit_profile'%}" class="item">
+              Edit Profile
+            </a>
+            <a href="{% url 'account_settings'%}" class="item">
+              Account Settings
+            </a>
+          </div>
+        </div>
+    {% else %}
+        <div class="ui pointing menu">
+        <a href="{% url 'public_profile'%}?id={{data.pUser.userID}}" class="item">
+          About
+        </a>
+        <a href="{% url 'public_friends'%}?id={{data.pUser.userID}}" class="item">
+          Friends
+        </a>
+        <a href="{% url 'public_fav_recipes'%}?id={{data.pUser.userID}}" class="item">
+          Favorite Recipes
+        </a>
+        <a
+          href="{% url 'public_personal_recipes'%}?id={{data.pUser.userID}}"
+          class="active item"
+        >
+          Personal Recipes
+        </a>
+      </div>
+    {% endif %}
       <div class="eight wide column">
         <div style="margin-bottom: 50px;" class="ui raised segment">
           {% if data.recipe %}
