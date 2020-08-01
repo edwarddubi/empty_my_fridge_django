@@ -16,6 +16,12 @@
     text-align: center;
   }
 
+  #pagination_top {
+      position: relative;
+      top: 50px;
+      text-align: center;
+    }
+
   /* pagination styling */
   .pagination a {
     color: #031f3b;
@@ -362,6 +368,36 @@
           <button type="submit">Sort</button>
         </div>
     </form>
+
+    <!--Pagination-->
+    {% if data.recipes %}
+    <div class="pagination" id="pagination_top">
+      <span class="step-links">
+        {% if data.recipes.has_previous %}
+        <a href="?page=1" title="First" style="border: none; background-color: white; color: #031f3b;">
+          <<</a>
+            <a href="?page={{ data.recipes.previous_page_number }}"
+              style="border: none; background-color: white; color: #031f3b;">Previous</a>
+            {% endif %}
+
+            <span class="current">
+              {% for num in data.recipes.paginator.page_range %} {% if data.recipes.number == num %}
+              <a href="?page={{ num }}" style="background-color: #031f3b; color: white;">{{ num }}</a>
+              {% else %}
+              <a href="?page={{ num }}">{{ num }}</a>
+              {% endif %} {% endfor %}
+            </span>
+            {% if data.recipes.has_next %}
+            <a href="?page={{ data.recipes.next_page_number }}"
+              style="border: none; background-color: white; color: #031f3b;">Next</a>
+            <a href="?page={{ data.recipes.paginator.num_pages }}" title="Last"
+              style="border: none; background-color: white; color: #031f3b;">>></a>
+            {% endif %}
+      </span>
+    </div>
+    {% endif %}
+
+    <!--End of Pagination-->
 
     <!--Recipe Cards-->
     {% if data.recipe_lst %}
