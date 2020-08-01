@@ -301,7 +301,7 @@
       </div>
       {%else%}
       <div class="ui toggle checkbox" style="margin-top: 4px;">
-        <input type="checkbox" name="fridge" type="submit" value="True" name="part" onchange="form.submit()">
+        <input type="checkbox" type="submit" name="fridge"  value="True" name="part" onchange="form.submit()">
         <label>Activate to display fridge recipes</label>
       </div>
       {%endif%}
@@ -333,22 +333,22 @@
           {%endif%}
           {% if data.fridge.1 %}
             {% if data.sorting_type == "mis_A" %}
-              <option value="mis_A">Missing least ingredients</option>
+              <option value="mis_A">Least missing ingredients</option>
               <option value="name_A" >Name ascending</option>
               <option value="name_D" >Name descending</option>
               <option value="fav_A" >Least Popular</option>
               <option value="fav_D">Most Popular</option>
-              <option value="mis_D">Missing most ingredients</option>
+              <option value="mis_D">Most missing ingredients</option>
             {%elif data.sorting_type == "mis_D"%}
-              <option value="mis_D">Missing most ingredients</option>
+              <option value="mis_D">Most missing ingredients</option>
               <option value="name_A" >Name ascending</option>
               <option value="name_D" >Name descending</option>
               <option value="fav_A" >Least Popular</option>
               <option value="fav_D">Most Popular</option>
-              <option value="mis_A">Missing least ingredients</option>
+              <option value="mis_A">Least missing ingredients</option>
             {% else %}
-              <option value="mis_A">Missing least ingredients</option>
-              <option value="mis_D">Missing most ingredients</option>
+              <option value="mis_A">Least missing ingredients</option>
+              <option value="mis_D">Most missing  ingredients</option>
             {% endif %}
           {% endif %}
         </select>

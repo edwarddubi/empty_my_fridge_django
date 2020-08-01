@@ -9,15 +9,46 @@ from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 import json
 import sys
+import time
+"""
 sys.path.append('..')
 sys.path.append('empty_my_fridge/model')
-import time
 from category import Category
 from route import ActivityPage
 from message import Message
 from recipes import Recipes
 from user import User
 import config
+"""
+try:
+    from empty_my_fridge.model.user import User
+except ModuleNotFoundError:
+    from empty_my_fridge.empty_my_fridge.model.user import User
+
+try:
+    from empty_my_fridge.empty_my_fridge.model.recipes import Recipes
+except ModuleNotFoundError:
+    from empty_my_fridge.model.recipes import Recipes
+
+try:
+    from empty_my_fridge.model.category import Category
+except ModuleNotFoundError:
+    from empty_my_fridge.empty_my_fridge.model.category import Category
+
+try:
+    from empty_my_fridge.empty_my_fridge.model.message import Message
+except ModuleNotFoundError:
+    from empty_my_fridge.model.message import Message
+
+try:
+    from empty_my_fridge.model.route import ActivityPage
+except ModuleNotFoundError:
+    from empty_my_fridge.empty_my_fridge.model.route import ActivityPage
+
+try:
+    from config import myConfig
+except ModuleNotFoundError:
+    from empty_my_fridge.config import myConfig
 from . import allrecipes
 
 
@@ -341,6 +372,7 @@ def recipe_list(request):
                 return HttpResponseRedirect(activity_page)
             matches = Fridge_matches(all_recipes)
             all_recipes=[]
+            uid = m_user._getUser_Id_()
             fridge_recipes = "fridge"
             if(matches):
                 all_recipes = matches["exact"]
