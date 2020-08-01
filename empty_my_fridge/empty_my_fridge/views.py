@@ -1757,12 +1757,17 @@ def fridge(request):
             db.child("users").child(uid).child("Fridge").child(food).remove()
 
     if search_aing:
-        all_ingredients = [i for i in all_ingredients if search_aing in i]
+        search_aing.lower()
+        all_ingredients = [i for i in all_ingredients if search_aing.lower() in i.lower()]
         if not all_ingredients:
             all_ingredients = []
     if search_fing:
-        fridge_ingredients = [i for i in fridge_ingredients if search_fing in i]
-        if not fridge_ingredients:
+        search_fing.lower()
+        if fridge_ingredients:
+            fridge_ingredients = [i for i in fridge_ingredients if search_fing.lower() in i.lower()]
+            if not fridge_ingredients:
+                fridge_ingredients = []
+        else:
             fridge_ingredients = []
    
     if chk_food and uid:
