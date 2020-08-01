@@ -150,3 +150,16 @@ Refrain from pushing to master. push to your branch and allow the scrum master t
  - python -m pip install -U wheel twine setuptools
  - python setup.py sdist bdist_wheel 
  - twine upload dist/*
+
+## Personal Contributions
+### User Custom Recipes
+  - Users can add a custom recipe with an image to our database, and set the privacy to private (only they can see it), friends (their friends can see their personal recipes), or public (anyone can see it)
+  - Users can also opt to change the picture of their recipe, or even delete the entire thing if they so wish
+  
+### Formatted Recipe Page
+  - All scraped recipes end up directing to the external site we found it from. However, in the case a user creates their own recipe, and then wants to see their recipe or let other people see it, a populatable format was needed to display that information.
+  - Users with proper permissions can see all custom recipes in this format, and if that user owns the recipe, they can also update the picture of it if they so desire!
+
+### Friends
+  - Users can send friend requests using another user's email or username to which that other user can accept or deny.
+  - If you click on one of your friends, you can also see a public version of their user profile page, with their friends, favorited recipes, as well as any personal recipes they have created that aren't private
