@@ -78,18 +78,19 @@ def Fridge_matches(all_recipes):
     return({"exact":possible_recipes,"partial":partial_recipes})
 
 def sort_recipes(recipe_list, type):
-    result = None
-    if type == "name_A":
-        result = sorted(
-            recipe_list, key=lambda x: x["recipe_name"], reverse=False)
-    elif type == "name_D":
-        result = sorted(
-            recipe_list, key=lambda x: x["recipe_name"], reverse=True)
-    elif type == "fav_A":
-        result = sorted(recipe_list, key=lambda x: x["likes"], reverse=False)
-    elif type == "fav_D":
-        result = sorted(recipe_list, key=lambda x: x["likes"], reverse=True)
-    return result
+    try:
+        result = None
+        if type == "name_A":
+            result = sorted(recipe_list, key=lambda x: x["recipe_name"], reverse=False)
+        elif type == "name_D":
+            result = sorted(recipe_list, key=lambda x: x["recipe_name"], reverse=True)
+        elif type == "fav_A":
+            result = sorted(recipe_list, key=lambda x: x["likes"], reverse=False)
+        elif type == "fav_D":
+            result = sorted(recipe_list, key=lambda x: x["likes"], reverse=True)
+        return result
+    except:
+        return None
 
 
 @csrf_exempt
@@ -132,7 +133,6 @@ def scrape_page(request):
 
 # get all filtered recipes
 
-
 def get_all_filtered_recipes():
     recipe_list = []
     uid = m_user._getUser_Id_()
@@ -151,8 +151,6 @@ def get_all_filtered_recipes():
     return recipe_list
 
 # Recipe Page
-
-
 @csrf_exempt
 def recipe_page(request):
     if recipes.get_scraped():
@@ -293,31 +291,54 @@ def recipe_list(request):
 
     disp_fridge = (False, False)
     if request.method == "POST" or fridge_recipes:
-        if (request.POST.get('part')=="True" or fridge_recipes == "part"):
-            if m_user._isNone_():
+        if m_user._isNone_():
                 activity_page = "/empty_my_fridge/login/?activity=recipe_list"
                 return HttpResponseRedirect(activity_page)
-            matches = Fridge_matches(all_recipes)
-            fridge_recipes = "part"
-            all_recipes = []
-            if(matches):
-                all_recipes = matches["partial"]
-            disp_fridge = (True, True)
-        elif(fridge_lst:=request.POST.get('fridge')=="True" or fridge_recipes == "fridge"):
-            if m_user._isNone_():
-                activity_page = "/empty_my_fridge/login/?activity=recipe_list"
-                return HttpResponseRedirect(activity_page)
-            matches = Fridge_matches(all_recipes)
-            all_recipes=[]
-            fridge_recipes = "fridge"
-            if(matches):
-                all_recipes = matches["exact"]
-            disp_fridge = (True, False)
-        recipes.set_fridge_recipes(None)
+        else:
+            uid = m_user._getUser_Id_()
+            if (request.POST.get('part')=="True" or fridge_recipes == "part"):
+                matches = Fridge_matches(all_recipes)
+                fridge_recipes = "part"
+                all_recipes = []
+                if(matches):
+                    all_recipes = matches["partial"]
+                    if all_recipes:
+                        temp_recipes = []
+                        for recipe in all_recipes:
+                            try:
+                                is_fav = recipe["stars"][uid] != None
+                                recipe["user_saved"] = is_fav
+                            except KeyError:
+                                pass
+                            temp_recipes.append(recipe)
+                        all_recipes = temp_recipes
+
+                        
+                disp_fridge = (True, True)
+            elif(fridge_lst:=request.POST.get('fridge')=="True" or fridge_recipes == "fridge"):
+                matches = Fridge_matches(all_recipes)
+                all_recipes=[]
+                fridge_recipes = "fridge"
+                if(matches):
+                    all_recipes = matches["exact"]
+                    if all_recipes:
+                        temp_recipes = []
+                        for recipe in all_recipes:
+                            try:
+                                is_fav = recipe["stars"][uid] != None
+                                recipe["user_saved"] = is_fav
+                            except KeyError:
+                                pass
+                            temp_recipes.append(recipe)
+                        all_recipes = temp_recipes
+
+                disp_fridge = (True, False)
+            recipes.set_fridge_recipes(None)
         if(sorting_type:=request.POST.get('sorting')):
             recipes.set_sorting_type(sorting_type)
 
-    all_recipes = sort_recipes(all_recipes, recipes.get_sorting_type())
+    all_recipes = sort_recipes(all_recipes, recipes.get_sorting_type()) or all_recipes
+    
     if recipes.get_is_recipe_liked():
         scrollTop = recipes.get_recipe_list_position()
         recipes.set_is_recipe_liked(False)
@@ -432,28 +453,49 @@ def category(request):
                 activity_page = "/empty_my_fridge/login/?activity=recipe_list"
                 return HttpResponseRedirect(activity_page)
             matches = Fridge_matches(recipe_lst)
+            uid = m_user._getUser_Id_()
             fridge_recipes = "part"
             recipe_lst = []
             if(matches):
                 recipe_lst = matches["partial"]
+                if recipe_lst:
+                    temp_recipes = []
+                    for recipe in recipe_lst:
+                        try:
+                            is_fav = recipe["stars"][uid] != None
+                            recipe["user_saved"] = is_fav
+                        except KeyError:
+                            pass
+                        temp_recipes.append(recipe)
+                    recipe_lst = temp_recipes
             disp_fridge = (True, True)
         elif(fridge_lst:=request.POST.get('fridge')=="True" or fridge_recipes=="fridge"):
             if m_user._isNone_():
                 activity_page = "/empty_my_fridge/login/?activity=recipe_list"
                 return HttpResponseRedirect(activity_page)
+            uid = m_user._getUser_Id_()
             matches = Fridge_matches(recipe_lst)
             fridge_recipes = "fridge"
-            print(fridge_recipes)
             recipe_lst = []
             if(matches):
                 recipe_lst = matches["exact"]
+                if recipe_lst:
+                    temp_recipes = []
+                    for recipe in recipe_lst:
+                        try:
+                            is_fav = recipe["stars"][uid] != None
+                            recipe["user_saved"] = is_fav
+                        except KeyError:
+                            pass
+                        temp_recipes.append(recipe)
+                    recipe_lst = temp_recipes
             disp_fridge = (True, False)
         recipes.set_fridge_recipes(None)
         if(sorting_type:=request.POST.get('sorting')):
             recipes.set_sorting_type(sorting_type)
 
     
-    recipe_lst = sort_recipes(recipe_lst, recipes.get_sorting_type())
+    recipe_lst = sort_recipes(recipe_lst, recipes.get_sorting_type()) or recipe_lst
 
     paginator = Paginator(recipe_lst, 48)
     page = request.GET.get('page')
@@ -567,8 +609,19 @@ def get_recipes_by_category_ingredients(request):
                 return HttpResponseRedirect(activity_page)
             matches = Fridge_matches(result_list)
             result_list = []
+            uid = m_user._getUser_Id_()
             if(matches):
                 result_list = matches["partial"]
+                if result_list:
+                    temp_recipes = []
+                    for recipe in result_list:
+                        try:
+                            is_fav = recipe["stars"][uid] != None
+                            recipe["user_saved"] = is_fav
+                        except KeyError:
+                            pass
+                        temp_recipes.append(recipe)
+                    result_list = temp_recipes
             disp_fridge = (True, True)
         elif(fridge_lst:=request.POST.get('fridge')=="True"):
             if m_user._isNone_():
@@ -576,13 +629,24 @@ def get_recipes_by_category_ingredients(request):
                 return HttpResponseRedirect(activity_page)
             matches = Fridge_matches(result_list)
             result_list = []
+            uid = m_user._getUser_Id_()
             if(matches):
                 result_list = matches["exact"]
+                if result_list:
+                    temp_recipes = []
+                    for recipe in result_list:
+                        try:
+                            is_fav = recipe["stars"][uid] != None
+                            recipe["user_saved"] = is_fav
+                        except KeyError:
+                            pass
+                        temp_recipes.append(recipe)
+                    result_list = temp_recipes
             disp_fridge = (True, False)
         if(sorting_type:=request.POST.get('sorting')):
             recipes.set_sorting_type(sorting_type)
 
-    result_list = sort_recipes(result_list, recipes.get_sorting_type())
+    result_list = sort_recipes(result_list, recipes.get_sorting_type()) or result_list
     paginator = Paginator(result_list, 48)
     page = request.GET.get('page')
     if not page:
@@ -1680,7 +1744,18 @@ def fridge_recipes(request):
 
     all_recipes = recipes.get_all_recipes()
     matches = Fridge_matches(all_recipes)
+    uid = m_user._getUser_Id_()
     possible_recipes = matches["exact"]
+    temp_recipes = []
+    if possible_recipes:
+        for recipe in possible_recipes:
+            try:
+                is_fav = recipe["stars"][uid] != None
+                recipe["user_saved"] = is_fav
+            except KeyError:
+                pass
+            temp_recipes.append(recipe)
+        possible_recipes = temp_recipes
     disp_partial = False
     fridge_recipes = recipes.get_fridge_recipes()
     if request.method == "POST" or fridge_recipes:
@@ -1688,10 +1763,25 @@ def fridge_recipes(request):
             fridge_recipes = "part"
             disp_partial = True
             possible_recipes=[]
-            possible_recipes =matches["partial"]
+            possible_recipes = matches["partial"]
+            temp_recipes = []
+            if possible_recipes:
+                for recipe in possible_recipes:
+                    try:
+                        is_fav = recipe["stars"][uid] != None
+                        recipe["user_saved"] = is_fav
+                    except KeyError:
+                        pass
+                    temp_recipes.append(recipe)
+                possible_recipes = temp_recipes
         else:
             disp_partial = False
         recipes.set_fridge_recipes(None)
+
+    if(sorting_type:=request.POST.get('sorting')):
+            recipes.set_sorting_type(sorting_type)
+
+    possible_recipes = sort_recipes(possible_recipes, recipes.get_sorting_type()) or possible_recipes
 
     scrollTop = 0
     keep_scroll_pos = False
@@ -1703,7 +1793,6 @@ def fridge_recipes(request):
 
     if len(possible_recipes) > 0:
         found_results = True
-    print(scrollTop)
     paginator = Paginator(possible_recipes, 48)
     page = request.GET.get('page')
     if not page:
@@ -1726,6 +1815,7 @@ def fridge_recipes(request):
         "items": len(curr_recipes),
         "isSearch": True,
         "fridge_recipes" : fridge_recipes,
+        "sorting_type": recipes.get_sorting_type(),
     }
 
     return render(request, 'fridge_recipes.html', {"data": data})
