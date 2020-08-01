@@ -124,6 +124,9 @@ use command -> git checkout -b < branchName >
 
 Refrain from pushing to master. push to your branch and allow the scrum master to review your work before pushing to master
 
+## GitHub Fetch
+ - git fetch --all
+ - git reset --hard origin/**branch name**
 
 ## SetUp file
  - python -m pip install -U wheel twine setuptools
