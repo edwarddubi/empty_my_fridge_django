@@ -247,8 +247,7 @@
           margin-inline-start: 0px;
           margin-inline-end: 0px;
           font-weight: bold;
-          font-size: 1.6rem;
-      }
+          font-size: 1.6rem;}
       </style>
       <div class="myfridge_instructions">
         <ol class="numbered horizontal">
@@ -413,9 +412,16 @@
             width: 30%;
             position: center;
             transition: all 5s ease-in-out;
-            width: 50%;
+            max-height: 500px;
             border: 1px solid rgb(0, 0, 0);
-            z-index:20;
+            z-index:999;
+          }
+          .ui.success.message {
+              background-color: #fcfff5;
+              color: #2c662d;
+              z-index:20;
+              overflow: auto;
+              max-height: 500px;
           }
 
           .popup h2 {
@@ -426,15 +432,11 @@
           
           .popup .content {
             
-            max-height: 40%;
-            overflow: auto;
+            max-height: 500px;
+            overflow: scroll;
           }
 
-          @media screen and (max-width: 700px){
-              .popup{
-              width: 70%;
-            }
-          }
+          
     
         </style>
         <div class="myfridge_inner myfridge_d">

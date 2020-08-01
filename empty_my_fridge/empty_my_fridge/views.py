@@ -1746,8 +1746,6 @@ def fridge(request):
     chk_food = request.POST.getlist('sav_ing')
     del_food = request.POST.getlist('del_ing')
     popup={}
-    # if chk_food:
-    #     chk_food = all_ingredients
 
     if(request.POST.get('remove_all')):
         db.child("users").child(uid).child("Fridge").remove()
@@ -1778,8 +1776,11 @@ def fridge(request):
                 "Fridge").update(new_ingredients)
 
         else:
+            disj=[]
             for x in chk_food:
+                disj.append(x)
                 new_ingredients[x] = x
+            popup={"add":disj}
             db.child("users").child(uid).child("Fridge").set(new_ingredients)
 
     if fridge_ingredients:
