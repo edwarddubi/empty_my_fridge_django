@@ -1681,7 +1681,6 @@ def user_fav_recipes(request):
 
 # User Error Messages Display
 def error_message(type):
-
     if type.find("WEAK_PASSWORD") != -1:
         type = "WEAK_PASSWORD"
 

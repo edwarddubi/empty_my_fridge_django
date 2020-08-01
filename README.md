@@ -33,3 +33,22 @@ Semantic Ui or fomantic Ui css (currently, Semantic Ui)
 - HTML, CSS, and JS (Snippets)
 
 ## Contributions
+
+### Edward Mensah
+0. **Navigation bar (including Ui)**
+1. **User authentication (including Ui):**
+    - Login/Register/Reset Password
+    - Email verification/Logout
+2. **User Profile (including Ui)**
+    - View and Edit user information/Account Settings
+    - User favorite recipes
+    - Change user avatar
+3. **Page routing**
+    - Navigating from one page to another
+4. **Recipe list (including Ui)**
+    - Get all recipes
+    - Ability to populate these recipes on the recipe page
+5. **Search (On the navigation bar)**
+    - Ability to search for recipes by name
+6. **Likes**
+    - Ability to add a recipe to user's favorites 
