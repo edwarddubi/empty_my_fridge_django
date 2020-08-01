@@ -31,3 +31,5 @@ Semantic Ui or fomantic Ui css (currently, Semantic Ui)
 ## Templates
 
 - HTML, CSS, and JS (Snippets)
+
+## Contributions

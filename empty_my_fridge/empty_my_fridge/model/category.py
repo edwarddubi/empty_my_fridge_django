@@ -5,6 +5,7 @@ class Category:
         self.is_cat_and_ingrd = False
         self.filter_list = None
         self.sorting_type = "name_A"
+        self.isExact = False
 
     def get_sorting_type(self):
         return self.sorting_type
@@ -40,3 +41,9 @@ class Category:
 
     def get_filter_list(self):
         return self.filter_list
+    
+    def get_isExact(self):
+        return self.isExact
+
+    def set_isExact(self, isComplete):
+        self.isExact = isComplete
