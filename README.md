@@ -8,7 +8,7 @@ A web application that tells users recipes they can make based on ingredients in
 
 ## PYPI
 
-[empty-my-fridge 1.1.4](https://pypi.org/project/empty-my-fridge/)
+[empty-my-fridge 1.1.6](https://pypi.org/project/empty-my-fridge/)
 
 ### Install using command
   - pip3 install empty-my-fridge
