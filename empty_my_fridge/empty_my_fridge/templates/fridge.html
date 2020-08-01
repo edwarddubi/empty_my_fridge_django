@@ -337,10 +337,13 @@
                 <input
                   type="text"
                   placeholder="Search.."
-                  name="search_ingredients"
+                  name="search_all_ingredients"
                   id="search"/>
                   <button class= "compact big ui icon button" onclick="form.submit()">
                   <i class="search icon " ></i>
+                </button>
+                <button class= "compact big ui icon button" onclick="form.reset()">
+                <i class= "sync alternate icon" type="reset"></i>
                 </button>
                 </div>
               </form>
@@ -440,20 +443,40 @@
               ingredients)</span
             >
           </h3>
-          
+          <div class="search-container" style= "position: sticky; top: 60px;">
+              <form>
+              <div class="inline field" style="background-color: white;">
+
+                <input
+                  type="text"
+                  placeholder="Search.."
+                  name="search_personal_ingredients"
+                  id="search"/>
+                  <button class= "compact big ui icon button" onclick="form.submit()">
+                  <i class="search icon " ></i>
+                </button>
+                <button class= "compact big ui icon button" onclick="form.reset()">
+                  <i class= "sync alternate icon" type="reset"></i>
+                </button>
+                </div>
+              </form>
+            </div>
           <form method="post">
-              <div class="ui buttons" style= "position: sticky; top: 60px">
+              <div class="ui buttons" style= "position: sticky; top: 115px">
                 <button class="ui button" style= "width: 60%; "type="submit" >Remove from Fridge</button>
                 <div class="or"></div>
                 <button class="ui right floated negative button" 
                 type="submit" value="Remove all" method="post" name="remove_all">Remove all</button>
               </div>
             <ul>
-              {% for food in fing %}
+              {% if fing %}{% for food in fing %}
               <input type="checkbox" name="del_ing" value="{{food}}" />
               <label> {{food}}</label
               ><br />
               {% endfor %}
+              {% else %}
+              <p>No ingredients found</p>
+              {% endif %}
             </ul>
           </form>
           <a
