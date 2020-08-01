@@ -964,14 +964,9 @@ def recipe_view_page(request):
     uid = m_user._getUser_Id_()
     print_list = []
     recipe_id = request.GET.get("id")
-    print(recipe_id)
     link = None
     this_recipe = None
-    #"https://firebasestorage.googleapis.com/v0/b/empty-my-fridge-ff73c.appspot.com/o/cutePlate.jpg?alt=media&token=229f016f-e151-4bf7-b569-d6a07a6a2c18"
-
     if request.method == "POST":
-        # recipe_id = request.POST.get("recipe_id")
-        # print(recipe_id)
         try:
             file = request.FILES['img']
             _dir_ = "recipe_images/{0}/{1}".format(uid, file.name)
@@ -984,7 +979,6 @@ def recipe_view_page(request):
             "recipe_image": link
         }
         this_recipe = db.child("recipe").child(recipe_id).get().val()
-        print(this_recipe)
         if this_recipe and link:
             db.child("recipe").child(recipe_id).update(recipe_image_update)
             db.child("users").child(uid).child("recipes").child(recipe_id).update(recipe_image_update)
@@ -997,11 +991,16 @@ def recipe_view_page(request):
         if not this_recipe:
             this_recipe = db.child("users").child(uid).child("recipes").child(recipe_id).get().val()
 
+        if not this_recipe:
+            friend_id = m_user.get_friend_id()
+            this_recipe = db.child("users").child(friend_id).child("recipes").child(recipe_id).get().val()
+
         try:
             if uid:
                 if this_recipe["uid"] == uid:
                     this_recipe["belongsToUser"] = True
         except KeyError:
+            this_recipe["belongsToUser"] = False
             pass
         for (measurement, ingredient) in zip(this_recipe["measurements"], this_recipe["recipe_ingredients"]):
             combo = measurement + ": " + ingredient
@@ -1035,11 +1034,10 @@ def user_friends(request):
                 #nt(value["added_back"])
                 if value["added_back"] == "True":
                     friend_details = dict(thisFren)
-                    # print(friend_details)
                     friends_list.append(friend_details)
 
         if request.method == "POST":
-            print("is being DELETED...")
+            print("user is being DELETED...")
             deny = request.POST.get("deny")
             thisFren = db.child("users").child(deny).get().val() #what does .val() do at the end?
             #once you find the right person...
@@ -1068,33 +1066,20 @@ def public_friends(request):
         uid = m_user._getUser_Id_()
         #get friend's object
         friend_id = request.GET.get("id")
-        print("friend_id: ")
-        print(friend_id)
 
         if friend_id:
             pUser = db.child("users").child(friend_id).get().val()
-            # print("pUser: ")
-            # print(pUser)
             pUser_details = dict(pUser)
-            #pUser._setUser_(user_details)
 
         friends_list = []
         friends = db.child("users").child(friend_id).child("friends").get().val()
-        print("has friends: ")
-        print(friends)
         num_of_friends = 0
         if friends.items() != None:
             for _key_,value in friends.items():
-                print("key")
-                print(_key_)
-                #_key_ = str(fren.key()) #grabs friend's unique id
-                #added_back"])
                 if value["added_back"]:
                     thisFren = db.child("users").child(_key_).get().val()
                     friend_details = dict(thisFren)
-                    # print(friend_details)
                     friends_list.append(friend_details)
-        print(friends_list)
         num_of_friends = len(friends_list)
         data = {
             "user": user,
@@ -1185,7 +1170,7 @@ def remove_white_spaces(items):
 
 @csrf_exempt
 def friend_requests(request):
-    print("in friend_request!")
+    print("Friend Request!")
     if m_user._isNone_():
         return HttpResponseRedirect("/empty_my_fridge/login/")
     else:
@@ -1201,7 +1186,6 @@ def friend_requests(request):
 
         friends_list = []
         friends = db.child("users").child(uid).child("friends").get().val()
-        #print(friends)
         num_of_friends = 0
     
 
@@ -1213,11 +1197,7 @@ def friend_requests(request):
             email = request.POST.get("email")
             username = request.POST.get("username")
             accept = request.POST.get("accept")
-            print("accept: ")
-            print(accept)
             deny = request.POST.get("deny")
-            print("deny: ")
-            print(deny)
             #they chose to use email....
             if email:
                 for person in users.each():
@@ -1233,14 +1213,12 @@ def friend_requests(request):
                         break
             if accept:
                 isSub = True
-                print("is being ADDED.... ")
+                print("user is being ADDED.... ")
                 #so if you actually have friends...
                 #if friends:
                     #look through them...
                    # for fren in friends.each():
                 thisFren = db.child("users").child(uid).child("friends").child(accept).get().val() #what does .val() do at the end?
-                print("thisFren: ")
-                print(thisFren)
                 #set them true on my friend list...
                 db.child("users").child(uid).child("friends").child(accept).update({"added_back": "True"})
                # thisFren["added_back"] = True
@@ -1255,14 +1233,13 @@ def friend_requests(request):
                 friend_added = True
             if deny:
                 isSub = True
-                print("is being DELETED...")
+                print("user is being DELETED...")
                 thisFren = db.child("users").child(deny).get().val() #what does .val() do at the end?
                 #once you find the right person...
                 if thisFren:
                     #delete them from my friend list...
                     db.child("users").child(uid).child("friends").child(deny).remove()
                     friend_deleted = True
-            #print(thisUser)
 
             if thisUser:
                 #thisEmail = thisUser["email"]
@@ -1283,8 +1260,7 @@ def friend_requests(request):
             if accept or deny:
                 return HttpResponseRedirect("/empty_my_fridge/friend_requests/")
             #they chose to use userID...
-        
-        print(friends)
+    
         if friends:
             for key, value in friends.items():
                 thisFren = db.child("users").child(key).get().val()
@@ -1293,8 +1269,6 @@ def friend_requests(request):
                 if not value["added_back"]:
                     friends_list.append(dict(thisFren))
         num_of_friends = len(friends_list)
-        
-        print(friends_list)
         data = {
             "user": user,
             "found": found,
@@ -1420,10 +1394,8 @@ def personal_recipes(request):
         if request.method == "POST":
 
             title = request.POST.get("title")
-            print(title)
             if not title:
                 recipe_id = request.POST.get("delete_recipe")
-                print(recipe_id)
                 db.child("users").child(uid).child("recipes").child(recipe_id).remove()
                 db.child("recipe").child(recipe_id).remove()
             else:

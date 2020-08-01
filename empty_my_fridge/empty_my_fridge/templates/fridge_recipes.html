@@ -194,11 +194,11 @@
       {%for recipe in data.recipes%} {%if not data.partial%}
       <div class="four wide column">
         <div class="ui link card" style="margin: 10px; width: 300px; height: 340px;">
-          <a href="{{recipe.recipe_link}}" class="ui medium image">
+          <a href="{{recipe.recipe_link}}" target="_blank" class="ui medium image">
             <img style="height: 215px; object-fit: cover;" src="{{recipe.recipe_image}}" />
           </a>
           <div class="content" style="text-align: center;">
-            <a class="recipe_name" href="{{recipe.recipe_link}}">{{recipe.recipe_name}}</a>
+            <a target="_blank" class="recipe_name" href="{{recipe.recipe_link}}">{{recipe.recipe_name}}</a>
           </div>
           <div class="extra content" bis_skin_checked="1">
             <span class="left floated">
