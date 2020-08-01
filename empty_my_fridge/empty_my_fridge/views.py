@@ -1032,7 +1032,7 @@ def user_friends(request):
                 #_key_ = str(fren.key()) #grabs friend's unique id
                 thisFren = db.child("users").child(_key_).get().val() #what does .val() do at the end?
                 #nt(value["added_back"])
-                if value["added_back"] == "True":
+                if value["added_back"]:
                     friend_details = dict(thisFren)
                     friends_list.append(friend_details)
 

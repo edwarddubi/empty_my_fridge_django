@@ -376,11 +376,11 @@
           </style>
           <div class="ui link card purple raised" style="margin: 10px; width: 300px; height: 340px;">
             {% if recipe.recipe_link %}
-            <a class="ui medium image" href="{{recipe.recipe_link}}">
+            <a  target="_blank" class="ui medium image" href="{{recipe.recipe_link}}">
               <img style="height: 215px; object-fit: cover;" src="{{recipe.recipe_image}}" />
             </a>
             {% else %}
-            <a class="ui medium image" href="{% url 'recipe_view_page'%}?id={{recipe.recipe_id}}">
+            <a  target="_blank" class="ui medium image" href="{% url 'recipe_view_page'%}?id={{recipe.recipe_id}}">
               <img style="height: 215px; object-fit: cover;" src="{{recipe.recipe_image}}" />
             </a>
             {% endif %}
