@@ -1761,8 +1761,11 @@ def fridge(request):
         if not all_ingredients:
             all_ingredients = []
     if search_fing:
-        fridge_ingredients = [i for i in fridge_ingredients if search_fing in i]
-        if not fridge_ingredients:
+        if fridge_ingredients:
+            fridge_ingredients = [i for i in fridge_ingredients if search_fing in i]
+            if not fridge_ingredients:
+                fridge_ingredients = []
+        else:
             fridge_ingredients = []
    
     if chk_food and uid:
