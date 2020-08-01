@@ -404,7 +404,7 @@
               <img style="height: 215px; object-fit: cover;" src="{{recipe.recipe_image}}" />
             </a>
             {% else %}
-            <a  target="_blank" class="ui medium image" href="{% url 'recipe_view_page'%}?id={{recipe.recipe_id}}">
+            <a class="ui medium image" href="{% url 'recipe_view_page'%}?id={{recipe.recipe_id}}">
               <img style="height: 215px; object-fit: cover;" src="{{recipe.recipe_image}}" />
             </a>
             {% endif %}
@@ -414,7 +414,7 @@
               <a target="_blank" class="recipe_name" href="{{recipe.recipe_link}}">
                 {{recipe.recipe_name}}</a>
               {% else %}
-              <a target="_blank" class="recipe_name"
+              <a class="recipe_name"
                 href="{% url 'recipe_view_page'%}?id={{recipe.recipe_id}}">{{recipe.recipe_name}}</a>
               {% endif %}
 

@@ -142,8 +142,8 @@
             <input value="{{data.pUser.name}}" readonly="" type="text" />
           </div>
           <div style="width: 30%;" class="field">
-            <label>Username</label>
-            <input value="@{{data.pUser.username}}" readonly="" type="text" />
+            <label>User ID</label>
+            <input value="{{data.pUser.username}}" readonly="" type="text" />
           </div>
           {% if data.pUser.bio %}
           <div style="width: 30%;" class="field">
@@ -169,7 +169,7 @@
           </div>
           {% endif %}
           {% if data.pUser.blog %}
-          <a href="{{data.pUser.blog}}">Personal Blog</a>
+          <a target="_blank" href="{{data.pUser.blog}}">Personal Blog</a>
           {% endif %}
           <p>Joined: {{data.pUser.joined}}</p>
         </div>

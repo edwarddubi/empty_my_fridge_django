@@ -30,19 +30,19 @@ descriptions = ['baked', 'beaten', 'blanched', 'boiled', 'boiling', 'boned', 'br
 		'skinned', 'gutted', 'browned', 'patted', 'raw', 'flaked', 'deveined', 'shelled', 'shucked', 'crumbs',
 		'halves', 'squares', 'zest', 'peel', 'uncooked', 'butterflied', 'unwrapped', 'unbaked', 'warmed', 'cracked','good','store', 
 		'bought', 'fajita-sized', 'finely', 'freshly','slow', 'quality', 'sodium', 'mixed', 'wild', 'French', 'African' ,'Mexican','Asian', 'Italian', 'Chinese', 'American', 
-		'garnished', 'seedless','coarsely', 'natural', 'organic', 'solid','solid', 'heaping','stoned', 'homemade', 'canned', 'unsweetened', 'instant']
+		'garnished', 'seedless','coarsely', 'natural', 'organic', 'solid','solid', 'heaping','stoned', 'homemade', 'canned', 'unsweetened', 'instant','overripe']
 
 # list of common ingredients that accidentally get filtered out due to similarities in description list
-description_exceptions = ['butter', 'oil', 'cream', 'bread','all', 'salt']
+description_exceptions = ['butter', 'oil', 'cream', 'bread','all', 'salt', 'sour']
 
-nonplurals = ['eggs', 'sugars']
+nonplurals = ['eggs', 'sugars', 'whites', 'tortillas', 'peppers','carrots', 'limes', 'pecans','zucchinis', 'apples']
 # list of numbers as words
 numbers = ['one', 'two','three','four','five','six','seven','eight','nine','ten', 'elevin','twelve','dozen']
 
 brands = ['bertolli®', 'cook\'s', 'hothouse', 'NESTLÉ®', 'TOLL HOUSE®']
 
 # misc modifiers (Will sort later)
-modifier = ['plus', 'silvered', 'virgin', 'seasoning', 'taste', 'yolk', 'meat', 'frying']
+modifier = ['plus', 'silvered', 'virgin', 'seasoning', 'taste', 'yolks', 'meat', 'frying', 'dusting']
 
 # list of adverbs used before or after description
 precedingAdverbs = ['well', 'very', 'super']
@@ -52,7 +52,7 @@ succeedingAdverbs = ['diagonally', 'lengthwise', 'overnight']
 prepositions = ['as', 'such', 'for', 'with', 'without', 'if', 'about', 'e.g.', 'in', 'into', 'at', 'until', 'won\'t']
 
 # only used as <something> removed, <something> reserved, <x> inches, <x> old, <some> temperature
-descriptionsWithPredecessor = ['removed', 'discarded', 'reserved', 'included', 'inch', 'inches', 'old', 'temperature', 'up']
+descriptionsWithPredecessor = ['removed', 'discarded', 'reserved', 'included', 'inch', 'inches', 'old', 'temperature', 'up', ]
 
 # descriptions that can be removed from ingredient, i.e. candied pineapple chunks
 unnecessaryDescriptions = ['chunks', 'pieces', 'rings', 'spears', 'style', 'desserts']
@@ -63,7 +63,6 @@ hypenatedSuffixes = ['coated', 'free', 'flavored']
 
 vulgarFractions = ['¼','½','¾','⅐','⅑','⅒','⅓','⅔','⅕','⅖','⅗','⅘','⅙','⅚','⅛','⅜','⅝','⅞','⅟']
 
-nonplurals = ['eggs', 'sugars', 'onions']
 def parser(ingredient, food_array):
 	if type(ingredient) != str:
 	   return 	
@@ -73,6 +72,7 @@ def parser(ingredient, food_array):
 	# Removes unnecessary special characters
 	ingredient = ingredient.strip()
 	ingredient = ingredient.replace('-', ' ')
+	ingredient = ingredient.replace('+', ' ')
 	ingredient = ingredient.replace(':', ' ')
 	ingredient = ingredient.replace(';', ' ')
 	ingredient = ingredient.replace('/', ' ')
@@ -160,14 +160,21 @@ def parser(ingredient, food_array):
 def allrecipes(db):
 	menu = "Stop scraping after...page numbers completed.\n1. 3 pages\n2. 5 pages\n3. All pages\n4. Custom\nOption: "
 	option = input(menu)
+	num = 0
+	page_num = 0
 	if option == "1":
+		num = 0
 		page_num = 3
 	elif option == "2":
+		num = 0
 		page_num = 5
 	elif option == "3":
-		page_num = len(numbers) + 1
+		num = 0
+		page_num = 200
 	elif option == "4":
-		page_num = input("Custom: ")
+		num = input("Set start page: ")
+		num = int(num)
+		page_num = input("Set end page: ")
 		page_num = int(page_num)
 
 	print('Getting all ingredients in database. Please wait....')
@@ -181,9 +188,8 @@ def allrecipes(db):
 	print('For the time being, get yourself a coffee while you wait.')
 	print('\n')
 
-	num = 0
-	while num < 15:
-		print('Now scraping page ' + str(num) + ' out of ' + str(len(numbers) + 1))
+	while num <= page_num:
+		print('Now scraping page ' + str(num) + ' out of ' + str(page_num))
 		# ---------- ---------- Scraping Page With All Recipe Links---------- ----------
 		allrecipe = 'https://www.allrecipes.com/recipes/?page=' + str(num)
 		uClient = uReq(allrecipe)
@@ -296,7 +302,7 @@ def allrecipes(db):
 
 			grand_recipe_list.append(add_to_grand_list)
 			#Used to have a 1 second delay for each recipe scraped. Helps prevents forced connection drops from host
-			time.sleep(1)
+			time.sleep(0.5)
 		
 		res = '{0} recipes have been scraped.\nStopping...Please wait...'.format((num - 1) * 21)
 		if page_num == num - 1:
