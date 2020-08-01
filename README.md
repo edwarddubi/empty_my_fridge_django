@@ -64,7 +64,7 @@ Semantic Ui or fomantic Ui css (currently, Semantic Ui)
     - Customization of personal recipes' images 
     - Public access to custom recipe pages 
 
-3. **Friends** ****July 18 - July 30***
+3. **Friends** ***July 18 - July 30***
     - Users have the abilty to send/receive friend requests by id or email
     - Accept/ deny friend requests
     - Delete friends
@@ -88,7 +88,7 @@ Semantic Ui or fomantic Ui css (currently, Semantic Ui)
     - Choice to either show exact matches for all applied filters or show all recipes that match at least one filter
    
 ### Charles Charlestin III
-  1. **Web Scraping** ***June 9 - present***
+  1. **Web Scraping** ***June 9 - July 29***
       - Utilized the beautiful soup python library to perform web scraping on desired webpages
         - Uses recipe data from allrecipes.com
         - Previously used recipe data from foodnetwork.com(Discontinued from sprint 1)
