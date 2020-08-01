@@ -105,7 +105,8 @@ def Fridge_matches(all_recipes):
                 f_i = set()
             if r_i.issubset(f_i):
                 possible_recipes.append(recipe)
-            elif(len(missing:=(r_i-f_i))<4):
+            elif(len((r_i-f_i))<4):
+                missing=(r_i-f_i)
                 recipe["missing_ingredients"]=list(missing)
                 partial_recipes.append(recipe)
         except KeyError:
@@ -331,8 +332,8 @@ def recipe_list(request):
     fridge_recipes = recipes.get_fridge_recipes()
     disp_fridge = (False, False)
     if request.method == "POST" or fridge_recipes:
-        if ((sorting_type := request.POST.get('sorting'))
-        != recipes.get_sorting_type() and sorting_type):
+        sorting_type=request.POST.get('sorting') 
+        if( sorting_type != recipes.get_sorting_type() and sorting_type):
             recipes.set_sorting_type(sorting_type)
             recipes.set_fridge_recipes(fridge_recipes)
         elif request.method == "GET":
@@ -365,7 +366,7 @@ def recipe_list(request):
                     all_recipes = temp_recipes
                     
             disp_fridge = (True, True)
-        elif(fridge_lst:=request.POST.get('fridge')=="True" or fridge_recipes == "fridge"):
+        elif(request.POST.get('fridge')=="True" or fridge_recipes == "fridge"):
             recipes.set_fridge_recipes("fridge")
             if m_user._isNone_():
                 activity_page = "/empty_my_fridge/login/?activity=recipe_list"
@@ -503,7 +504,8 @@ def category(request):
     fridge_recipes = recipes.get_fridge_recipes()
     disp_fridge = (False, False)
     if request.method == "POST" or fridge_recipes:
-        if(( sorting_type:=request.POST.get('sorting') )!= m_category.get_sorting_type() and sorting_type):
+        sorting_type=request.POST.get('sorting') 
+        if( sorting_type != m_category.get_sorting_type() and sorting_type):
             m_category.set_sorting_type(sorting_type)
             recipes.set_fridge_recipes(fridge_recipes)
         elif request.method == "GET":
@@ -533,7 +535,7 @@ def category(request):
                         temp_recipes.append(recipe)
                     recipe_lst = temp_recipes
             disp_fridge = (True, True)
-        elif(fridge_lst:=request.POST.get('fridge')=="True" or fridge_recipes=="fridge"):
+        elif(request.POST.get('fridge')=="True" or fridge_recipes=="fridge"):
             recipes.set_fridge_recipes("fridge")
             if m_user._isNone_():
                 activity_page = "/empty_my_fridge/login/?activity=recipe_list"
@@ -669,7 +671,8 @@ def get_recipes_by_category_ingredients(request):
     fridge_recipes = recipes.get_fridge_recipes()
     disp_fridge = (False, False)
     if request.method == "POST" or fridge_recipes:
-        if(( sorting_type:=request.POST.get('sorting') )!= m_category.get_sorting_type() and sorting_type):
+        sorting_type=request.POST.get('sorting') 
+        if( sorting_type != m_category.get_sorting_type() and sorting_type):
             m_category.set_sorting_type(sorting_type)
             recipes.set_fridge_recipes(fridge_recipes)
         elif request.method == "GET":
@@ -699,7 +702,7 @@ def get_recipes_by_category_ingredients(request):
                         temp_recipes.append(recipe)
                     result_list = temp_recipes
             disp_fridge = (True, True)
-        elif(fridge_lst:=request.POST.get('fridge')=="True"or fridge_recipes=="fridge"):
+        elif(request.POST.get('fridge')=="True"or fridge_recipes=="fridge"):
             recipes.set_fridge_recipes("fridge")
             if m_user._isNone_():
                 activity_page = "/empty_my_fridge/login/?activity=recipe_list"
@@ -1813,7 +1816,8 @@ def fridge_recipes(request):
     disp_partial = False
     fridge_recipes = recipes.get_fridge_recipes()
     if request.method == "POST" or fridge_recipes:
-        if(( sorting_type:=request.POST.get('sorting') )!= recipes.get_fridge_sorting_type() and sorting_type):
+        sorting_type=request.POST.get('sorting') 
+        if( sorting_type != recipes.get_fridge_sorting_type() and sorting_type):
             recipes.set_fridge_sorting_type(sorting_type)
             recipes.set_fridge_recipes(fridge_recipes)
         elif request.method == "GET":

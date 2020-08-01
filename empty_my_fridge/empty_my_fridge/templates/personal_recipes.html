@@ -202,7 +202,10 @@
               <div style="width: 80%;" class="field">
                 <label>Steps </label>
                 <textarea
-                  placeholder="How to make the recipe"
+                  placeholder="1. Gather necessary ingredients
+2. Mix them together
+3.Bake in oven at 350 degrees for 25 minutes
+4. Cool and enjoy!"
                   name="steps"
                   required
                 ></textarea>
@@ -277,8 +280,17 @@
               <div class="item">
                 <i class="right triangle icon"></i>
                 <div class="content">
+                  {% if each.privacy == "0" %}
                   <a class="header" href="{% url 'recipe_view_page'%}?id={{each.recipe_id}}" id="rec_link"
-                  name="rec_link" value="True">{{each.recipe_name}}</a>
+                  name="rec_link" value="True">{{each.recipe_name}} (Private)</a>
+                  {% elif each.privacy == "1" %}
+                  <a class="header" href="{% url 'recipe_view_page'%}?id={{each.recipe_id}}" id="rec_link"
+                  name="rec_link" value="True">{{each.recipe_name}} (Friends Only)</a>
+                  {% elif each.privacy == "2" %}
+                  <a class="header" href="{% url 'recipe_view_page'%}?id={{each.recipe_id}}" id="rec_link"
+                  name="rec_link" value="True">{{each.recipe_name}} (Public)</a>
+                  {% endif %}
+                  
                   <div class="description">{{each.description}}</div>
                   <form
                     action="/empty_my_fridge/recipe_view_page/"
