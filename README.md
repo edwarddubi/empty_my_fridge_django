@@ -8,7 +8,7 @@ A web application that tells users recipes they can make based on ingredients in
 
 ## PYPI
 
-[empty-my-fridge 1.0.7](https://pypi.org/project/empty-my-fridge/)
+[empty-my-fridge 1.1.4](https://pypi.org/project/empty-my-fridge/)
 
 ### Install using command
   - pip3 install empty-my-fridge
@@ -54,7 +54,7 @@ Semantic Ui or fomantic Ui css (currently, Semantic Ui)
     - Ability to add a recipe to user's favorites
    
 ### Cyan Perez
-1. **User Custom Recipes** ***June 22 - June 24***
+1. **User Custom Recipes** ***June 12 - June 24***
     - Users can add a custom recipe with an image to our database, and set the privacy to private (only they can see it) 
     - friends (their friends can see their personal recipes), or public (anyone can see it)
     - Users can also opt to change the picture of their recipe, or even delete the entire thing if they so wish

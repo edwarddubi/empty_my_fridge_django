@@ -370,38 +370,41 @@
     </form>
 
     <!--Pagination-->
-    {% if data.recipes %}
-    <div class="pagination" id="pagination_top">
-      <span class="step-links">
-        {% if data.recipes.has_previous %}
-        <a href="?page=1" title="First" style="border: none; background-color: white; color: #031f3b;">
-          <<</a>
-            <a href="?page={{ data.recipes.previous_page_number }}"
-              style="border: none; background-color: white; color: #031f3b;">Previous</a>
-            {% endif %}
+  {% if data.recipe_lst %}
+  <div class="pagination" id="pagination_top">
+    <span class="step-links">
+      {% if data.recipe_lst.has_previous %}
+      <a href="?category={{ data.category }}&page=1" title="First"
+        style="border: none; background-color: white; color: #031f3b;">
+        <<</a> <a href="?category={{ data.category }}&page={{ data.recipe_lst.previous_page_number }}"
+          style="border: none; background-color: white; color: #031f3b;">Previous
+      </a>
+      {% endif %}
 
-            <span class="current">
-              {% for num in data.recipes.paginator.page_range %} {% if data.recipes.number == num %}
-              <a href="?page={{ num }}" style="background-color: #031f3b; color: white;">{{ num }}</a>
-              {% else %}
-              <a href="?page={{ num }}">{{ num }}</a>
-              {% endif %} {% endfor %}
-            </span>
-            {% if data.recipes.has_next %}
-            <a href="?page={{ data.recipes.next_page_number }}"
-              style="border: none; background-color: white; color: #031f3b;">Next</a>
-            <a href="?page={{ data.recipes.paginator.num_pages }}" title="Last"
-              style="border: none; background-color: white; color: #031f3b;">>></a>
-            {% endif %}
+      <span class="current">
+        {% for num in data.recipe_lst.paginator.page_range %}
+        {% if data.recipe_lst.number == num %}
+        <a href="?category={{ data.category }}&page={{ num }}"
+          style="background-color: #031f3b; color: white;">{{ num }}</a>
+        {% else %}
+        <a href="?category={{ data.category }}&page={{ num }}">{{ num }}</a>
+        {% endif %} {% endfor %}
       </span>
-    </div>
-    {% endif %}
+      {% if data.recipe_lst.has_next %}
+      <a href="?category={{ data.category }}&page={{ data.recipe_lst.next_page_number }}"
+        style="border: none; background-color: white; color: #031f3b;">Next</a>
+      <a href="?category={{ data.category }}&page={{ data.recipe_lst.paginator.num_pages }}" title="Last"
+        style="border: none; background-color: white; color: #031f3b;">>></a>
+      {% endif %}
+    </span>
+  </div>
+  {% endif %}
 
-    <!--End of Pagination-->
+  <!--End of Pagination-->
 
     <!--Recipe Cards-->
     {% if data.recipe_lst %}
-    <div class="ui grid" style="margin-top: 6px; margin-bottom: 75px;">
+    <div class="ui grid" style="margin-top: 60px; margin-bottom: 75px;">
       <!--column-->
       {% for recipe in data.recipe_lst %}
       <div class="four wide column">
