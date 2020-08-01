@@ -4,6 +4,13 @@ class Category:
         self.category_page = "1"
         self.is_cat_and_ingrd = False
         self.filter_list = None
+        self.sorting_type = "name_A"
+
+    def get_sorting_type(self):
+        return self.sorting_type
+
+    def set_sorting_type(self, type):
+        self.sorting_type = type
 
     def set_category(self, category):
         self.category = category

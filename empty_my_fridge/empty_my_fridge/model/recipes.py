@@ -16,6 +16,7 @@ class Recipes:
         self.sorting_type = "name_A"
         self.fridge_recipes = None
         self.is_fridge = False
+        self.fridge_sorting_type = "name_A"
 
         
 
@@ -35,6 +36,7 @@ class Recipes:
         self.filter_list = None
         self.fridge_recipes = None
         self.is_fridge = False
+        self.fridge_sorting_type = "name_A"
 
     def get_fridge_recipes(self):
         return self.fridge_recipes
@@ -53,6 +55,12 @@ class Recipes:
 
     def set_sorting_type(self, type):
         self.sorting_type = type
+
+    def get_fridge_sorting_type(self):
+        return self.fridge_sorting_type
+
+    def set_fridge_sorting_type(self, type):
+        self.fridge_sorting_type = type
     
     def set_scraped(self, scraped):
         self.scraped = scraped
