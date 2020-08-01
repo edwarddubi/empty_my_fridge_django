@@ -215,10 +215,17 @@
       <div style="color: white; margin-top: 2px; text-align: center;">
         <h5>Exact Matches</h5>
       </div>
-      <div class="ui toggle checkbox" style="margin-top: 10px; margin-left: 58px;">
-        <input type="checkbox" name="filter_style" value="True">
-        <label></label>
-      </div>
+      {% if data.isExact %}
+        <div class="ui toggle checkbox" style="margin-top: 10px; margin-left: 58px;">
+          <input type="checkbox" name="filter_style" value="True" checked="checked">
+          <label></label>
+        </div>
+      {% else %}
+        <div class="ui toggle checkbox" style="margin-top: 10px; margin-left: 58px;">
+          <input type="checkbox" name="filter_style" value="True">
+          <label></label>
+        </div>
+      {% endif %}
       <button class="ui vertical animated button" type="submit" id="apply"
         style="margin-left: 14px; margin-top: 20px; margin-bottom: 10px; width: 136px; height: 35px;" tabindex="0"
         bis_skin_checked="1">
@@ -315,44 +322,44 @@
       <div class="inline field" style="text-align: right;">
         <select name="sorting">
           {%if data.sorting_type == "name_A"%}
-          <option value="name_A">Name ascending</option>
-          <option value="name_D">Name descending</option>
+          <option value="name_A">Name Ascending</option>
+          <option value="name_D">Name Descending</option>
           <option value="fav_A">Least Popular</option>
           <option value="fav_D">Most Popular</option>
           {%elif data.sorting_type == "name_D"%}
-          <option value="name_D">Name descending</option>
-          <option value="name_A">Name ascending</option>
+          <option value="name_D">Name Descending</option>
+          <option value="name_A">Name Ascending</option>
           <option value="fav_A">Least Popular</option>
           <option value="fav_D">Most Popular</option>
           {%elif data.sorting_type == "fav_A"%}
           <option value="fav_A">Least Popular</option>
-          <option value="name_D">Name descending</option>
-          <option value="name_A">Name ascending</option>
+          <option value="name_D">Name Descending</option>
+          <option value="name_A">Name Ascending</option>
           <option value="fav_D">Most Popular</option>
           {%elif data.sorting_type == "fav_D"%}
           <option value="fav_D">Most Popular</option>
-          <option value="name_D">Name descending</option>
-          <option value="name_A">Name ascending</option>
+          <option value="name_D">Name Descending</option>
+          <option value="name_A">Name Ascending</option>
           <option value="fav_A">Least Popular</option>
           {%endif%}
           {% if data.fridge.1 %}
           {% if data.sorting_type == "mis_A" %}
-            <option value="mis_A">Least missing ingredients</option>
-            <option value="name_A" >Name ascending</option>
-            <option value="name_D" >Name descending</option>
+            <option value="mis_A">Least Missing Ingredients</option>
+            <option value="name_A" >Name Ascending</option>
+            <option value="name_D" >Name Descending</option>
             <option value="fav_A" >Least Popular</option>
             <option value="fav_D">Most Popular</option>
-            <option value="mis_D">Most missing ingredients</option>
+            <option value="mis_D">Most Missing Ingredients</option>
           {%elif data.sorting_type == "mis_D"%}
-            <option value="mis_D">Most missing ingredients</option>
-            <option value="name_A" >Name ascending</option>
-            <option value="name_D" >Name descending</option>
+            <option value="mis_D">Most Missing Ingredients</option>
+            <option value="name_A" >Name Ascending</option>
+            <option value="name_D" >Name Descending</option>
             <option value="fav_A" >Least Popular</option>
             <option value="fav_D">Most Popular</option>
-            <option value="mis_A">Least missing ingredients</option>
+            <option value="mis_A">Least Missing Ingredients</option>
           {% else %}
-            <option value="mis_A">Least missing ingredients</option>
-            <option value="mis_D">Most ingredients missing</option>
+            <option value="mis_A">Least Missing Ingredients</option>
+            <option value="mis_D">Most Missing Ingredients</option>
           {% endif %}
         {% endif %}
         </select>

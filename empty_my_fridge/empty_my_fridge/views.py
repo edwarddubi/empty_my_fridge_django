@@ -52,8 +52,6 @@ except ModuleNotFoundError:
 from . import allrecipes
 
 
-
-
 firebase = pyrebase.initialize_app(myConfig())
 
 auth_fb = firebase.auth()
@@ -290,7 +288,6 @@ def recipe_list(request):
     isClearing = False
     isFilter = False
     to_remove = []
-    f = request.GET.get("fridge")
     filters = request.POST.getlist('filter_data')
     remove_list = request.POST.getlist('remove_filter')
     clear_all = request.POST.get('clear')
@@ -309,6 +306,10 @@ def recipe_list(request):
             isRemoving = True
         if filter_style:
             isComplete = True
+            recipes.set_isExact(True)
+        else:
+            isComplete = False
+            recipes.set_isExact(False)
 
         if isRemoving:
             if curr_filters is not None:
@@ -426,6 +427,7 @@ def recipe_list(request):
             "active_filters": filters,
             "isFilter": isFilter,
             "fridge_recipes": fridge_recipes,
+            "isExact": recipes.get_isExact()
 
         }
         return render(request, 'recipes.html', {"data": data})
@@ -448,7 +450,8 @@ def recipe_list(request):
             "recipe_name": _recipe_name_,
             "active_filters": filters,
             "isFilter": isFilter,
-            "fridge_recipes": fridge_recipes
+            "fridge_recipes": fridge_recipes,
+            "isExact": recipes.get_isExact()
         }
         return render(request, 'recipes.html', {"data": data})
 
@@ -478,6 +481,10 @@ def category(request):
             isRemoving = True
         if filter_style:
             isComplete = True
+            m_category.set_isExact(isComplete)
+        else:
+            isComplete = False
+            m_category.set_isExact(isComplete)
 
         if isRemoving:
             if curr_filters is not None:
@@ -590,6 +597,7 @@ def category(request):
         "sorting_type": m_category.get_sorting_type(),
         "active_filters": filters,
         "fridge_recipes" : fridge_recipes,
+        "isExact": m_category.get_isExact()
     }
     return render(request, 'category.html', {"data": data})
 

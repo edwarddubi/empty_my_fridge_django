@@ -17,9 +17,9 @@ class Recipes:
         self.fridge_recipes = None
         self.is_fridge = False
         self.fridge_sorting_type = "name_A"
+        self.isExact = False
 
         
-
     def __init__(self, db, m_user, food_network):
         self.recipe_list = None
         self.pos = 0
@@ -37,6 +37,7 @@ class Recipes:
         self.fridge_recipes = None
         self.is_fridge = False
         self.fridge_sorting_type = "name_A"
+        self.isExact = False
 
     def get_fridge_recipes(self):
         return self.fridge_recipes
@@ -109,6 +110,12 @@ class Recipes:
 
     def get_recipes_current_page(self):
         return self.recipes_current_page
+
+    def get_isExact(self):
+        return self.isExact
+
+    def set_isExact(self, isComplete):
+        self.isExact = isComplete
 
     def set_recipe_liked(self, key):
         for recipe in self.recipe_list:
