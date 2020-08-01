@@ -158,7 +158,9 @@
         <label>Activate to display partial matches</label>
       </div>
       {%endif%}
+    </form>
       <!-- Sorting dropdown-->
+      <form method="post">
       <div class="inline field" style="text-align: right;">
         <select name="sorting">
           {%if data.sorting_type == "name_A"%}
@@ -182,6 +184,26 @@
           <option value="name_A">Name ascending</option>
           <option value="fav_A">Least Popular</option>
           {%endif%}
+          {% if data.partial %}
+            {% if data.sorting_type == "mis_A" %}
+              <option value="mis_A">Missing least ingredients</option>
+              <option value="name_A" >Name ascending</option>
+              <option value="name_D" >Name descending</option>
+              <option value="fav_A" >Least Popular</option>
+              <option value="fav_D">Most Popular</option>
+              <option value="mis_D">Missing most ingredients</option>
+            {%elif data.sorting_type == "mis_D"%}
+              <option value="mis_D">Missing most ingredients</option>
+              <option value="name_A" >Name ascending</option>
+              <option value="name_D" >Name descending</option>
+              <option value="fav_A" >Least Popular</option>
+              <option value="fav_D">Most Popular</option>
+              <option value="mis_A">Missing least ingredients</option>
+            {% else %}
+              <option value="mis_A">Missing least ingredients</option>
+              <option value="mis_D">Missing most ingredients</option>
+            {% endif %}
+          {% endif %}
         </select>
         <button type="submit">Sort</button>
       </div>
@@ -194,11 +216,11 @@
       {%for recipe in data.recipes%} {%if not data.partial%}
       <div class="four wide column">
         <div class="ui link card" style="margin: 10px; width: 300px; height: 340px;">
-          <a href="{{recipe.recipe_link}}" target="_blank" class="ui medium image">
+          <a class="ui medium image" href="{{recipe.recipe_link}}" target="_blank" >
             <img style="height: 215px; object-fit: cover;" src="{{recipe.recipe_image}}" />
           </a>
           <div class="content" style="text-align: center;">
-            <a target="_blank" class="recipe_name" href="{{recipe.recipe_link}}">{{recipe.recipe_name}}</a>
+            <a class="recipe_name" href="{{recipe.recipe_link}}" target="_blank" >{{recipe.recipe_name}}</a>
           </div>
           <div class="extra content" bis_skin_checked="1">
             <span class="left floated">
@@ -267,12 +289,11 @@
             }
           </style>
           <div class="ui link red card" style="margin: 10px; width: 300px; height: 340px;">
-            <a href="{{recipe.recipe_link}}" class="ui medium image">
+            <a href="{{recipe.recipe_link}}" class="ui medium image" target="_blank">
               <img style="height: 215px; object-fit: cover;" src="{{recipe.recipe_image}}" />
             </a>
-            </a>
             <div class="content" style="text-align: center;">
-              <a class="recipe_name" href="{{recipe.recipe_link}}">{{recipe.recipe_name}}</a>
+              <a class="recipe_name" href="{{recipe.recipe_link}}" target="_blank">{{recipe.recipe_name}}</a>
             </div>
             <div class="extra content" bis_skin_checked="1">
               <span class="left floated">

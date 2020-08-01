@@ -301,6 +301,7 @@
           <label>Activate to display partial matches</label>
         </div>
         {%endif%}
+
       </div>
       {%else%}
       <div class="ui toggle checkbox" style="margin-top: 4px;">
@@ -308,7 +309,9 @@
         <label>Activate to display fridge recipes</label>
       </div>
       {%endif%}
+    </form>
       <!-- Sorting dropdown-->
+      <form method="post">
       <div class="inline field" style="text-align: right;">
         <select name="sorting">
           {%if data.sorting_type == "name_A"%}
@@ -332,9 +335,30 @@
           <option value="name_A">Name ascending</option>
           <option value="fav_A">Least Popular</option>
           {%endif%}
+          {% if data.fridge.1 %}
+          {% if data.sorting_type == "mis_A" %}
+            <option value="mis_A">Least missing ingredients</option>
+            <option value="name_A" >Name ascending</option>
+            <option value="name_D" >Name descending</option>
+            <option value="fav_A" >Least Popular</option>
+            <option value="fav_D">Most Popular</option>
+            <option value="mis_D">Most ingredients missing</option>
+          {%elif data.sorting_type == "mis_D"%}
+            <option value="mis_D">Most ingredients missing</option>
+            <option value="name_A" >Name ascending</option>
+            <option value="name_D" >Name descending</option>
+            <option value="fav_A" >Least Popular</option>
+            <option value="fav_D">Most Popular</option>
+            <option value="mis_A">Least missing ingredients</option>
+          {% else %}
+            <option value="mis_A">Least missing ingredients</option>
+            <option value="mis_D">Most ingredients missing</option>
+          {% endif %}
+        {% endif %}
         </select>
         <button type="submit">Sort</button>
       </div>
+
     </form>
 
     <!--Recipe Cards-->
@@ -393,6 +417,8 @@
               <a target="_blank" class="recipe_name"
                 href="{% url 'recipe_view_page'%}?id={{recipe.recipe_id}}">{{recipe.recipe_name}}</a>
               {% endif %}
+
+             
 
             </div>
             <div class="extra content" bis_skin_checked="1">
