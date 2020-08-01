@@ -54,7 +54,7 @@ from . import allrecipes
 
 
 
-firebase = pyrebase.initialize_app(config.myConfig())
+firebase = pyrebase.initialize_app(myConfig())
 
 auth_fb = firebase.auth()
 fb_storage = firebase.storage()
@@ -1847,10 +1847,6 @@ def fridge_recipes(request):
     possible_recipes = sort_recipes(possible_recipes, recipes.get_fridge_sorting_type()) or possible_recipes
 
 
-    if(sorting_type:=request.POST.get('sorting')):
-            recipes.set_sorting_type(sorting_type)
-
-    possible_recipes = sort_recipes(possible_recipes, recipes.get_sorting_type()) or possible_recipes
 
     scrollTop = 0
     keep_scroll_pos = False
