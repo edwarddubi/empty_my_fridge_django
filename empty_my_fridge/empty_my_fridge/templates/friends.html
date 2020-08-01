@@ -225,8 +225,10 @@
           </div>
           {% else %}
           <h2 style="padding: 100px;">
-            Your Friends List is Empty. Try adding a few!
+            Your Friends List is empty. Try adding a few!
           </h2>
+          <a class="ui blue button" href="{% url 'friend_requests'%}" style="margin-left: 280px;">
+            Find Friends</a>
           {% endif %}
         </div>
       </div>
