@@ -40,15 +40,15 @@ Semantic Ui or fomantic Ui css (currently, Semantic Ui)
     - Login/Register/Reset Password
     - Email verification/Logout
 2. **User Profile (including Ui)**
-    - View and Edit user information/Account Settings
-    - User favorite recipes
+    - View and Edit user information/Account Settings (12 th June)
+    - User favorite recipes (13 June)
     - Change user avatar
 3. **Page routing**
-    - Navigating from one page to another
-4. **Recipe list (including Ui)**
+    - Navigating from one page to another (14, 25 June)
+4. **Recipe list (including Ui)** (15, 25 June)
     - Get all recipes
     - Ability to populate these recipes on the recipe page
-5. **Search (On the navigation bar)**
+5. **Search (On the navigation bar)** 17 june
     - Ability to search for recipes by name
 6. **Likes**
     - Ability to add a recipe to user's favorites 
