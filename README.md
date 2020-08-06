@@ -35,23 +35,25 @@ Semantic Ui or fomantic Ui css (currently, Semantic Ui)
 ## Contributions
 
 ### Edward Mensah
-1. **User Authentication** ***June 6 - 10***
+1. **User Authentication** ***June 6 - June 10***
     - Login/Register/Reset Password
     - Email verification/Logout
 2. **User Profile**  ***June 11***
     - View and Edit user information/Account Settings
     - User favorite recipes
     - Change user avatar
-3. **Page Routing** ***June 2 - 11***
+3. **Page Routing** ***June 2 - June 11***
     - Navigation bar 
     - Navigating from one page to another
-4. **Recipe Page**  ***June 10 - 20***
+4. **Recipe Page**  ***June 10 - June 20***
     - Get all recipes
     - Ability to populate these recipes on the recipe page
 5. **Search** ***June 17***
     - Ability to search for recipes by name
-6. **Likes** ***June 12- 17***
+6. **Likes** ***June 12 - June 17***
     - Ability to add a recipe to user's favorites
+7. **Packacking** ***June 26 - June 29***
+    - Packaged our app and deployed to Pypi
    
 ### Cyan Perez
 1. **User Custom Recipes** ***June 12 - June 24***
@@ -75,15 +77,17 @@ Semantic Ui or fomantic Ui css (currently, Semantic Ui)
 2. **Categories Page** ***June 20 - June 24***
     - Gets all recipes and populates the page by specified category
     - Accessible through homepage choices and navigation bar dropdown
-3. **Recipe Page**  ***June 10 - 20***
+3. **Recipe Page**  ***June 10 - June 20***
     - Get all recipes
     - Ability to populate these recipes on the recipe page
-4. **Pagination** ***June 13 - 17***
+4. **Pagination** ***June 13 - June 17***
     - Appears on all pages that display recipes
-5. **Recipe Filtering** ***June 24 - June 30***
+5. **Recipe Filtering** ***July 24 - July 30***
     - Ability for users to filter recipes both on recipes and categories pages
     - Saves current choices so users can add or remove as needed
     - Choice to either show exact matches for all applied filters or show all recipes that match at least one filter
+6. **Packacking** ***June 26 - June 29***
+    - Packaged our app and deployed to Pypi
    
 ### Charles Charlestin III
   1. **Web Scraping** ***June 9 - July 29***
